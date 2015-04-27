@@ -1,0 +1,73 @@
+import xml.etree.cElementTree as ET
+
+# tree = ET.ElementTree(file='no_scheme_Update Purchase Order User Journey.xml')
+# root = tree.getroot()
+# print(root.attrib['NAME'])
+
+# for child_of_root in root:
+# 	print (child_of_root.tag, child_of_root.attrib)
+
+# for elem in tree.iter(tag='DDITEM'):
+# 	print('DDI',elem.tag, elem.attrib)
+
+
+SCHEME_PREFIX = '{http://www.reflective.com}'
+
+tree = ET.ElementTree(file='Update Purchase Order User Journey.xml')
+root = tree.getroot()
+print(root.attrib['NAME'])
+
+for child_of_root in root:
+	print (child_of_root.tag, child_of_root.attrib)
+
+print('='*10)
+ddis = root.find(SCHEME_PREFIX + 'DYNAMICDATA')
+for child_of_root in ddis:
+	print (child_of_root.tag, child_of_root.attrib)
+
+for ddi in ddis.findall(SCHEME_PREFIX + 'DDITEM'):
+	print (ddi.tag, '|||', ddi.attrib)
+	# ET.dump(ddi)
+
+first_ddi = ddis.findall(SCHEME_PREFIX + 'DDITEM')[0]
+print('>> DDI element [0] attrib EXISTING = ', first_ddi.attrib['EXISTING'])
+for child in first_ddi.getchildren():
+	print (child.tag, '|||', child.attrib)
+
+sixst_ddi = ddis.findall(SCHEME_PREFIX + 'DDITEM')[6]
+print('>> DDI element [0] SOURCE TYPE = ', first_ddi.find(SCHEME_PREFIX+'SOURCE').attrib['TYPE'])
+print('>> DDI element [0] DESCRIPTION = ', first_ddi.find(SCHEME_PREFIX+'DESCRIPTION').text)
+print('>> DDI element [6] DESCRIPTION = ', sixst_ddi.find(SCHEME_PREFIX+'DESCRIPTION').text)
+
+sixst_items = {}
+for item in sixst_ddi.findall(SCHEME_PREFIX+'ITEM'):
+	sixst_items[item.get('CODE')] = item.text
+
+print('>> DDI element [6] ITEMS:')
+for key, val in sixst_items.items():
+	print(key,':',val)
+
+print('~'*20)
+print
+ddi_mxid21 = [ z for z in ddis.findall(SCHEME_PREFIX+'DDITEM') if z.attrib['NAME'] == "Update Purchase Order ID 21" ][0]
+
+siphons = ddi_mxid21.find(SCHEME_PREFIX+'SIPHONS')
+# print(siphons)
+mxid21_siphons = {}
+for sip in siphons.findall(SCHEME_PREFIX+'SIPHON'):
+	print (sip.tag, '|||', sip.attrib)
+	sip_items = {}
+	for item in sip.getchildren():
+		sip_items[item.tag.replace(SCHEME_PREFIX,'')] = item.text
+
+	print([sip.get('SEQUENCE'), sip.get('TYPE')])
+	mxid21_siphons[ sip.get('SEQUENCE')+sip.get('TYPE') ] = sip_items
+
+
+print('>> DDI element [6] ITEMS:')
+for key, val in mxid21_siphons.items():
+	print(key,':',val)
+
+
+
+

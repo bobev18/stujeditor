@@ -1,0 +1,1742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<USERJOURNEY APPNAME="CoB Maximo" NAME="Update Purchase Order"
+    VALID="true" VERSION="7.6">
+    <DESCRIPTION/>
+    <PLUGIN ID="1"/>
+    <RESPONSEPROCESSOR/>
+    <CREATED>07/24/2014 00:00:00.000</CREATED>
+    <NVP NAME="errHandlingSVCas" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="singleLineCookies" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="errHandling5xxCas" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="errHandling404ClearSession" PLUGIN="1" TYPE="java.lang.String">Default Behavior</NVP>
+    <NVP NAME="logResponse" PLUGIN="1" TYPE="java.lang.String">false</NVP>
+    <NVP NAME="followRedirects" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="errHandlingSVClearSession" PLUGIN="1" TYPE="java.lang.String">True</NVP>
+    <NVP NAME="errHandling404Cas" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="sleepTimeFactor" PLUGIN="1" TYPE="java.lang.String">1.0</NVP>
+    <NVP NAME="cycleEndSleepTime" PLUGIN="1" TYPE="java.lang.String">0</NVP>
+    <NVP NAME="useCookies" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="resetConnectionEachCycle" PLUGIN="1" TYPE="java.lang.String">false</NVP>
+    <NVP NAME="initialSleepTime" PLUGIN="1" TYPE="java.lang.String">0</NVP>
+    <NVP NAME="allowRelativeRedirects" PLUGIN="1" TYPE="java.lang.String">true</NVP>
+    <NVP NAME="logRequest" PLUGIN="1" TYPE="java.lang.String">false</NVP>
+    <NVP NAME="httpVersion" PLUGIN="1" TYPE="java.lang.String">1.1</NVP>
+    <NVP NAME="sleepTimeVariation" PLUGIN="1" TYPE="java.lang.String">0.2</NVP>
+    <NVP NAME="maxRedirects" PLUGIN="1" TYPE="java.lang.String">3</NVP>
+    <NVP NAME="errHandling5xxClearSession" PLUGIN="1" TYPE="java.lang.String">True</NVP>
+    <NVP NAME="checkcerts" PLUGIN="1" TYPE="java.lang.String">false</NVP>
+    <NVP NAME="cookies" PLUGIN="1" TYPE="java.lang.String">browser</NVP>
+    <DYNAMICDATA>
+        <DDITEM EXISTING="true" NAME="Build Date" VALID="true">
+            <SOURCE TYPE="CONSTANT"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="SCRIPT  "/>
+            <LIFECYCLE TYPE="R"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="VALUE     ">skins-20140725-1936</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="csrftoken" VALID="true">
+            <SOURCE TYPE="AUTOCORR"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">true</ITEM>
+            <ITEM CODE="FIELDNAME ">csrftoken</ITEM>
+            <ITEM CODE="FIELDTYPE ">Known Fields</ITEM>
+            <ITEM CODE="INHEADERS ">true</ITEM>
+            <ITEM CODE="INPOST    ">true</ITEM>
+            <ITEM CODE="INURL     ">true</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Cycle Success" VALID="true">
+            <SOURCE TYPE="VARIABLE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INITALVALU">0</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Friendly Name" VALID="true">
+            <SOURCE TYPE="SAMEAS  "/>
+            <SELECTION TYPE="SAMEAS  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ASSOCIATED">Username</ITEM>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="FIELDINDEX">3</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Homepage" VALID="true">
+            <SOURCE TYPE="CONSTANT"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="SCRIPT  "/>
+            <LIFECYCLE TYPE="R"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="VALUE     ">http://vcobappspr43/maximo</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="loginstamp" VALID="true">
+            <SOURCE TYPE="AUTOCORR"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">true</ITEM>
+            <ITEM CODE="FIELDNAME ">loginstamp</ITEM>
+            <ITEM CODE="FIELDTYPE ">Known Fields</ITEM>
+            <ITEM CODE="INHEADERS ">true</ITEM>
+            <ITEM CODE="INPOST    ">true</ITEM>
+            <ITEM CODE="INURL     ">true</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="pageseqnum" VALID="true">
+            <SOURCE TYPE="AUTOINCR"/>
+            <SELECTION TYPE="AUTOINCR"/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="U"/>
+            <DESCRIPTION>Created by Maximo Pack</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INCREMENT ">1</ITEM>
+            <ITEM CODE="MINLENGTH ">1</ITEM>
+            <ITEM CODE="PREFIX    "/>
+            <ITEM CODE="STARTVALUE">1</ITEM>
+            <ITEM CODE="SUFFIX    "/>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Password" VALID="true">
+            <SOURCE TYPE="SAMEAS  "/>
+            <SELECTION TYPE="SAMEAS  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ASSOCIATED">Username</ITEM>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="FIELDINDEX">2</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="PO Code" VALID="true">
+            <SOURCE TYPE="SAMEAS  "/>
+            <SELECTION TYPE="SAMEAS  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ASSOCIATED">PO Number</ITEM>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="FIELDINDEX">3</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="PO Description" VALID="true">
+            <SOURCE TYPE="SAMEAS  "/>
+            <SELECTION TYPE="SAMEAS  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ASSOCIATED">PO Number</ITEM>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="FIELDINDEX">5</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="PO Number" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="RANDOM  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">10</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;td    nowrap="nowrap"  id="mx\d{2,8}(\[R:\d+?\])_0"  align="left"   valign="top".+?id="(mx\d{2,8})\1_holder" class="bc"&gt;&lt;span ctype="label"  id="\2\1".+?title="([^"]+?)"&gt;[^"]+?&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?&lt;td    nowrap="nowrap"  id="mx\d{2,8}\1_0"[^~]+?id="mx\d{2,8}\1_holder" class="bc"&gt;&lt;span ctype="label"  id="mx\d{2,8}\1"[^~]+?title="([^"]+?)"&gt;\4&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?title="([^"]+?)"[^~]+?title="WAPPR"&gt;WAPPR&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>All</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="uisessionid" VALID="true">
+            <SOURCE TYPE="AUTOCORR"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ENCODE    ">true</ITEM>
+            <ITEM CODE="FIELDNAME ">uisessionid</ITEM>
+            <ITEM CODE="FIELDTYPE ">Known Fields</ITEM>
+            <ITEM CODE="INHEADERS ">true</ITEM>
+            <ITEM CODE="INPOST    ">true</ITEM>
+            <ITEM CODE="INURL     ">true</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 1" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="SEQUENTI"/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx163.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">2</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>addLoadMethod\(".*(mx163)'.*'</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 10" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx929.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">12</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;input  aria-required="true"  role="textbox"  id="([^'"\[]*?)" class="fld text    ibfld fld_req"     ctype="textbox"   li="mx[\d]{1,8}"     maxlength="[\d]{1,8}" style=";width:[\d]{1,8}\.[\d]{1,8}px;"         type="text" title="Description:? ?.*?" value=".*?" ov=".*?" work="[\d]{1,8}" fldInfo='\{&amp;quot;length&amp;quot;:&amp;quot;[\d]{1,8}&amp;quot;,&amp;quot;inttype&amp;quot;:&amp;quot;[\d]{1,8}&amp;quot;,&amp;quot;required&amp;quot;:true\}'/&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 11" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx283.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">12</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;a role="tab" tabindex="\-[\d]{1,8}" id="([^'"\[]*?)_anchor" title="PO Lines"  onfocus="appendClass\(this\,'offhover'\)" onblur="removeClass\(this\,'offhover'\)" class="text tablabeloff off "  onkeydown="if\(event\.keyCode==KEYCODE_SPACEBAR\)\{sendEvent\('click'\,'mx[\d]{1,8}'\,''\);cancelEvent\(event\);\}else \{itemAKey\(event\,this\)\}" onmouseover="return noStatus\(\)" href="javascript: sendEvent\('click'\,'mx[\d]{1,8}'\,''\);"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 12" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx2211.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">13</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;button ctype="pushbutton"   type="button"    control="true" id="(mx\d{1,8})"  class="text pb default"  style=""&gt;New Row&lt;/button&gt;&lt;/div&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 13" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1622.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">15</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;!\[CDATA\[&lt;label ctype="label"  id="mx[\d]{1,8}"    noclick="[\d]{1,8}"   targetid="mx[\d]{1,8}"    class="text label  label  " style="display:block;padding\-left:[\d]{1,8}px;padding\-top:[\d]{1,8}px;;;;;" for="([^'"\[]*?)" title="Item"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 14" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1614.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">15</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;!\[CDATA\[&lt;label ctype="label"  id="mx[\d]{1,8}"    noclick="[\d]{1,8}"   targetid="mx[\d]{1,8}"    class="text label  label  " style="display:block;padding\-left:[\d]{1,8}px;padding\-top:[\d]{1,8}px;;;;;" for="([^'"\[]*?)" title="Line Type"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 15" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1633.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">13</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;label ctype="label"  id="mx[\d]{1,8}"    noclick="[\d]{1,8}"   targetid="mx[\d]{1,8}"    class="text label  label  " style="display:block;padding\-left:[\d]{1,8}px;padding\-top:[\d]{1,8}px;;;;;" for="([^'"\[]*?)" title="Remarks"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 16" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1625.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">17</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;!\[CDATA\[&lt;input  aria\-required="true"  role="textbox"  id="([^'"\[]*?)" class="fld text    ibfld fld_req"     ctype="textbox"   li="mx[\d]{1,8}"  db="mx[\d]{1,8}"   maxlength="[\d]{1,8}" style=";width:[\d]{1,8}\.[\d]{1,8}px;"         type="text" title="Description" value="" ov="" work="[\d]{1,8}" fldInfo='\{&amp;quot;length&amp;quot;:&amp;quot;[\d]{1,8}&amp;quot;\,&amp;quot;inttype&amp;quot;:&amp;quot;[\d]{1,8}&amp;quot;\,&amp;quot;eventpriority&amp;quot;:[\d]{1,8}\,&amp;quot;required&amp;quot;:true\}'/&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 17" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1814.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">13</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>for="(mx\d{1,8})" title="Unit Cost"&gt;Unit Cost:&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 18" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1790.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">13</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>for="(mx\d{1,8})" title="Order Unit"&gt;Order Unit:&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 2" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="SEQUENTI"/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx140.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">2</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>addLoadMethod\(".*(mx140)'.*'</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 20" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1969.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">15</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;input   role="textbox"  id="(mx\d{1,8})".+?title="Asset:? ?.*?" value=".*?" ov=".*?" work="1"</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 21" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1950.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">13</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="T">
+                    <STARTTEXT>title="SWP #"&gt;SWP #:</STARTTEXT>
+                    <ENDTEXT>title="WO Task"&gt;WO Task:</ENDTEXT>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+                <SIPHON SEQUENCE="1" TYPE="R">
+                    <STARTTEXT>for="(mx\d{1,8})" title="Work Order"&gt;Work Order:&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>All</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 22" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx1925.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">13</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;label ctype="label"  id="mx[\d]{1,8}"    noclick="[\d]{1,8}"   targetid="mx[\d]{1,8}"    class="text label  label  " style="display:block;padding\-left:[\d]{1,8}px;padding\-top:[\d]{1,8}px;;;;;" for="([^'"\[]*?)" title="SWP #"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 23" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx314.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">8</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;a role="button" id="([^'"\[]*?)_anchor" href='javascript:setClickElementId\("mx[\d]{1,8}"\);sendEvent\("click"\,"mx[\d]{1,8}"\,""\)'  onkeydown="itemAKey\(event\,this\)" title="Change Status    CTRL\+ALT\+A" onfocus="appendClass\(this\,'onhover'\)" onblur="removeClass\(this\,'onhover'\)"  eventtype="STATUS" class="on" &gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 24" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx2891.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">23</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;label ctype="label"  id="mx[\d]{1,8}"    noclick="[\d]{1,8}"   targetid="mx[\d]{1,8}"    class="text label  label  " style="display:block;padding\-left:[\d]{1,8}px;padding\-top:[\d]{1,8}px;;;;;" for="([^'"\[]*?)" title="New Status"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 25" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx2892.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">23</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;input  aria\-required="true"  role="combobox" aria\-autocomplete="none"  id="mx[\d]{1,8}" class="fld text cbt  ibfld fld_req"     ctype="textbox"   li="([^'"\[]*?)" liclick="[\d]{1,8}"    maxlength="[\d]{1,8}" style=";width:[\d]{1,8}\.[\d]{1,8}px;"      sue="[\d]{1,8}"  readonly="readonly" type="text" title="New Status" value="" ov="" work="[\d]{1,8}" fldInfo='\{&amp;quot;length&amp;quot;:&amp;quot;[\d]{1,8}&amp;quot;\,&amp;quot;inttype&amp;quot;:&amp;quot;[\d]{1,8}&amp;quot;\,&amp;quot;eventpriority&amp;quot;:[\d]{1,8}\,&amp;quot;required&amp;quot;:true\}'/&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 26" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx2924.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">23</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;input  aria\-readonly="true"  role="textbox"  id="mx[\d]{1,8}" class="fld text text   ib readonlyfld fld_ro"     ctype="textbox"   li="mx[\d]{1,8}"  db="([^'"\[]*?)"   maxlength="[\d]{1,8}" style=";width:[\d]{1,8}\.[\d]{1,8}px;"      sue="[\d]{1,8}" tabindex="\-[\d]{1,8}" readonly="readonly" type="text" title="PO: (.+?)" value="\2" ov="\2" work="[\d]{1,8}"</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 3" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="SEQUENTI"/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx152.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">2</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>addLoadMethod\(".*(mx152)'.*'</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 4" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="SEQUENTI"/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx183.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">2</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>addLoadMethod\(".*(mx183)'.*'</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 5" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx46.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">2</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;span ctype="label"  id="([^'"\[]*?)"   tabindex="[\d]{1,8}"    ev="goto"  targetid="mx[\d]{1,8}"  mxevent="click" accesskey='G' class="text powerwhite   anchor" style="display:block;;cursor:pointer;;;;" title="Go To ALT\+G"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 6" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx561.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">8</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;input   role="textbox"  id="([^'"\[]*?)" class="fld text tablefilterfield  tt ib queryField"     ctype="textbox"   li="mx[\d]{1,8}"      style=";width:[\d]{1,8}\.[\d]{1,8}px;"  ontr='true'       type="text" title="Status filter" value="" ov="" fldInfo='\{&amp;quot;query&amp;quot;:true\,&amp;quot;lookup&amp;quot;:&amp;quot;valuelist&amp;quot;\,&amp;quot;eventpriority&amp;quot;:[\d]{1,8}\}'/&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 7" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx364.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">8</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;tr aria\-invalid="true" role="row" id="([^'"\[]*?)"  onkeyup="if\(tableRowEnterKeyFlag==[\d]{1,8} &amp;&amp; event\.keyCode==KEYCODE_ENTER\)\{sendEvent\('filterrows'\,'mx[\d]{1,8}'\,''\);cancelEvent\(event\);\}" onkeydown="if\(event\.keyCode == KEYCODE_ENTER\) tableRowEnterKeyFlag=[\d]{1,8}; else tableRowEnterKeyFlag=[\d]{1,8};" class="tfr   trodd" style="display:;"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 8" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx222.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">8</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;a  href="javascript: void\([\d]{1,8}\);" ctype="toggleimage" ev="true" tabindex="[\d]{1,8}"  compid="([^'"\[]*?)"  title="Next Page \[CTRL\+Right Arrow\]"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 9" VALID="true">
+            <SOURCE TYPE="RESPONSE"/>
+            <SELECTION TYPE="FIRST   "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created to handle recorded Maximo identifier mx679.</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INDEX     ">1</ITEM>
+            <ITEM CODE="STEPREF   ">10</ITEM>
+            <SIPHONS>
+                <SIPHON SEQUENCE="0" TYPE="R">
+                    <STARTTEXT>&lt;span ctype="label"  id="([^'"\[]*?)\[R:[\d]{1,8}\]"   tabindex="[\d]{1,8}"      targetid="mx[\d]{1,8}\[R:[\d]{1,8}\]"  mxevent="click"  class="text txtbold text label  label   anchor" style="padding:[\d]{1,8}px;padding\-left:[\d]{1,8}px;padding\-top:[\d]{1,8}px;padding\-bottom:[\d]{1,8}px;;cursor:pointer;;;;" title="UT\-[\d]{1,8}B[\d]{1,8}"&gt;</STARTTEXT>
+                    <ENDTEXT/>
+                    <RFINDEX>1</RFINDEX>
+                </SIPHON>
+            </SIPHONS>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Update Purchase Order ID 9b" VALID="true">
+            <SOURCE TYPE="SAMEAS  "/>
+            <SELECTION TYPE="SAMEAS  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="ASSOCIATED">PO Number</ITEM>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="FIELDINDEX">2</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="Username" VALID="true">
+            <SOURCE TYPE="FLATFILE"/>
+            <SELECTION TYPE="RANDOM  "/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="C"/>
+            <DESCRIPTION/>
+            <ITEM CODE="DELIMITER ">,</ITEM>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="FIELDINDEX">1</ITEM>
+            <ITEM CODE="FILENAME  ">C:\Program Files (x86)\Reflective Solutions\StressTester\ddi_data\logins.csv</ITEM>
+        </DDITEM>
+        <DDITEM EXISTING="true" NAME="xhrseqnum" VALID="true">
+            <SOURCE TYPE="AUTOINCR"/>
+            <SELECTION TYPE="AUTOINCR"/>
+            <SCOPE TYPE="THREAD  "/>
+            <LIFECYCLE TYPE="T"/>
+            <DESCRIPTION>Created by Maximo Pack</DESCRIPTION>
+            <ITEM CODE="ENCODE    ">false</ITEM>
+            <ITEM CODE="INCREMENT ">1</ITEM>
+            <ITEM CODE="MINLENGTH ">1</ITEM>
+            <ITEM CODE="PREFIX    "/>
+            <ITEM CODE="STARTVALUE">1</ITEM>
+            <ITEM CODE="SUFFIX    "/>
+        </DDITEM>
+    </DYNAMICDATA>
+    <STEPS>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Home Page" NAMEUSERDEFINED="true" ORDER="1"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}"/>
+            <SUCCESS>Welcome to New Maximo</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="scriptBeforeStep" TYPE="java.lang.String">success = ddItems.getCurrentValue('Cycle Success');
+logger.logInfo('Cycle Success:' + success);
+if (success == '1') {
+  ddItems.setValues('Cycle Success', '0');
+  logger.logInfo('... jumping ...');
+  'Go To'
+}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>1</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false" NAME="Login"
+            NAMEUSERDEFINED="true" ORDER="2" PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/login">
+                <NVP NAME="welcome" VALUE="true"/>
+            </REQUEST>
+            <POST>
+                <NVP NAME="allowinsubframe" VALUE="null"/>
+                <NVP NAME="login" VALUE="jsp"/>
+                <NVP NAME="loginstamp" VALUE="{{loginstamp}}"/>
+                <NVP NAME="mobile" VALUE="false"/>
+                <NVP NAME="password" VALUE="{{Password}}"/>
+                <NVP NAME="username" VALUE="{{Username}}"/>
+            </POST>
+            <SUCCESS>{{Friendly Name}}</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>10000</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/webclient/login/login.jsp?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">image/jpeg, image/gif, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>2</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="portletrenderer.jsp" NAMEUSERDEFINED="false" ORDER="3"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/components/portletrenderer.jsp">
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="dojo.preventCache" VALUE="1406214763561"/>
+                <NVP NAME="gt;" VALUE=""/>
+                <NVP NAME="lt;!-- RICH TEXT --" VALUE=""/>
+                <NVP NAME="pcompid" VALUE="{{Update Purchase Order ID 1}}"/>
+                <NVP NAME="title" VALUE="Inbox / Assignments"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </REQUEST>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>2</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="portletrenderer.jsp (2)" NAMEUSERDEFINED="false"
+            ORDER="4" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/components/portletrenderer.jsp">
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="dojo.preventCache" VALUE="1406214763557"/>
+                <NVP NAME="gt;" VALUE=""/>
+                <NVP NAME="lt;!-- RICH TEXT --" VALUE=""/>
+                <NVP NAME="pcompid" VALUE="{{Update Purchase Order ID 2}}"/>
+                <NVP NAME="title" VALUE="Favorite Applications"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </REQUEST>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>2</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="portletrenderer.jsp (3)" NAMEUSERDEFINED="false"
+            ORDER="5" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/components/portletrenderer.jsp">
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="dojo.preventCache" VALUE="1406214763559"/>
+                <NVP NAME="gt;" VALUE=""/>
+                <NVP NAME="lt;!-- RICH TEXT --" VALUE=""/>
+                <NVP NAME="pcompid" VALUE="{{Update Purchase Order ID 3}}"/>
+                <NVP NAME="title" VALUE="Quick Insert"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </REQUEST>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>2</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="portletrenderer.jsp (4)" NAMEUSERDEFINED="false"
+            ORDER="6" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/components/portletrenderer.jsp">
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="dojo.preventCache" VALUE="1406214763562"/>
+                <NVP NAME="gt;" VALUE=""/>
+                <NVP NAME="lt;!-- RICH TEXT --" VALUE=""/>
+                <NVP NAME="pcompid" VALUE="{{Update Purchase Order ID 4}}"/>
+                <NVP NAME="title" VALUE="Result Set"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </REQUEST>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>2</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false" NAME="Go To"
+            NAMEUSERDEFINED="true" ORDER="34" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_setup.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>3000</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="MaxResponseTime" TYPE="java.lang.Long">0</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="blank.gif" NAMEUSERDEFINED="false" ORDER="35"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/menus/blank.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_asset.gif" NAMEUSERDEFINED="false" ORDER="36"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_asset.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_consists.gif" NAMEUSERDEFINED="false"
+            ORDER="37" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_consists.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_financial.gif" NAMEUSERDEFINED="false"
+            ORDER="38" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_financial.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_int.gif" NAMEUSERDEFINED="false" ORDER="39"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_int.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_contract.gif" NAMEUSERDEFINED="false"
+            ORDER="40" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_contract.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_inventor.gif" NAMEUSERDEFINED="false"
+            ORDER="41" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_inventor.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_plustmp.gif" NAMEUSERDEFINED="false" ORDER="42"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_plustmp.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_pm.gif" NAMEUSERDEFINED="false" ORDER="43"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_pm.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_plans.gif" NAMEUSERDEFINED="false" ORDER="44"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_plans.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_purchase.gif" NAMEUSERDEFINED="false"
+            ORDER="45" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_purchase.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_sd.gif" NAMEUSERDEFINED="false" ORDER="46"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_sd.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_sla.gif" NAMEUSERDEFINED="false" ORDER="47"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_sla.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_util.gif" NAMEUSERDEFINED="false" ORDER="48"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_util.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_plustwarr.gif" NAMEUSERDEFINED="false"
+            ORDER="49" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_plustwarr.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="modimg_wo.gif" NAMEUSERDEFINED="false" ORDER="50"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/modimg_wo.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="menuback.png" NAMEUSERDEFINED="false" ORDER="51"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/menus/menuback.png"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="item_over.gif" NAMEUSERDEFINED="false" ORDER="52"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/menus/item_over.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>34</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Purchase Orders" NAMEUSERDEFINED="true" ORDER="7"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 5}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;changeapp&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 5}}&quot;,&quot;value&quot;:&quot;PO&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS/>
+            <DESCRIPTION/>
+            <SLEEPTIME>5000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>7</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="vcobappspr43/maximo/ui/" NAMEUSERDEFINED="true"
+            ORDER="8" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/ui/">
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="event" VALUE="loadapp"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+                <NVP NAME="value" VALUE="po"/>
+            </REQUEST>
+            <SUCCESS>Purchase Orders&amp;&amp;PO</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/login?welcome=true</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">image/jpeg, image/gif, image/pjpeg, application/x-ms-application, application/xaml+xml, application/x-ms-xbap, */*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="scriptAfterStep" TYPE="java.lang.String">
+ddItems.getRefreshValue('pageseqnum');
+ddItems.setValues('xhrseqnum', '1');</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>7</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Search WAPPR" NAMEUSERDEFINED="true" ORDER="9"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 6}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 6}}&quot;,&quot;value&quot;:&quot;WAPPR&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;},{&quot;type&quot;:&quot;filterrows&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 7}}&quot;,&quot;value&quot;:&quot;&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>WAPPR</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>6000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>9</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Next Page" NAMEUSERDEFINED="true" ORDER="10"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 8}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 8}}&quot;,&quot;value&quot;:&quot;true&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>\d{0,8} of \d{0,8}</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>3000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">REGEX</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>10</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="More Pages" NAMEUSERDEFINED="true" ORDER="33"
+            PROCESSRESPONSE="false" TYPE="CONTROL">
+            <REQUEST URL=" "/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <FLOWCONTROL TYPE="VARIABLELOOP">
+                <NVP NAME="DESTINATIONSTEP" ORDER="0">10</NVP>
+                <NVP NAME="MAXITERCOUNT" ORDER="0">10</NVP>
+                <NVP NAME="MINITERCOUNT" ORDER="0">5</NVP>
+                <NVP NAME="SLEEPTIME" ORDER="0">0.0</NVP>
+            </FLOWCONTROL>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Choose PO" NAMEUSERDEFINED="true" ORDER="12"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 9b}}{{PO Number}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 9b}}{{PO Number}}&quot;,&quot;value&quot;:&quot;&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>{{PO Code}}</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>6000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>12</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false" NAME="PO Lines"
+            NAMEUSERDEFINED="true" ORDER="13" PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 10}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 11}}&quot;,&quot;value&quot;:&quot;&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>PO Lines&amp;&amp;Line Cost</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>3000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>13</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false" NAME="New Row"
+            NAMEUSERDEFINED="true" ORDER="14" PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/img_row_unselect_over.gif"/>
+            <SUCCESS/>
+            <DESCRIPTION/>
+            <SLEEPTIME>3000</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>14</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="maximo.jsp" NAMEUSERDEFINED="true" ORDER="15"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 12}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 12}}&quot;,&quot;value&quot;:&quot;&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>Line Type&amp;&amp;Description</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>14</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Line Type" NAMEUSERDEFINED="true" ORDER="16"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/img_longdescription_off_over.gif"/>
+            <SUCCESS/>
+            <DESCRIPTION/>
+            <SLEEPTIME>6000</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>16</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="maximo.jsp (2)" NAMEUSERDEFINED="true" ORDER="17"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 13}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 14}}&quot;,&quot;value&quot;:&quot;MATERIAL&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>MATERIAL</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>16</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Item Description" NAMEUSERDEFINED="true" ORDER="18"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 15}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 16}}&quot;,&quot;value&quot;:&quot;Freight&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>Freight</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>7000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>18</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Order Unit" NAMEUSERDEFINED="true" ORDER="19"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 17}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 18}}&quot;,&quot;value&quot;:&quot;EA&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>EA</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>4000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>19</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Unit Cost" NAMEUSERDEFINED="true" ORDER="20"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 18}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 17}}&quot;,&quot;value&quot;:&quot;10&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>10.00</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>4000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>20</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Work Order" NAMEUSERDEFINED="true" ORDER="21"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 18}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 21}}&quot;,&quot;value&quot;:&quot;408408&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>Training - City Sportsfields Personnel</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>5000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>21</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false" NAME="SWP"
+            NAMEUSERDEFINED="true" ORDER="22" PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 21}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;setvalue&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 22}}&quot;,&quot;value&quot;:&quot;10.10.10.10&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>Automation Plan</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>4000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>22</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Change Status" NAMEUSERDEFINED="true" ORDER="23"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 21}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 23}}&quot;,&quot;value&quot;:&quot;&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>Change Status</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>3000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>23</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="IE_dropdown.gif" NAMEUSERDEFINED="false" ORDER="24"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/IE_dropdown.gif"/>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>23</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Open Drop Down" NAMEUSERDEFINED="true" ORDER="25"
+            PROCESSRESPONSE="false" TYPE="GET">
+            <REQUEST URL="{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/IE_dropdown_over.gif"/>
+            <SUCCESS/>
+            <DESCRIPTION>this is actually the drop down click</DESCRIPTION>
+            <SLEEPTIME>3000</SLEEPTIME>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>25</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="true"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="maximo.jsp (3)" NAMEUSERDEFINED="true" ORDER="26"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 24}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 25}}&quot;,&quot;value&quot;:&quot;combobox&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>APPRSS</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>0</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>25</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false" NAME="Approved"
+            NAMEUSERDEFINED="true" ORDER="27" PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 24}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;po_status_menus&quot;,&quot;value&quot;:&quot;0_APPR_OPTION&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>Approved</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>4000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>27</STEPGROUP>
+        </STEP>
+        <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+            FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+            NAME="Status OK" NAMEUSERDEFINED="true" ORDER="28"
+            PROCESSRESPONSE="false" TYPE="POST">
+            <REQUEST URL="{{Homepage}}/ui/maximo.jsp"/>
+            <POST>
+                <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+                <NVP NAME="currentfocus" VALUE="{{Update Purchase Order ID 26}}"/>
+                <NVP NAME="events" VALUE="[{&quot;type&quot;:&quot;click&quot;,&quot;targetId&quot;:&quot;{{Update Purchase Order ID 26}}&quot;,&quot;value&quot;:&quot;&quot;,&quot;requestType&quot;:&quot;SYNC&quot;,&quot;csrftokenholder&quot;:&quot;rvl9l3o56go0ocslvabvup461v&quot;}]"/>
+                <NVP NAME="requesttype" VALUE="SYNC"/>
+                <NVP NAME="responsetype" VALUE="text/xml"/>
+                <NVP NAME="scrollleftpos" VALUE="0"/>
+                <NVP NAME="scrolltoppos" VALUE="0"/>
+                <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+            </POST>
+            <SUCCESS>BMXAA3280E&amp;&amp;status changed to APPR</SUCCESS>
+            <DESCRIPTION/>
+            <SLEEPTIME>4000</SLEEPTIME>
+            <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+            <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">vcobappspr43</NVP>
+            <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">{{Homepage}}/ui/?event=loadapp&amp;value=po&amp;uisessionid=3&amp;csrftoken=rvl9l3o56go0ocslvabvup461v</NVP>
+            <NVP NAME="x-requested-with" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+            <NVP NAME="_qm_try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+            <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+            <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+            <NVP NAME="Pragma" PLUGIN="1" TYPE="java.lang.String">no-cache</NVP>
+            <NVP NAME="Proxy-Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+            <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+            <NVP NAME="ValidationType" TYPE="java.lang.String">PLAIN</NVP>
+            <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="scriptAfterStep" TYPE="java.lang.String">ddItems.setValues('Cycle Success', '1');</NVP>
+            <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+            <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+            <STEPGROUP>28</STEPGROUP>
+        </STEP>
+    </STEPS>
+</USERJOURNEY>
