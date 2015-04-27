@@ -93,5 +93,19 @@ class UserJourney():
     def list_ddi_names(self):
         return [z.name for z in self.dditems]
 
+    def pull_ddi_by(self, attrib, value):
+        result = []
+        for ddi in self.dditems:
+            if getattr(ddi, attrib) == value:
+                result.append(ddi)
+
+        if len(result) > 1:
+            return result
+        elif len(result) == 1:
+            return result[0]
+        else:
+            return None
+
+
 
 

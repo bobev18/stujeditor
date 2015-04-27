@@ -13,6 +13,9 @@ class EditorTest(unittest.TestCase):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
         self.assertEqual(DDI_LIST, test_uj.list_ddi_names())
 
+    def test_find_ddi_by_attribute(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.assertEqual(2, len(test_uj.pull_ddi_by('name', 'Update Purchase Order ID 21').siphons))
 
 
 if __name__ == "__main__":
