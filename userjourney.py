@@ -1,6 +1,8 @@
 import xml.etree.cElementTree as ET
+import re
 
 SCHEME_PREFIX = '{http://www.reflective.com}'
+DDI_PATTERN = r'\{\{([\s\w]+?)\}\}'
 
 
 #         <DDITEM EXISTING="true" NAME="csrftoken" VALID="true">
@@ -118,6 +120,35 @@ class DynamicDataItem():
 #             <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
 #             <STEPGROUP>201</STEPGROUP>
 #         </STEP>
+#         <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+#             FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+#             NAME="Work Order Tracking" NAMEUSERDEFINED="true"
+#             ORDER="132" PROCESSRESPONSE="false" TYPE="POST">
+#             <REQUEST URL="https://max75rep.gasco.ae:443/maximo/ui/maximo.jsp"/>
+#             <POST>
+#                 <TEXTDATA>currentfocus={{Update Work Order ID 8}}&amp;csrftoken={{csrftoken}}&amp;events=%5B%7B%22type%22%3A%22changeapp%22%2C%22targetId%22%3A%22{{Update Work Order ID 8}}%22%2C%22value%22%3A%22WOTRACK%22%2C%22requestType%22%3A%22SYNC%22%2C%22csrftokenholder%22%3A%22coo0mpa85vpkojtgmgmsgt7qs5%22%7D%5D&amp;responsetype=text%2Fxml&amp;scrolltoppos=0&amp;uisessionid={{uisessionid}}&amp;scrollleftpos=0&amp;requesttype=SYNC</TEXTDATA>
+#             </POST>
+#             <SUCCESS/>
+#             <DESCRIPTION/>
+#             <SLEEPTIME>4000</SLEEPTIME>
+#             <NVP NAME="xhrseqnum" PLUGIN="1" TYPE="java.lang.String">{{xhrseqnum}}</NVP>
+#             <NVP NAME="_QM_Try" PLUGIN="1" TYPE="java.lang.String">1</NVP>
+#             <NVP NAME="X-Requested-With" PLUGIN="1" TYPE="java.lang.String">XMLHttpRequest</NVP>
+#             <NVP NAME="Host" PLUGIN="1" TYPE="java.lang.String">max75rep.gasco.ae</NVP>
+#             <NVP NAME="Referer" PLUGIN="1" TYPE="java.lang.String">https://max75rep.gasco.ae/maximo/ui/login</NVP>
+#             <NVP NAME="Accept" PLUGIN="1" TYPE="java.lang.String">*/*</NVP>
+#             <NVP NAME="Connection" PLUGIN="1" TYPE="java.lang.String">Keep-Alive</NVP>
+#             <NVP NAME="Content-Type" PLUGIN="1" TYPE="java.lang.String">application/x-www-form-urlencoded;charset=UTF-8</NVP>
+#             <NVP NAME="pageseqnum" PLUGIN="1" TYPE="java.lang.String">{{pageseqnum}}</NVP>
+#             <NVP NAME="logResponse" TYPE="java.lang.Boolean">false</NVP>
+#             <NVP NAME="applyOctetEncoding" TYPE="java.lang.Boolean">false</NVP>
+#             <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+#             <STEPGROUP>132</STEPGROUP>
+
+
+class UJLoadException(Exception):
+    def __init__(self, *args):
+        self.args = [a for a in args]
 
 class Step():
 
@@ -129,6 +160,11 @@ class Step():
             else:
                 return element.text
 
+        def get_value_if_exists(element, childname, type_ = str):
+            if element.find(SCHEME_PREFIX+childname) != None:
+                return type_(element.find(SCHEME_PREFIX+childname).text)
+            return None
+
         self.element = element
         self.countastransaction = bool(element.get('COUNTASTRANSACTION'))
         self.executeseparately = bool(element.get('EXECUTESEPARATELY'))
@@ -136,7 +172,7 @@ class Step():
         self.lastcycleonly = bool(element.get('LASTCYCLEONLY'))
         self.name = element.get('NAME')
         self.nameuserdefined = bool(element.get('NAMEUSERDEFINED'))
-        print('>>>>', element.tag, element.attrib)
+        # print('>>>>', element.tag, element.attrib)
         self.order = int(element.get('ORDER'))
         self.processresponse = bool(element.get('PROCESSRESPONSE'))
         self.type = element.get('TYPE')
@@ -145,10 +181,17 @@ class Step():
         post_element = element.find(SCHEME_PREFIX+'POST')
         self.post_items = {}
         if post_element:
-            for post_item in post_element.findall(SCHEME_PREFIX+'NVP'):
-                self.post_items[post_item.get('NAME')] = post_item.get('VALUE')
+            if len(post_element.findall(SCHEME_PREFIX+'NVP')):
+                for post_item in post_element.findall(SCHEME_PREFIX+'NVP'):
+                    self.post_items[post_item.get('NAME')] = post_item.get('VALUE')
+            if len(post_element.findall(SCHEME_PREFIX+'TEXTDATA')):
+                self.post_items['TEXTDATA'] = post_element.find(SCHEME_PREFIX+'TEXTDATA').text
 
-        self.success = element.find(SCHEME_PREFIX+'SUCCESS').text
+            if len(self.post_items) == 0:
+                raise UJLoadException('found POST Element, but no NVP or TEXTDATA subElements')
+
+
+        self.success = get_value_if_exists(element,'SUCCESS')
         self.description = element.find(SCHEME_PREFIX+'DESCRIPTION').text
         self.sleeptime = int(element.find(SCHEME_PREFIX+'SLEEPTIME').text)
         self.items = {}
@@ -159,7 +202,30 @@ class Step():
             else:
                 self.items[nvp_item.get('NAME')] = booleanize(nvp_item)
 
-        self.stepgroup = int(element.find(SCHEME_PREFIX+'STEPGROUP').text)
+        self.stepgroup = get_value_if_exists(element,'STEPGROUP', int)
+        self.referenced_ddis = self.find_ddi_references()
+
+    def find_ddi_references(self):
+        # possible places for DDIs: URL, POST data, Validation, Headers
+        referenced_ddis = []
+        matches = re.findall(DDI_PATTERN, self.request)
+        if len(matches):
+            referenced_ddis.extend(matches)
+
+        matches = re.findall(DDI_PATTERN, str(self.post_items))
+        if len(matches):
+            referenced_ddis.extend(matches)
+
+        if self.success:
+            matches = re.findall(DDI_PATTERN, self.success)
+            if len(matches):
+                referenced_ddis.extend(matches)
+
+        matches = re.findall(DDI_PATTERN, str(self.headers))
+        if len(matches):
+            referenced_ddis.extend(matches)
+
+        return set(referenced_ddis)
 
 
 class UserJourney():
@@ -179,7 +245,7 @@ class UserJourney():
 
         steps_element = self.root.find(SCHEME_PREFIX+'STEPS')
         self.steps = []
-        for step in dditems_element.findall(SCHEME_PREFIX+'STEP'):
+        for step in steps_element.findall(SCHEME_PREFIX+'STEP'):
             self.steps.append(Step(step))
 
 
@@ -214,6 +280,15 @@ class UserJourney():
             return result[0]
         else:
             return None
+
+    def pull_steps_by_ddi(self, ddi_name):
+        result = []
+        for step in self.steps:
+            if ddi_name in step.referenced_ddis:
+                result.append(step)
+        return result
+
+
 
 
     def __repr__(self):

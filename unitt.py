@@ -31,19 +31,29 @@ class EditorTest(unittest.TestCase):
         id13_anew = test_uj.pull_ddi_by('name', 'MXID Item')
         self.assertEqual(id13_anew, id13)
 
+
+
     def test_list_steps(self):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
         self.assertEqual(STEP_LIST, test_uj.list_step_names())
 
     def test_find_step_by_attribute(self):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
-        self.assertEqual('Freight', test_uj.pull_step_by('name', 'Item Description').success_validation)
+        item_desc_step = test_uj.pull_step_by('name', 'Item Description')
+        self.assertEqual('Freight', test_uj.pull_step_by('name', 'Item Description').success)
 
+    def test_find_step_by_ddi(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        steps_with_id16 = test_uj.pull_steps_by_ddi('Update Purchase Order ID 16')
+        item_desc_step = test_uj.pull_step_by('name', 'Item Description')
+        self.assertIn(item_desc_step, steps_with_id16)
 
+        # id13 = test_uj.pull_step_by_ddi('Update Purchase Order ID 13')
+        # id13.rename('MXID Item')
+        # self.assertEqual('MXID Item', id13.name)
+        # id13_anew = test_uj.pull_ddi_by('name', 'MXID Item')
+        # self.assertEqual(id13_anew, id13)
 
-    # def test_replace_ddi(self):
-    #     # replace the ddi occurences among steps
-    #     pass
 
 
     # def test_rename_ddi(self):
