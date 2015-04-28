@@ -48,12 +48,20 @@ class EditorTest(unittest.TestCase):
         item_desc_step = test_uj.pull_step_by('name', 'Item Description')
         self.assertIn(item_desc_step, steps_with_id16)
 
-        # id13 = test_uj.pull_step_by_ddi('Update Purchase Order ID 13')
-        # id13.rename('MXID Item')
-        # self.assertEqual('MXID Item', id13.name)
-        # id13_anew = test_uj.pull_ddi_by('name', 'MXID Item')
-        # self.assertEqual(id13_anew, id13)
+    def test_replace_ddi_referece_in_all_steps(self):
+        # replace refereces of ddi name in all steps
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
 
+        # confirm it works in multiple steps
+        step_names_with_csrf = set([str(z) for z in test_uj.pull_steps_by_ddi('csrftoken')])
+        test_uj.replace_ddi_references('csrftoken', 'n0_su4_token')
+        step_names_with_n0_su4 = set([str(z) for z in test_uj.pull_steps_by_ddi('n0_su4_token')])
+        self.assertEqual(step_names_with_csrf, step_names_with_n0_su4)
+
+        # confirm it works in multiple POST rows
+        # {{Update Purchase Order ID 5}}
+
+        # confirm it works in multiple step istems - URL, Post, Validation, Headers, [Scripts]
 
 
     # def test_rename_ddi(self):

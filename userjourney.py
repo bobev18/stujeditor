@@ -2,8 +2,7 @@ import xml.etree.cElementTree as ET
 import re
 
 SCHEME_PREFIX = '{http://www.reflective.com}'
-DDI_PATTERN = r'\{\{([\s\w]+?)\}\}'
-
+DDI_PATTERN = r'\{\{(.+?)\}\}'
 
 #         <DDITEM EXISTING="true" NAME="csrftoken" VALID="true">
 #             <SOURCE TYPE="AUTOCORR"/>
@@ -160,6 +159,8 @@ class Step():
             else:
                 return element.text
 
+
+
         def get_value_if_exists(element, childname, type_ = str):
             if element.find(SCHEME_PREFIX+childname) != None:
                 return type_(element.find(SCHEME_PREFIX+childname).text)
@@ -205,27 +206,51 @@ class Step():
         self.stepgroup = get_value_if_exists(element,'STEPGROUP', int)
         self.referenced_ddis = self.find_ddi_references()
 
+    def __repr__(self):
+        return self.name
+
+
     def find_ddi_references(self):
-        # possible places for DDIs: URL, POST data, Validation, Headers
+        # possible places for DDIs: URL, POST data, Validation, Headers, JS
         referenced_ddis = []
+        # URL
         matches = re.findall(DDI_PATTERN, self.request)
         if len(matches):
             referenced_ddis.extend(matches)
-
+        # POST data
         matches = re.findall(DDI_PATTERN, str(self.post_items))
         if len(matches):
             referenced_ddis.extend(matches)
-
+        # Validation
         if self.success:
             matches = re.findall(DDI_PATTERN, self.success)
             if len(matches):
                 referenced_ddis.extend(matches)
-
+        # Headers
         matches = re.findall(DDI_PATTERN, str(self.headers))
         if len(matches):
             referenced_ddis.extend(matches)
 
         return set(referenced_ddis)
+
+
+    def find_ddi_in_JS(self, ddi_name):
+        JS_patterns = r'(getCurrentValue|getRefreshValue|setValues)\([\'\"](*DDINAME*)[\'\"]'.replace('*DDINAME*', ddi_name)
+        matches = re.findall(DDI_PATTERN, str(self.headers))
+        if len(matches):
+            referenced_ddis.extend(matches)
+
+        return matches
+
+    def replace_ddi(self, old_name, new_name):
+
+        # URL
+        self.request = re.sub(r'\{\{'+old_name+r'\}\}', r'\{\{'+new_name+r'\}\}', self.request)
+
+        # POST data
+        # Validation
+        # Headers
+
 
 
 class UserJourney():
@@ -287,6 +312,11 @@ class UserJourney():
             if ddi_name in step.referenced_ddis:
                 result.append(step)
         return result
+
+    def replace_ddi_references(self, old_name, new_name):
+        steps_with_references = self.pull_steps_by_ddi(old_name)
+        for step in steps_with_references:
+            step.replace_ddi(old_name, new_name)
 
 
 

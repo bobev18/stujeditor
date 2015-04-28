@@ -20,3 +20,7 @@ id13.rename('MXID Item')
 # 			if any([ s.start.count(z) for z in ['[^~]', '\\1', '\\2', '\\3', '\\4', '\\5', 'mx\\d'] ]):
 # 				print('>>>',s.start)
 
+steps_csrftoken = uj.pull_steps_by_ddi('csrftoken')
+print(len(steps_csrftoken))
+print(steps_csrftoken)
+print(type(steps_csrftoken[0]))
