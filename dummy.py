@@ -63,11 +63,28 @@ for sip in siphons.findall(SCHEME_PREFIX+'SIPHON'):
 	print([sip.get('SEQUENCE'), sip.get('TYPE')])
 	mxid21_siphons[ sip.get('SEQUENCE')+sip.get('TYPE') ] = sip_items
 
-
-print('>> DDI element [6] ITEMS:')
+print()
+print('>> DDI element ', ddi_mxid21.get('NAME'), ' ITEMS:')
 for key, val in mxid21_siphons.items():
 	print(key,':',val)
 
+ddi_mxid21.set('NAME', 'MXID WO Task')
+print('>> DDI element 21 is renamed to "', ddi_mxid21.get('NAME'),'"')
+
+# ET.dump(tree)
+# print(type(ET.tostring(root)))
+# print(str(ET.tostring(root)))
+
+# ===================================================================================
+# ===================================================================================
 
 
 
+print('='*20)
+steps = root.find(SCHEME_PREFIX + 'STEPS')
+# for child in steps:
+# 	print (child.tag, child.attrib)
+
+for step in steps.findall(SCHEME_PREFIX + 'STEP'):
+	print (step.tag, '|||', step.attrib)
+	# ET.dump(ddi)
