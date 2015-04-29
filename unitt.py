@@ -84,20 +84,18 @@ class EditorTest(unittest.TestCase):
         self.assertEqual(number_of_steps_with_homepage, number_of_steps_with_domain)
 
 
-    # def test_rename_ddi(self):
-    #     # change the DDI name and relevant occurences in steps
-    #     test_uj = UserJourney('Update Purchase Order User Journey.xml')
-    #     id13 = test_uj.pull_ddi_by('name', 'Update Purchase Order ID 13')
-    #     self.assertEqual(0, str(test_uj).count('MXID Item'))
-    #     # greater than 1 is due to = one in DDI definition, may have more in refference to the DDI among the steps
-    #     self.assertGreaterEqual(str(test_uj).count('Update Purchase Order ID 13'), 1)
-    #     old_count = str(test_uj).count('Update Purchase Order ID 13')
-    #     id13.rename('MXID Item')
-    #     self.assertEqual('MXID Item', id13.name)
-    #     id13_anew = test_uj.pull_ddi_by('name', 'MXID Item')
-    #     self.assertEqual(id13_anew, id13)
-    #     self.assertEqual(0, str(test_uj).count('Update Purchase Order ID 13'))
-    #     self.assertEqual(old_count, str(test_uj).count('MXID Item'))
+    def test_rename_ddi(self):
+        # change the DDI name and relevant occurences in steps
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        id13 = test_uj.pull_ddi_by('name', 'Update Purchase Order ID 13')
+        self.assertEqual(0, len(test_uj.pull_steps_by_ddi('MXID Item')))
+        self.assertEqual(1, len(test_uj.pull_steps_by_ddi('Update Purchase Order ID 13')))
+        test_uj.rename_ddi('Update Purchase Order ID 13', 'MXID Item')
+        self.assertEqual('MXID Item', id13.name)
+        ddi_by_new_name = test_uj.pull_ddi_by('name', 'MXID Item')
+        self.assertEqual(id13, ddi_by_new_name)
+        self.assertEqual(0, str(test_uj).count('Update Purchase Order ID 13'))
+        self.assertEqual(1, len(test_uj.pull_steps_by_ddi('MXID Item')))
 
 
 

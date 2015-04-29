@@ -343,8 +343,10 @@ class UserJourney():
         for step in steps_with_references:
             step.replace_ddi(old_name, new_name)
 
-
-
+    def rename_ddi(self, old_name, new_name):
+        target_ddi = self.pull_ddi_by('name', old_name)
+        target_ddi.rename(new_name)
+        self.replace_ddi_references(old_name, new_name)
 
     def __repr__(self):
         return str(ET.tostring(self.root))
