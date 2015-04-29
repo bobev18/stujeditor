@@ -298,6 +298,8 @@ class UserJourney():
         for step in steps_element.findall(SCHEME_PREFIX+'STEP'):
             self.steps.append(Step(step))
 
+        self.stepgroups = self.
+
 
     def list_ddi_names(self):
         return [z.name for z in self.dditems]
@@ -347,6 +349,10 @@ class UserJourney():
         target_ddi = self.pull_ddi_by('name', old_name)
         target_ddi.rename(new_name)
         self.replace_ddi_references(old_name, new_name)
+
+    def list_stepgroup_names(self):
+        return [z.name for z in self.stepgroups]
+
 
     def __repr__(self):
         return str(ET.tostring(self.root))

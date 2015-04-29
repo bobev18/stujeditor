@@ -88,3 +88,19 @@ steps = root.find(SCHEME_PREFIX + 'STEPS')
 for step in steps.findall(SCHEME_PREFIX + 'STEP'):
 	print (step.tag, '|||', step.attrib)
 	# ET.dump(ddi)
+
+print('-'*10)
+
+import re
+
+with open('Update Purchase Order User Journey.xml', 'r') as f:
+	raw = f.read()
+
+# matches = re.findall(r'<step [^~]+?name="(?P<name>.+?)".+?order="(?P<order>\d+?)"[^~]+?<stepgroup>(?P<group>\d+?)</stepgroup>', raw, re.I)
+# print(matches)
+matches = re.finditer(r'<step [^~]+?name="(?P<name>.+?)".+?order="(?P<order>\d+?)"[^~]+?<stepgroup>(?P<group>\d+?)</stepgroup>', raw, re.I)
+# print([z.groupdict() for z in matches])
+mlist = [z.groupdict() for z in matches]
+st_gr_list = [ z['group'] for z in mlist ]
+for st_id in st_gr_list:
+	print([ z['name'] for z in mlist if z['order']==st_id  ])

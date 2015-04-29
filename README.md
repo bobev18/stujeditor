@@ -2,11 +2,13 @@
 ST UJ Editor
 
 FEATURES
-1. load from XML
-2. replace DDI name - both in DDI definition and all references (although that is handled fine in the GUI)
-3. copy, move, delete steps
-4. copy, move, delete ddis
-5. save to XML
+- load from XML
+- replace DDI name - both in DDI definition and all references (although that is handled fine in the GUI)
+[- reset steps' order values (why?)]
+- elevate stepgroups
+- copy, move, delete steps
+- create, copy, delete ddis
+- save to XML
 
 TODO:
  1. recreate the object models
@@ -31,3 +33,14 @@ A: That will depend on the tool being created:
   If it's just UJ editor, the classes should be wrapper around the ET classes
   If this is something more than editor, the ET is just one side of the ptoject, and output may be via different channel (i.e. DB)
   Finally - make it a wrapper
+
+Q: Handle StepGroups
+  The UJs deal with stepgroups as step property
+  I want to have stepgroups as an object that contains the steps
+  I can have the stepgroup class, to be able to lookup belonging steps, and still have a step property.
+The question is, if I have class, stepgroup, should I have step references in the UJ class, or should the UJ class only see stepgroups.
+A: Have the UJ see only stepgroups. Add stepgroup objects for orphan steps, but keep the step's stepgroup attribute as is. During export we can respect the step attribute to properly export orphan steps;
+   Or we can export forcing orphaned steps into their own stepgroups
+
+
+
