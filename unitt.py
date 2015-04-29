@@ -60,8 +60,28 @@ class EditorTest(unittest.TestCase):
 
         # confirm it works in multiple POST rows
         # {{Update Purchase Order ID 5}}
+        steps_with_id5 = test_uj.pull_steps_by_ddi('Update Purchase Order ID 5')
+        self.assertEqual(1, len(steps_with_id5))
+        step_with_id5 = steps_with_id5[0]
+
+        test_uj.replace_ddi_references('Update Purchase Order ID 5', 'MXID PO App')
+        steps_with_po_app = test_uj.pull_steps_by_ddi('MXID PO App')
+        self.assertEqual(1, len(steps_with_po_app))
+        step_with_po_app = steps_with_po_app[0]
+        self.assertEqual(set(['currentfocus', 'events']), set([  z['name'] for z in step_with_po_app.post_items if z['name'].count('MXID PO App') or z['value'].count('MXID PO App')  ]))
 
         # confirm it works in multiple step istems - URL, Post, Validation, Headers, [Scripts]
+        number_of_steps_with_homepage = len([str(z) for z in test_uj.pull_steps_by_ddi('Homepage')])
+        po_step = test_uj.pull_step_by('name', 'Purchase Orders')
+        self.assertEqual(1, po_step.request.count('{{Homepage}}'))
+        self.assertIn('Referer', [ z['name'] for z in po_step.headers if z['name'].count('{{Homepage}}') or z['value'].count('{{Homepage}}') ])
+        test_uj.replace_ddi_references('Homepage', 'Domain')
+        self.assertEqual(0, po_step.request.count('{{Homepage}}'))
+        self.assertEqual(1, po_step.request.count('{{Domain}}'))
+        self.assertNotIn('Referer', [ z['name'] for z in po_step.headers if z['name'].count('{{Homepage}}') or z['value'].count('{{Homepage}}') ])
+        self.assertIn('Referer', [ z['name'] for z in po_step.headers if z['name'].count('{{Domain}}') or z['value'].count('{{Domain}}') ])
+        number_of_steps_with_domain = len([str(z) for z in test_uj.pull_steps_by_ddi('Domain')])
+        self.assertEqual(number_of_steps_with_homepage, number_of_steps_with_domain)
 
 
     # def test_rename_ddi(self):

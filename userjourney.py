@@ -270,10 +270,10 @@ class Step():
 
         # Headers
         for header in self.headers:
-            post_item['name'] = re.sub(r'\{\{'+old_name+r'\}\}', '{{'+new_name+'}}', post_item['name'])
-            post_item['value'] = re.sub(r'\{\{'+old_name+r'\}\}', '{{'+new_name+'}}', post_item['value'])
-            post_item['element'].set('NAME', post_item['name'])
-            post_item['element'].text = post_item['value']
+            header['name'] = re.sub(r'\{\{'+old_name+r'\}\}', '{{'+new_name+'}}', header['name'])
+            header['value'] = re.sub(r'\{\{'+old_name+r'\}\}', '{{'+new_name+'}}', header['value'])
+            header['element'].set('NAME', header['name'])
+            header['element'].text = header['value']
 
         self.referenced_ddis = self.find_ddi_references()
 
