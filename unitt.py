@@ -3,7 +3,7 @@ from userjourney import UserJourney
 
 DDI_LIST = ["Build Date", "csrftoken", "Cycle Success", "Friendly Name", "Homepage", "loginstamp", "pageseqnum", "Password", "PO Code", "PO Description", "PO Number", "uisessionid", "Update Purchase Order ID 1", "Update Purchase Order ID 10", "Update Purchase Order ID 11", "Update Purchase Order ID 12", "Update Purchase Order ID 13", "Update Purchase Order ID 14", "Update Purchase Order ID 15", "Update Purchase Order ID 16", "Update Purchase Order ID 17", "Update Purchase Order ID 18", "Update Purchase Order ID 2", "Update Purchase Order ID 20", "Update Purchase Order ID 21", "Update Purchase Order ID 22", "Update Purchase Order ID 23", "Update Purchase Order ID 24", "Update Purchase Order ID 25", "Update Purchase Order ID 26", "Update Purchase Order ID 3", "Update Purchase Order ID 4", "Update Purchase Order ID 5", "Update Purchase Order ID 6", "Update Purchase Order ID 7", "Update Purchase Order ID 8", "Update Purchase Order ID 9", "Update Purchase Order ID 9b", "Username", "xhrseqnum"]
 STEP_LIST = ['Home Page', 'Login', 'portletrenderer.jsp', 'portletrenderer.jsp (2)', 'portletrenderer.jsp (3)', 'portletrenderer.jsp (4)', 'Go To', 'blank.gif', 'modimg_asset.gif', 'modimg_consists.gif', 'modimg_financial.gif', 'modimg_int.gif', 'modimg_contract.gif', 'modimg_inventor.gif', 'modimg_plustmp.gif', 'modimg_pm.gif', 'modimg_plans.gif', 'modimg_purchase.gif', 'modimg_sd.gif', 'modimg_sla.gif', 'modimg_util.gif', 'modimg_plustwarr.gif', 'modimg_wo.gif', 'menuback.png', 'item_over.gif', 'Purchase Orders', 'vcobappspr43/maximo/ui/', 'Search WAPPR', 'Next Page', 'More Pages', 'Choose PO', 'PO Lines', 'New Row', 'maximo.jsp', 'Line Type', 'maximo.jsp (2)', 'Item Description', 'Order Unit', 'Unit Cost', 'Work Order', 'SWP', 'Change Status', 'IE_dropdown.gif', 'Open Drop Down', 'maximo.jsp (3)', 'Approved', 'Status OK',]
-STEPGROUP_LIST = ['Home Page', 'Purchase Orders', 'Search WAPPR', 'Next Page', 'Line Type', 'Line Type', 'Item Description', 'Order Unit', 'Unit Cost', 'Work Order', 'Change Status', 'Change Status', 'Open Drop Down', 'Open Drop Down', 'Status OK',]
+STEPGROUP_LIST = ['More Pages', 'Purchase Orders', 'Home Page', 'Work Order', 'Next Page', 'Choose PO', 'Status OK', 'SWP', 'Login', 'Go To', 'PO Lines', 'Order Unit', 'Open Drop Down', 'Item Description', 'Unit Cost', 'Search WAPPR', 'Change Status', 'New Row', 'Approved', 'Line Type']
 
 class EditorTest(unittest.TestCase):
 
@@ -101,7 +101,7 @@ class EditorTest(unittest.TestCase):
 
     def test_list_stepgroup_names(self):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
-        self.assertEqual(STEPGROUP_LIST, test_uj.list_stepgroup_names())
+        self.assertEqual(set(STEPGROUP_LIST), set(test_uj.list_stepgroup_names()))
 
 
 

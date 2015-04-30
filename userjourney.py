@@ -2,6 +2,7 @@ import xml.etree.cElementTree as ET
 # import re
 from step import Step
 from dynamic_data import DynamicDataItem
+from stepgroup import StepGroup
 
 SCHEME_PREFIX = '{http://www.reflective.com}'
 
@@ -20,13 +21,37 @@ class UserJourney():
         for ddi in dditems_element.findall(SCHEME_PREFIX+'DDITEM'):
             self.dditems.append(DynamicDataItem(ddi))
 
+        self.stepgroups = self.capture_stepgroups()
+
+    def capture_stepgroups(self):
+        # stepgroups are not defined in the XML, so to construct a stepgroup, we need list of all the steps
         steps_element = self.root.find(SCHEME_PREFIX+'STEPS')
         self.steps = []
+        orphans = []
+        order_ids_used_for_stepgroup = []
         for step in steps_element.findall(SCHEME_PREFIX+'STEP'):
             self.steps.append(Step(step))
+            if self.steps[-1].stepgroup != None:
+                order_ids_used_for_stepgroup.append(self.steps[-1].stepgroup)
+            else:
+                orphans.append(self.steps[-1].order)
 
-        # self.stepgroups = self.
+        order_ids_used_for_stepgroup = set(order_ids_used_for_stepgroup)
+        stepgroups = []
+        for stepgroup_id in order_ids_used_for_stepgroup:
+            # print([(z.name, z.order, z.stepgroup) for z in self.steps])
+            # leading_step = [ z for z in self.steps if z.order == stepgroup_id ]
+            # print(stepgroup_id, leading_step)
+            # if len(leading_step):
+            leading_step = [ z for z in self.steps if z.order == stepgroup_id ][0]
+            subscribed_steps = [ z for z in self.steps if z.stepgroup == stepgroup_id ]
+            stepgroups.append(StepGroup(leading_step, subscribed_steps))
 
+        for step_id in orphans:
+            orphan_step = [ z for z in self.steps if z.order == step_id ][0]
+            stepgroups.append(StepGroup(orphan_step, orphan_step))
+
+        return stepgroups
 
     def list_ddi_names(self):
         return [z.name for z in self.dditems]

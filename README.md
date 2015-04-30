@@ -41,6 +41,7 @@ Q: Handle StepGroups
 The question is, if I have class, stepgroup, should I have step references in the UJ class, or should the UJ class only see stepgroups.
 A: Have the UJ see only stepgroups. Add stepgroup objects for orphan steps, but keep the step's stepgroup attribute as is. During export we can respect the step attribute to properly export orphan steps;
    Or we can export forcing orphaned steps into their own stepgroups - that should not affect experience in the ST GUI
+PR: I cant create stepgroup objects before creating step objects
 
 
 

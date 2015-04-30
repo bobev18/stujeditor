@@ -104,3 +104,9 @@ mlist = [z.groupdict() for z in matches]
 st_gr_list = [ z['group'] for z in mlist ]
 for st_id in st_gr_list:
 	print([ z['name'] for z in mlist if z['order']==st_id  ])
+
+print('orphans')
+for step in steps.findall(SCHEME_PREFIX + 'STEP'):
+	# print(step.find(SCHEME_PREFIX+'STEPGROUP').text, step.get('ORDER'))
+	if step.find(SCHEME_PREFIX+'STEPGROUP') == None or step.find(SCHEME_PREFIX+'STEPGROUP').text == step.get('ORDER'):
+		print(step.get('NAME'))
