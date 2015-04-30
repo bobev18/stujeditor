@@ -58,17 +58,17 @@ class Step():
         self.description = self.description_element.text
         self.sleeptime_element = element.find(SCHEME_PREFIX+'SLEEPTIME')
         self.sleeptime = int(self.sleeptime_element.text)
-        self.stepgroup_element = element.find(SCHEME_PREFIX+'STEPGROUP')
 
         self.success_element = element.find(SCHEME_PREFIX+'SUCCESS')
         if self.success_element != None:
             self.success = self.success_element.text
         else:
             self.success = None
+        self.stepgroup_element = element.find(SCHEME_PREFIX+'STEPGROUP')
         if self.stepgroup_element != None:
-            self.stepgroup = int(self.stepgroup_element.text)
+            self.stepgroup_id = int(self.stepgroup_element.text)
         else:
-            self.stepgroup = None
+            self.stepgroup_id = None
 
         self.post_element = element.find(SCHEME_PREFIX+'POST')
         self.post_items = []

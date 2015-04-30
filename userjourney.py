@@ -31,31 +31,30 @@ class UserJourney():
     def capture_stepgroups(self):
         # stepgroups are not defined in the XML, so to construct a stepgroup, we need list of all the steps
         steps_element = self.root.find(SCHEME_PREFIX+'STEPS')
-        steps = []
-        orphans = []
-        stepgroup_ids = []
-        last_step_stepgroup = None
+        stepgroups = []
+        stepgroup_steps = []
+        lead_step = None
+        last_step_stepgroup_id = -1
         for step in steps_element.findall(SCHEME_PREFIX+'STEP'):
             current_step = Step(step)
-            steps.append(current_step)
-            current_step_stepgroup = current_step.stepgroup
-            if current_step_stepgroup != None:
-                if current_step_stepgroup not in stepgroup_ids:
-                    stepgroup_ids.append(current_step_stepgroup)
+
+            if last_step_stepgroup_id == -1: # adjust for starting element
+                lead_step = current_step
+                last_step_stepgroup_id = current_step.stepgroup_id
+
+            if current_step.stepgroup_id != last_step_stepgroup_id:
+                stepgroups.append(StepGroup(lead_step, stepgroup_steps))
+                lead_step = current_step
+                stepgroup_steps = [current_step]
+                last_step_stepgroup_id = current_step.id
             else:
-                orphans.append(current_step.id)
+                stepgroup_steps.append(current_step)
 
-        # stepgroup_ids = set(stepgroup_ids)
-
-        stepgroups = []
-        for stepgroup_id in stepgroup_ids:
-            leading_step = [ z for z in steps if z.id == stepgroup_id ][0]
-            subscribed_steps = [ z for z in steps if z.stepgroup == stepgroup_id ]
-            stepgroups.append(StepGroup(leading_step, subscribed_steps))
-
-        for step_id in orphans:
-            orphan_step = [ z for z in steps if z.id == step_id ][0]
-            stepgroups.append(StepGroup(orphan_step, [orphan_step]))
+        # finalize after last step
+        stepgroups.append(StepGroup(lead_step, stepgroup_steps))
+        lead_step = current_step
+        stepgroup_steps = [current_step]
+        last_step_stepgroup_id = current_step.id
 
         return stepgroups
 

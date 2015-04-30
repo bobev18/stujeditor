@@ -25,7 +25,6 @@ NOTES:
      ~ stepgroup starts with selfreferencing step - the lead step
      ~ stepgroup closes upon encountering step that has reference other than the previous one
 
-
 BUGS:
 
 
