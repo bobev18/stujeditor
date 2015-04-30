@@ -14,9 +14,17 @@ TODO:
  1. recreate the object models
  2. understand the effect of :
  	... xmlns="http://www.reflective.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.reflective.com stschema.xsd" ...
+ 3. add classes for post & flow_control
 
- NOTES:
- http://eli.thegreenplace.net/2012/03/15/processing-xml-in-python-with-elementtree
+NOTES:
+ - http://eli.thegreenplace.net/2012/03/15/processing-xml-in-python-with-elementtree
+ - The execution order is determined by the order of the steps in the XML, thus:
+   = rename attribute 'order' to 'id' for my objects
+   = utilize stepgroup referencing limitation:
+     ~ stepgroup reference cannot be to id, that hasn't been encountered as a step id
+     ~ stepgroup starts with selfreferencing step - the lead step
+     ~ stepgroup closes upon encountering step that has reference other than the previous one
+
 
 BUGS:
 
@@ -52,6 +60,22 @@ Q: How should I implement the interface for copy/delete/move steps?
    I can have the UJ class show stepgroup elements, and stepgroup to return it's own subtree representation
 A: try haing them separate, because otherwise UJ will need visibility of step objects
 
-
+!: There are too many design issues that creep from the XML structure into the object structure. I should create an alternative, using my structures, and adjust the XML feed as needed once I get to that point.
+?: Which components would I not overwite? Because these would be the ones to structure around:
+  - XML
+  - GUI
+  - DB
+  - Inj
+  - MA
+  - SAF
+  - MaxPack
+  - Recorder
+  - Post Recording processing
+  - LDAP/NTLM/etc integration
+  To consider key features:
+  = inj handles threads as browser
+  = inj handles cookies as browser
+  = MA has incorporated various communication templates/handshakes to access variety of sources
+  = recorder (mostly) integrates
 
 

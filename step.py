@@ -11,6 +11,23 @@ class StepNameException(Exception):
     def __init__(self, *args):
         self.args = [a for a in args]
 
+
+        # <STEP COUNTASTRANSACTION="false" EXECUTESEPARATELY="false"
+        #     FIRSTCYCLEONLY="false" LASTCYCLEONLY="false"
+        #     NAME="More Pages" NAMEUSERDEFINED="true" ORDER="33"
+        #     PROCESSRESPONSE="false" TYPE="CONTROL">
+        #     <REQUEST URL=" "/>
+        #     <DESCRIPTION/>
+        #     <SLEEPTIME>0</SLEEPTIME>
+        #     <NVP NAME="logRequest" TYPE="java.lang.Boolean">false</NVP>
+        #     <FLOWCONTROL TYPE="VARIABLELOOP">
+        #         <NVP NAME="DESTINATIONSTEP" ORDER="0">10</NVP>
+        #         <NVP NAME="MAXITERCOUNT" ORDER="0">10</NVP>
+        #         <NVP NAME="MINITERCOUNT" ORDER="0">5</NVP>
+        #         <NVP NAME="SLEEPTIME" ORDER="0">0.0</NVP>
+        #     </FLOWCONTROL>
+        # </STEP>
+
 class Step():
 
     def __init__(self, element):
@@ -31,7 +48,7 @@ class Step():
         self.name_user_defined = bool(element.get('NAMEUSERDEFINED'))
         self.nameuserdefined = bool(element.get('NAMEUSERDEFINED'))
         # print('>>>>', element.tag, element.attrib)
-        self.order = int(element.get('ORDER'))
+        self.id = int(element.get('ORDER'))
         self.processresponse = bool(element.get('PROCESSRESPONSE'))
         self.type = element.get('TYPE')
 
@@ -73,6 +90,14 @@ class Step():
                 self.headers.append(record)
             else:
                 self.items.append(record)
+
+        self.flow_control_element = element.find(SCHEME_PREFIX+'FLOWCONTROL')
+        if self.flow_control_element:
+            self.flow_type = self.flow_control_element.get('TYPE')
+            # print('flow control found at ', self.id, 'with type', self.flow_type)
+            self.flow_items = []
+            for nvp_item in self.flow_control_element.findall(SCHEME_PREFIX+'NVP'):
+                self.flow_items.append({'name': nvp_item.get('NAME'), 'order': nvp_item.get('ORDER'), 'value': nvp_item.text})
 
         self.referenced_ddis = self.find_ddi_references()
 

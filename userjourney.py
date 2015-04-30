@@ -34,6 +34,7 @@ class UserJourney():
         steps = []
         orphans = []
         stepgroup_ids = []
+        last_step_stepgroup = None
         for step in steps_element.findall(SCHEME_PREFIX+'STEP'):
             current_step = Step(step)
             steps.append(current_step)
@@ -42,18 +43,18 @@ class UserJourney():
                 if current_step_stepgroup not in stepgroup_ids:
                     stepgroup_ids.append(current_step_stepgroup)
             else:
-                orphans.append(current_step.order)
+                orphans.append(current_step.id)
 
         # stepgroup_ids = set(stepgroup_ids)
 
         stepgroups = []
         for stepgroup_id in stepgroup_ids:
-            leading_step = [ z for z in steps if z.order == stepgroup_id ][0]
+            leading_step = [ z for z in steps if z.id == stepgroup_id ][0]
             subscribed_steps = [ z for z in steps if z.stepgroup == stepgroup_id ]
             stepgroups.append(StepGroup(leading_step, subscribed_steps))
 
         for step_id in orphans:
-            orphan_step = [ z for z in steps if z.order == step_id ][0]
+            orphan_step = [ z for z in steps if z.id == step_id ][0]
             stepgroups.append(StepGroup(orphan_step, [orphan_step]))
 
         return stepgroups
@@ -85,9 +86,9 @@ class UserJourney():
 
         return None
 
-    def find_steps_by_id(self, id_):
+    def find_step_by_id(self, id_):
         for stepgroup in self.stepgroups:
-            match = stepgroup.find_steps_by_attribute('order', id_)
+            match = stepgroup.find_steps_by_attribute('id', id_)
             if len(match):
                 return match[0]
 
@@ -128,6 +129,21 @@ class UserJourney():
     def list_stepgroup_names(self):
         return [z.name for z in self.stepgroups]
 
-
     def __repr__(self):
         return str(ET.tostring(self.root))
+
+    def tree_output(self):
+        result = ''
+        for stepgroup in self.stepgroups:
+            result += stepgroup.tree_output()
+            if stepgroup.lead_step.flow_control_element:
+                destination_names = []
+                for destination in [ z for z in stepgroup.lead_step.flow_items if z['name'] == 'DESTINATIONSTEP' ]:
+                    try:
+                        name = self.find_step_by_id(int(destination['value'])).name
+                    except ValueError:
+                        name = destination['value']
+                    destination_names.append(name)
+                result += ' -->> ' + '|'.join(destination_names) +'\n'
+
+        return result

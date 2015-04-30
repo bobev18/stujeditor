@@ -112,10 +112,22 @@ class EditorTest(unittest.TestCase):
         anew_steps_with_id16 = test_uj.find_steps_by_ddi_reference('Update Purchase Order ID 16')
         self.assertIn(step_desc_item, anew_steps_with_id16)
 
-
     def test_list_stepgroup_names(self):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
         self.assertEqual(set(STEPGROUP_LIST), set(test_uj.list_stepgroup_names()))
+
+    def test_step_tree_output(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        stepgroup_names = set(test_uj.list_stepgroup_names())
+        step_names = set(test_uj.list_step_names())
+        tree_output = test_uj.tree_output()
+
+        stepgroup_counts = map(tree_output.count, stepgroup_names)
+        map(lambda x: self.assertEqual(1, x), stepgroup_counts)
+
+        step_counts = map(tree_output.count, step_names)
+        map(lambda x: self.assertEqual(1, x), step_counts)
+
 
 
 
