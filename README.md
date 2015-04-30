@@ -18,6 +18,11 @@ TODO:
  NOTES:
  http://eli.thegreenplace.net/2012/03/15/processing-xml-in-python-with-elementtree
 
+BUGS:
+ - renaming step should change the 'named_by_user' flag
+ - renaming step to an existing name should throw exception
+
+
 DESIGN DECISIONS:
 Q: Knowledge amongst UJ<>STEP<>DDI:
   UJ know both Step and DDI classes/objects;
@@ -42,6 +47,13 @@ The question is, if I have class, stepgroup, should I have step references in th
 A: Have the UJ see only stepgroups. Add stepgroup objects for orphan steps, but keep the step's stepgroup attribute as is. During export we can respect the step attribute to properly export orphan steps;
    Or we can export forcing orphaned steps into their own stepgroups - that should not affect experience in the ST GUI
 PR: I cant create stepgroup objects before creating step objects
+
+Q: How should I implement the interface for copy/delete/move steps?
+   the tree structure is best for representing the stepgroups in steps
+   I can have UJ class display all elements of the tree or
+   I can have the UJ class show stepgroup elements, and stepgroup to return it's own subtree representation
+A: try haing them separate, because otherwise UJ will need visibility of step objects
+
 
 
 
