@@ -19,8 +19,6 @@ TODO:
  http://eli.thegreenplace.net/2012/03/15/processing-xml-in-python-with-elementtree
 
 BUGS:
- - renaming step should change the 'named_by_user' flag
- - renaming step to an existing name should throw exception
 
 
 DESIGN DECISIONS:

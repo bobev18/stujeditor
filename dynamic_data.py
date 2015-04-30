@@ -28,5 +28,3 @@ class DynamicDataItem():
     def rename(self, new_name):
         self.element.set('NAME', new_name)
         self.name = new_name
-        # print('element', self.element)
-        # print('name', self.element.)

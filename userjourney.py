@@ -1,7 +1,7 @@
 import functools
 
 import xml.etree.cElementTree as ET
-from step import Step
+from step import Step, StepNameException
 from dynamic_data import DynamicDataItem
 from stepgroup import StepGroup
 
@@ -61,21 +61,37 @@ class UserJourney():
     def list_ddi_names(self):
         return [z.name for z in self.dditems]
 
-    def pull_ddi_by(self, attrib, value):
-        result = []
+    def find_ddi_by_name(self, name):
         for ddi in self.dditems:
-            if getattr(ddi, attrib) == value:
-                result.append(ddi)
+            if ddi.name == name:
+                return ddi
+        return None
 
-        if len(result) > 1:
-            return result
-        elif len(result) == 1:
-            return result[0]
-        else:
-            return None
+    # def find_ddis_by_attribute(self, attrib, value):
+    #     result = []
+    #     for ddi in self.dditems:
+    #         if getattr(ddi, attrib) == value:
+    #             result.append(ddi)
+    #     return result
 
     def list_step_names(self):
         return functools.reduce(lambda x,y: x+y, [z.list_step_names() for z in self. stepgroups])
+
+    def find_step_by_name(self, name):
+        for stepgroup in self.stepgroups:
+            match = stepgroup.find_steps_by_attribute('name', name)
+            if len(match):
+                return match[0]
+
+        return None
+
+    def find_steps_by_id(self, id_):
+        for stepgroup in self.stepgroups:
+            match = stepgroup.find_steps_by_attribute('order', id_)
+            if len(match):
+                return match[0]
+
+        return None
 
     def find_steps_by_attribute(self, attrib, value):
         result = []
@@ -96,13 +112,18 @@ class UserJourney():
 
     def rename_ddi(self, old_name, new_name):
         if new_name not in self.list_ddi_names():
-            target_ddi = self.pull_ddi_by('name', old_name)
-            # print(old_name, new_name, target_ddi)
-            # target_ddi = target_ddi[0]
+            target_ddi = self.find_ddi_by_name(old_name)
             target_ddi.rename(new_name)
             self.replace_ddi_references(old_name, new_name)
         else:
             raise DDINameException('new DDI name - ', new_name, ' already exists')
+
+    def rename_step(self, old_name, new_name):
+        if new_name not in self.list_step_names():
+            target_step = self.find_step_by_name(old_name)
+            target_step.rename(new_name)
+        else:
+            raise StepNameException('new step name - ', new_name, ' already exists')
 
     def list_stepgroup_names(self):
         return [z.name for z in self.stepgroups]

@@ -7,6 +7,10 @@ class UJLoadPostDataException(Exception):
     def __init__(self, *args):
         self.args = [a for a in args]
 
+class StepNameException(Exception):
+    def __init__(self, *args):
+        self.args = [a for a in args]
+
 class Step():
 
     def __init__(self, element):
@@ -134,3 +138,10 @@ class Step():
             header['element'].text = header['value']
 
         self.referenced_ddis = self.find_ddi_references()
+
+
+    def rename(self, new_name):
+        self.name = new_name
+        self.name_user_defined = True
+        self.element.set('NAME', new_name)
+        self.element.set('NAMEUSERDEFINED', 'true')
