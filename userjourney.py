@@ -11,6 +11,8 @@ class DDINameException(Exception):
     def __init__(self, *args):
         self.args = [a for a in args]
 
+StepIDException = DDINameException
+
 class UserJourney():
 
     def __init__(self, filename):
@@ -27,6 +29,8 @@ class UserJourney():
             self.dditems.append(DynamicDataItem(ddi))
 
         self.stepgroups = self.capture_stepgroups()
+
+        self.parent_map = {child:parent for parent in self.tree.iter() for child in parent}
 
     def capture_stepgroups(self):
         # stepgroups are not defined in the XML, so to construct a stepgroup, we need list of all the steps
@@ -146,3 +150,78 @@ class UserJourney():
                 result += ' -->> ' + '|'.join(destination_names) +'\n'
 
         return result
+
+    def promote_step_to_lead(self, id_):
+        # find target step
+        # find the stepgroup of the target step i.e target stepgroup
+        # find the stepgroup lead
+        # swap the target step and the lead step in the steps list of the stepgroup object
+        # swap the target step and the lead step in the XML
+        # exchange the id of the target step to the id of the lead step in objects
+        # exchange the id of the target step to the id of the lead step in the XML
+        # exchange the names:
+        #  - name of the target step is the name that was on the lead step
+        #  - name the ex-lead step based of the request url ((ensure it's unique))
+        # reflect name changes in the XML
+        # reflect the new lead step in the stepgroup object
+        #
+
+
+        # find target step
+        lead_to_be = self.find_step_by_id(id_)
+
+        # find the stepgroup of the target step i.e target stepgroup
+        eligible_stepgroups = [ z for z in self.stepgroups if z.id == lead_to_be.stepgroup_id]
+        if len(eligible_stepgroups) == 0:
+            message = 'no eligible stepgroups found for step with id ' + str(id_)
+            raise StepIDException(message)
+        elif len(eligible_stepgroups) == 1:
+            target_stepgroup = eligible_stepgroups[0]
+        else:
+            raise StepIDException('UJ error - there are two or more stepgroups with duplicate ids')
+
+        # find the stepgroup lead
+        ex_lead = target_stepgroup.lead_step
+
+        # swap the target step and the lead step in the steps list of the stepgroup object
+        lead_position = 0 # target_stepgroup.steps.index(ex_lead)
+        target_step_position = target_stepgroup.steps.index(lead_to_be)
+        new_step_order = target_stepgroup.steps.copy()
+        new_step_order[lead_position] = lead_to_be
+        new_step_order[target_step_position] = ex_lead
+        target_stepgroup.steps = new_step_order
+
+        # swap the target step and the lead step in the XML
+        # print('~'*100)
+        # print(self.parent_map)
+        # print(ex_lead)
+        # print(self.parent_map[ex_lead])
+        self.parent_map[ex_lead.element].remove(lead_to_be.element)
+        self.parent_map[ex_lead.element].insert(0, lead_to_be.element)
+
+
+        # exchange the id of the target step to the id of the lead step in objects
+        ex_lead.id = lead_to_be.id
+        lead_to_be.id = target_stepgroup.id
+        # exchange the id of the target step to the id of the lead step in the XML
+        ex_lead.element.set('ORDER', lead_to_be.id)
+        lead_to_be.element.set('ORDER', target_stepgroup.id)
+        # exchange the names:
+        #  - name the ex-lead step based of the request url ((ensure it's unique))
+        new_name = ex_lead.request.rsplit('/', 1)[1]
+        if self.find_step_by_name(new_name) != None:
+            counter = 1
+            while self.find_step_by_name(new_name + ' (' + str(counter) + ')') != None:
+                counter += 1
+
+            new_name = new_name + ' (' + str(counter) + ')'
+
+        ex_lead.name = new_name
+        ex_lead.element.set('NAME', new_name)
+
+        #  - name of the target step is the name that was on the lead step
+        lead_to_be.name = target_stepgroup.name
+        lead_to_be.element.set('NAME', target_stepgroup.name)
+
+        # reflect the new lead step in the stepgroup object
+        target_stepgroup.lead_step = lead_to_be
