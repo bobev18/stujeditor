@@ -19,9 +19,13 @@ class UserJourney():
         # self.filename = filename
         with open(filename, 'r') as f:
             self.raw = f.read()
-        self.tree = ET.ElementTree(file=filename)
+
+        ET.register_namespace('', 'http://www.reflective.com')
+        self.tree = ET.parse(filename)
+        # self.tree = ET.ElementTree(file=filename)
         self.root = self.tree.getroot()
         self.name = self.root.attrib['NAME']
+
 
         dditems_element = self.root.find(SCHEME_PREFIX+'DYNAMICDATA')
         self.dditems = []
@@ -192,20 +196,16 @@ class UserJourney():
         target_stepgroup.steps = new_step_order
 
         # swap the target step and the lead step in the XML
-        # print('~'*100)
-        # print(self.parent_map)
-        # print(ex_lead)
-        # print(self.parent_map[ex_lead])
         self.parent_map[ex_lead.element].remove(lead_to_be.element)
         self.parent_map[ex_lead.element].insert(0, lead_to_be.element)
 
 
         # exchange the id of the target step to the id of the lead step in objects
         ex_lead.id = lead_to_be.id
+        ex_lead.element.set('ORDER', str(lead_to_be.id))
+        lead_to_be.element.set('ORDER', str(target_stepgroup.id))
         lead_to_be.id = target_stepgroup.id
         # exchange the id of the target step to the id of the lead step in the XML
-        ex_lead.element.set('ORDER', lead_to_be.id)
-        lead_to_be.element.set('ORDER', target_stepgroup.id)
         # exchange the names:
         #  - name the ex-lead step based of the request url ((ensure it's unique))
         new_name = ex_lead.request.rsplit('/', 1)[1]
@@ -225,3 +225,19 @@ class UserJourney():
 
         # reflect the new lead step in the stepgroup object
         target_stepgroup.lead_step = lead_to_be
+
+        # print('*'*60)
+        # ET.dump(self.root)
+        # print('*'*60)
+
+    def change_uj_name(self, new_name):
+        self.name = new_name
+        self.root.set('NAME', new_name)
+
+    def write_to_file(self, file_name):
+        # ET.dump(self.root)
+        # print(ET.tostring(self.root).decode("utf-8")[-100:])
+        with open(file_name, 'w') as xml_file:
+            xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))
+            # xml_file.write(ET.tostring(self.tree.getroot()).decode("utf-8"))
+

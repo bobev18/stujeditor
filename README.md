@@ -25,7 +25,17 @@ NOTES:
      ~ stepgroup starts with selfreferencing step - the lead step
      ~ stepgroup closes upon encountering step that has reference other than the previous one
 
+ - to write without the namespace prefix:
+   = register namespace prior to parse:  `ET.register_namespace('', 'http://www.reflective.com')`
+   = use ET.parse instead of ET.ElementTree(file):  `self.tree = ET.parse(filename) # self.tree = ET.ElementTree(file=filename)`
+   = use file write wiht `ET.tostring(self.root)` instead of the ET export `tree.write('output.xml')`;
+     ~ one issue is that this process strips the 1st line, so add it manually:
+   '''        with open(file_name, 'w') as xml_file:
+            xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))'''
+
 BUGS:
+	moving element to step lead fails, because the use of parent_element.insert(at_pos_) inserts the step at the very top of all steps.
+
 
 
 DESIGN DECISIONS:
@@ -52,6 +62,9 @@ The question is, if I have class, stepgroup, should I have step references in th
 A: Have the UJ see only stepgroups. Add stepgroup objects for orphan steps, but keep the step's stepgroup attribute as is. During export we can respect the step attribute to properly export orphan steps;
    Or we can export forcing orphaned steps into their own stepgroups - that should not affect experience in the ST GUI
 PR: I cant create stepgroup objects before creating step objects
+PR: when I need to insert step at specific position, I need to use the full list of steps. I cannot use the lists attached to stepgrous, because they are not represented as ET objects, thus do not export.
+PR: I cant leverage having a StepGroup class, without bottom up creation of the ET object uppon export
+A: the 'steps' attribute of StepGroup objects is valid ET object since it contains subelement objects. Manage the XML edits withing that list, and then concatanate all lists before write/output
 
 Q: How should I implement the interface for copy/delete/move steps?
    the tree structure is best for representing the stepgroups in steps

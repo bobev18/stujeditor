@@ -131,23 +131,30 @@ class EditorTest(unittest.TestCase):
     def test_promote_step_to_lead(self):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
         self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/img_longdescription_off_over.gif')
+        self.assertEqual(1, len(test_uj.find_steps_by_attribute('id', 16)))
         test_uj.promote_step_to_lead(17)
+        self.assertEqual(1, len(test_uj.find_steps_by_attribute('id', 16)))
         self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/ui/maximo.jsp')
         self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/IE_dropdown_over.gif')
         test_uj.promote_step_to_lead(26)
         self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/ui/maximo.jsp')
 
-    # def test_write_to_file(self):
-    #     test_uj = UserJourney('Update Purchase Order User Journey.xml')
-    #     self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/img_longdescription_off_over.gif')
-    #     self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/IE_dropdown_over.gif')
-    #     test_uj.promote_step_to_lead(17)
-    #     test_uj.promote_step_to_lead(26)
-    #     test_uj.change_uj_name('Update Purchase Order Altered')
-    #     test_uj.write_to_file('Update Purchase Order Altered User Journey.xml')
-    #     test_uj = UserJourney('Update Purchase Order Altered User Journey.xml')
-    #     self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/ui/maximo.jsp')
-    #     self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/ui/maximo.jsp')
+    def test_write_to_file(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/img_longdescription_off_over.gif')
+        self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/IE_dropdown_over.gif')
+        self.assertEqual(1, len(test_uj.find_steps_by_attribute('id', 16)))
+        test_uj.promote_step_to_lead(17)
+
+        test_uj.promote_step_to_lead(26)
+        test_uj.change_uj_name('Update Purchase Order Altered')
+        test_uj.write_to_file('Update Purchase Order Altered User Journey.xml')
+        test_uj = UserJourney('Update Purchase Order Altered User Journey.xml')
+        self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/ui/maximo.jsp')
+        self.assertEqual(1, len(test_uj.find_steps_by_attribute('id', 16)))
+        self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/ui/maximo.jsp')
+        self.assertEqual(1, test_uj.tree_output().split('\n')[0].count('Home Page')) # this ensures the list of steps starts with Home Page
+
 
 
 
