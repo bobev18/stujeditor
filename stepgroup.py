@@ -37,3 +37,40 @@ class StepGroup():
                 #     result += '\t\t' + post['name'] + ': ' + post['value']
 
         return result
+
+    def promote(self, lead_to_be):
+        # find the stepgroup lead
+        ex_lead = self.lead_step
+
+        # swap the target step and the lead step in the steps list of the stepgroup object
+        lead_position = 0 # self.steps.index(ex_lead)
+        target_step_position = self.steps.index(lead_to_be)
+        new_step_order = self.steps.copy()
+        new_step_order[lead_position] = lead_to_be
+        new_step_order[target_step_position] = ex_lead
+        self.steps = new_step_order
+
+        # exchange the id of the target step to the id of the lead step in objects & in XML
+        ex_lead.id = lead_to_be.id
+        ex_lead.element.set('ORDER', str(lead_to_be.id))
+        lead_to_be.element.set('ORDER', str(self.id))
+        lead_to_be.id = self.id
+
+        # exchange the names:
+        ### name of the ex-lead step based of the request url ((ensure it's unique))
+        new_name = ex_lead.request.rsplit('/', 1)[1]
+        if self.find_steps_by_attribute('name', new_name) != []:
+            counter = 1
+            while self.find_steps_by_attribute('name', new_name + ' (' + str(counter) + ')') != []:
+                counter += 1
+            new_name = new_name + ' (' + str(counter) + ')'
+
+        ex_lead.name = new_name
+        ex_lead.element.set('NAME', new_name)
+
+        ### name of the target step is the name that was on the lead step
+        lead_to_be.name = self.name
+        lead_to_be.element.set('NAME', self.name)
+
+        # reflect the new lead step in the stepgroup object
+        self.lead_step = lead_to_be

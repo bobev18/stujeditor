@@ -1,4 +1,5 @@
 import functools
+import itertools
 
 import xml.etree.cElementTree as ET
 from step import Step, StepNameException
@@ -157,21 +158,6 @@ class UserJourney():
 
     def promote_step_to_lead(self, id_):
         # find target step
-        # find the stepgroup of the target step i.e target stepgroup
-        # find the stepgroup lead
-        # swap the target step and the lead step in the steps list of the stepgroup object
-        # swap the target step and the lead step in the XML
-        # exchange the id of the target step to the id of the lead step in objects
-        # exchange the id of the target step to the id of the lead step in the XML
-        # exchange the names:
-        #  - name of the target step is the name that was on the lead step
-        #  - name the ex-lead step based of the request url ((ensure it's unique))
-        # reflect name changes in the XML
-        # reflect the new lead step in the stepgroup object
-        #
-
-
-        # find target step
         lead_to_be = self.find_step_by_id(id_)
 
         # find the stepgroup of the target step i.e target stepgroup
@@ -184,51 +170,17 @@ class UserJourney():
         else:
             raise StepIDException('UJ error - there are two or more stepgroups with duplicate ids')
 
+        target_stepgroup.promote(lead_to_be)
         # find the stepgroup lead
-        ex_lead = target_stepgroup.lead_step
-
         # swap the target step and the lead step in the steps list of the stepgroup object
-        lead_position = 0 # target_stepgroup.steps.index(ex_lead)
-        target_step_position = target_stepgroup.steps.index(lead_to_be)
-        new_step_order = target_stepgroup.steps.copy()
-        new_step_order[lead_position] = lead_to_be
-        new_step_order[target_step_position] = ex_lead
-        target_stepgroup.steps = new_step_order
-
         # swap the target step and the lead step in the XML
-        self.parent_map[ex_lead.element].remove(lead_to_be.element)
-        self.parent_map[ex_lead.element].insert(0, lead_to_be.element)
-
-
         # exchange the id of the target step to the id of the lead step in objects
-        ex_lead.id = lead_to_be.id
-        ex_lead.element.set('ORDER', str(lead_to_be.id))
-        lead_to_be.element.set('ORDER', str(target_stepgroup.id))
-        lead_to_be.id = target_stepgroup.id
         # exchange the id of the target step to the id of the lead step in the XML
         # exchange the names:
-        #  - name the ex-lead step based of the request url ((ensure it's unique))
-        new_name = ex_lead.request.rsplit('/', 1)[1]
-        if self.find_step_by_name(new_name) != None:
-            counter = 1
-            while self.find_step_by_name(new_name + ' (' + str(counter) + ')') != None:
-                counter += 1
-
-            new_name = new_name + ' (' + str(counter) + ')'
-
-        ex_lead.name = new_name
-        ex_lead.element.set('NAME', new_name)
-
         #  - name of the target step is the name that was on the lead step
-        lead_to_be.name = target_stepgroup.name
-        lead_to_be.element.set('NAME', target_stepgroup.name)
-
+        #  - name the ex-lead step based of the request url ((ensure it's unique))
+        # reflect name changes in the XML
         # reflect the new lead step in the stepgroup object
-        target_stepgroup.lead_step = lead_to_be
-
-        # print('*'*60)
-        # ET.dump(self.root)
-        # print('*'*60)
 
     def change_uj_name(self, new_name):
         self.name = new_name
@@ -237,6 +189,13 @@ class UserJourney():
     def write_to_file(self, file_name):
         # ET.dump(self.root)
         # print(ET.tostring(self.root).decode("utf-8")[-100:])
+
+        new_step_list = list(itertools.chain(*[z.steps for z in self.stepgroups]))
+        new_step_list = [z.element for z in new_step_list]
+        steps_element = self.root.find(SCHEME_PREFIX+'STEPS')
+        container = self.root.find(SCHEME_PREFIX+'STEPS')
+        container[:] = new_step_list
+
         with open(file_name, 'w') as xml_file:
             xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))
             # xml_file.write(ET.tostring(self.tree.getroot()).decode("utf-8"))

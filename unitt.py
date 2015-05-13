@@ -153,7 +153,14 @@ class EditorTest(unittest.TestCase):
         self.assertEqual(test_uj.find_step_by_id(16).request, '{{Homepage}}/ui/maximo.jsp')
         self.assertEqual(1, len(test_uj.find_steps_by_attribute('id', 16)))
         self.assertEqual(test_uj.find_step_by_id(25).request, '{{Homepage}}/ui/maximo.jsp')
-        self.assertEqual(1, test_uj.tree_output().split('\n')[0].count('Home Page')) # this ensures the list of steps starts with Home Page
+        self.assertEqual(1, test_uj.tree_output().split('\n')[0].count('Home Page')) # this ensures the list of steps starts with Home
+        self.assertEqual(set(STEPGROUP_LIST), set(test_uj.list_stepgroup_names()))
+        new_step_names_list = STEP_LIST.copy()
+        new_step_names_list[STEP_LIST.index('maximo.jsp (2)')] = 'img_longdescription_off_over.gif'
+        new_step_names_list[STEP_LIST.index('maximo.jsp (3)')] = 'IE_dropdown_over.gif'
+        self.assertNotEqual(set(STEP_LIST), set(test_uj.list_step_names()))
+        self.assertEqual(set(new_step_names_list), set(test_uj.list_step_names()))
+
 
 
 
