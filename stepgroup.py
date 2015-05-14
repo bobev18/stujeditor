@@ -13,7 +13,6 @@ class StepGroup():
         for step in self.steps:
             if getattr(step, attribute) == value:
                 result.append(step)
-
         return result
 
     def find_steps_by_ddi_reference(self, ddi_name):
@@ -32,11 +31,11 @@ class StepGroup():
         if not self.lead_step.flow_control_element:
             for step in self.steps:
                 # result += ' '*10 + '[ ' + str(step.order).center(5) + ' ] NAME: ' + step.name.ljust(32) + '\t URL: ' + step.request + '\n'
-                result += '\n' + ' '*10 + str(step.id).center(5) + ' NAME: ' + step.name.ljust(32) + '\t URL: ' + step.request + '\n'
+                result += '\n' + ' '*10 + str(step.id).center(5) + ' NAME: ' + step.name.ljust(32) + '\t URL: ' + step.request# + '\n'
                 # for post in step.post_items:
                 #     result += '\t\t' + post['name'] + ': ' + post['value']
 
-        return result
+        return result + '\n'
 
     def promote(self, lead_to_be):
         # find the stepgroup lead

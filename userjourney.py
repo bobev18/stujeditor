@@ -146,11 +146,12 @@ class UserJourney():
         for stepgroup in self.stepgroups:
             result += stepgroup.tree_output()
             if stepgroup.lead_step.flow_control_element:
+                result = result[:-1]
                 destination_names = []
                 for destination in [ z for z in stepgroup.lead_step.flow_items if z['name'] == 'DESTINATIONSTEP' ]:
                     try:
                         name = self.find_step_by_id(int(destination['value'])).name
-                    except ValueError:
+                    except (ValueError, AttributeError):
                         name = destination['value']
                     destination_names.append(name)
                 result += ' -->> ' + '|'.join(destination_names) +'\n'
@@ -181,22 +182,26 @@ class UserJourney():
         self.name = new_name
         self.root.set('NAME', new_name)
 
-    def write_to_file(self, file_name):
-        # ET.dump(self.root)
-        # print(ET.tostring(self.root).decode("utf-8")[-100:])
-
+    def push_stepgroup_changes_to_XML(self):
         new_step_list = list(itertools.chain(*[z.steps for z in self.stepgroups]))
         new_step_list = [z.element for z in new_step_list]
         steps_element = self.root.find(SCHEME_PREFIX+'STEPS')
         container = self.root.find(SCHEME_PREFIX+'STEPS')
-        container[:] = new_step_list
+        if len(new_step_list):
+            container[:] = new_step_list
+        else:
+            if container != None:
+                self.root.remove(steps_element)
 
+    def write_to_file(self, file_name):
+        self.push_stepgroup_changes_to_XML()
         with open(file_name, 'w') as xml_file:
             xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))
 
     def delete_step_by_id(self, id_):
         # target_step = self.find_step_by_id(id_)
         target_stepgroup, target_step = self.find_stepgroup_by_step_id(id_)
+        # print('group len', len(target_stepgroup.steps))
         if len(target_stepgroup.steps) == 1:
             self.stepgroups.remove(target_stepgroup)
         else:

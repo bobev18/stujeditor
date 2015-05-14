@@ -68,7 +68,7 @@ class Step():
         if self.stepgroup_element != None:
             self.stepgroup_id = int(self.stepgroup_element.text)
         else:
-            self.stepgroup_id = None
+            self.stepgroup_id = self.id
 
         self.post_element = element.find(SCHEME_PREFIX+'POST')
         self.post_items = []

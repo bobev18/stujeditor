@@ -34,9 +34,11 @@
 with open(file_name, 'w') as xml_file:
 	xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))
 ```
+- deletion of step ignores the dependace of ddis uppon the step as a source
+- deletion of ddi ignores the dependace on related ddis and references of that ddi in steps
 
 ### BUGS:
- - moving element to step lead fails, because the use of parent_element.insert(at_pos_) inserts the step at the very top of all steps.
+
 
 
 
