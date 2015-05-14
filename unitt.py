@@ -188,13 +188,17 @@ class EditorTest(unittest.TestCase):
         self.assertEqual(16, test_uj.find_stepgroup_by_id(16).lead_step.id)
         self.assertEqual(test_uj.find_step_by_id(test_uj.find_stepgroup_by_id(16).lead_step.id).request, '{{Homepage}}/ui/maximo.jsp')
 
-    # def test_delete_ddi(self):
-    #     test_uj = UserJourney('Update Purchase Order User Journey.xml')
-    #     self.assertEqual(2, len(test_uj.find_ddi_by_name('Update Purchase Order ID 21').siphons))
-    #     test_uj.delete_ddi('Update Purchase Order ID 21')
-    #     self.assertRaises(DDINameException, test_uj.find_ddi_by_name, 'Update Purchase Order ID 21')
-    #     ddi_list_copy = DDI_LIST.copy()
-    #     self.assertEqual(ddi_list_copy.remove('Update Purchase Order ID 21'), test_uj.list_ddi_names())
+    def test_delete_ddi(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.assertEqual(2, len(test_uj.find_ddi_by_name('Update Purchase Order ID 21').siphons))
+        test_uj.delete_ddi('Update Purchase Order ID 21')
+        self.assertIsNone(test_uj.find_ddi_by_name('Update Purchase Order ID 21'))
+        ddi_list_copy = DDI_LIST.copy()
+        ddi_list_copy.remove('Update Purchase Order ID 21')
+        self.assertEqual(ddi_list_copy, test_uj.list_ddi_names())
+        self.assertEqual(0, str(test_uj).count('NAME="Update Purchase Order ID 21"'))
+
+
 
 
 

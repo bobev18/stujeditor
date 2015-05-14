@@ -61,6 +61,14 @@ uj = UserJourney('Update Purchase Order User Journey.xml')
 
 uj.stepgroups = []
 
+
+while uj.dditems != []:
+	ddi = uj.dditems[0]
+	uj.delete_ddi(ddi.name)
+
+
+uj.dditems = []
+
 uj.push_stepgroup_changes_to_XML()
 
 print('-'*20)

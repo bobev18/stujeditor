@@ -29,9 +29,9 @@ class UserJourney():
         self.name = self.root.attrib['NAME']
 
 
-        dditems_element = self.root.find(SCHEME_PREFIX+'DYNAMICDATA')
+        self.dditems_element = self.root.find(SCHEME_PREFIX+'DYNAMICDATA')
         self.dditems = []
-        for ddi in dditems_element.findall(SCHEME_PREFIX+'DDITEM'):
+        for ddi in self.dditems_element.findall(SCHEME_PREFIX+'DDITEM'):
             self.dditems.append(DynamicDataItem(ddi))
 
         self.stepgroups = self.capture_stepgroups()
@@ -195,6 +195,10 @@ class UserJourney():
 
     def write_to_file(self, file_name):
         self.push_stepgroup_changes_to_XML()
+
+        if not len(self.dditems):
+            self.root.remove(self.dditems_element)
+
         with open(file_name, 'w') as xml_file:
             xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))
 
@@ -207,6 +211,10 @@ class UserJourney():
         else:
             target_stepgroup.delete_step(target_step)
 
+    def delete_ddi(self, ddi_name):
+        target_ddi = self.find_ddi_by_name(ddi_name)
+        self.dditems_element.remove(target_ddi.element)
+        self.dditems.remove(target_ddi)
 
 
 
