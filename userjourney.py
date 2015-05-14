@@ -13,6 +13,7 @@ class DDINameException(Exception):
         self.args = [a for a in args]
 
 StepIDException = DDINameException
+StepGroupIDException = DDINameException
 
 class UserJourney():
 
@@ -35,7 +36,7 @@ class UserJourney():
 
         self.stepgroups = self.capture_stepgroups()
 
-        self.parent_map = {child:parent for parent in self.tree.iter() for child in parent}
+        # self.parent_map = {child:parent for parent in self.tree.iter() for child in parent}
 
     def capture_stepgroups(self):
         # stepgroups are not defined in the XML, so to construct a stepgroup, we need list of all the steps
@@ -156,31 +157,25 @@ class UserJourney():
 
         return result
 
+    def find_stepgroup_by_id(self, id_):
+        groups_wiht_id = [ z for z in self.stepgroups if z.id == id_ ]
+        if len(groups_wiht_id) != 1:
+            return None
+            # message = str(len(groups_wiht_id)) + ' stepgroups found for id ' + str(id_)
+            # raise StepGroupIDException(message)
+
+        return groups_wiht_id[0]
+
+    def find_stepgroup_by_step_id(self, id_):
+        target_step = self.find_step_by_id(id_)
+        if target_step == None:
+            return None
+        return self.find_stepgroup_by_id(target_step.stepgroup_id), target_step
+
     def promote_step_to_lead(self, id_):
-        # find target step
-        lead_to_be = self.find_step_by_id(id_)
-
-        # find the stepgroup of the target step i.e target stepgroup
-        eligible_stepgroups = [ z for z in self.stepgroups if z.id == lead_to_be.stepgroup_id]
-        if len(eligible_stepgroups) == 0:
-            message = 'no eligible stepgroups found for step with id ' + str(id_)
-            raise StepIDException(message)
-        elif len(eligible_stepgroups) == 1:
-            target_stepgroup = eligible_stepgroups[0]
-        else:
-            raise StepIDException('UJ error - there are two or more stepgroups with duplicate ids')
-
+        # lead_to_be = self.find_step_by_id(id_)
+        target_stepgroup, lead_to_be = self.find_stepgroup_by_step_id(id_)
         target_stepgroup.promote(lead_to_be)
-        # find the stepgroup lead
-        # swap the target step and the lead step in the steps list of the stepgroup object
-        # swap the target step and the lead step in the XML
-        # exchange the id of the target step to the id of the lead step in objects
-        # exchange the id of the target step to the id of the lead step in the XML
-        # exchange the names:
-        #  - name of the target step is the name that was on the lead step
-        #  - name the ex-lead step based of the request url ((ensure it's unique))
-        # reflect name changes in the XML
-        # reflect the new lead step in the stepgroup object
 
     def change_uj_name(self, new_name):
         self.name = new_name
@@ -198,5 +193,15 @@ class UserJourney():
 
         with open(file_name, 'w') as xml_file:
             xml_file.write(self.raw.split('\n')[0] + '\n' + ET.tostring(self.root).decode("utf-8"))
-            # xml_file.write(ET.tostring(self.tree.getroot()).decode("utf-8"))
+
+    def delete_step_by_id(self, id_):
+        # target_step = self.find_step_by_id(id_)
+        target_stepgroup, target_step = self.find_stepgroup_by_step_id(id_)
+        if len(target_stepgroup.steps) == 1:
+            self.stepgroups.remove(target_stepgroup)
+        else:
+            target_stepgroup.delete_step(target_step)
+
+
+
 

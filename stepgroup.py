@@ -43,7 +43,7 @@ class StepGroup():
         ex_lead = self.lead_step
 
         # swap the target step and the lead step in the steps list of the stepgroup object
-        lead_position = 0 # self.steps.index(ex_lead)
+        lead_position = self.steps.index(ex_lead)
         target_step_position = self.steps.index(lead_to_be)
         new_step_order = self.steps.copy()
         new_step_order[lead_position] = lead_to_be
@@ -74,3 +74,14 @@ class StepGroup():
 
         # reflect the new lead step in the stepgroup object
         self.lead_step = lead_to_be
+
+    def delete_step(self, target_step):
+        if target_step.id == self.id:
+            new_lead = self.steps[1]
+            # id_to_delete = new_lead.id
+            self.promote(new_lead)
+            del self.steps[1]
+        else:
+            self.steps.remove(target_step)
+
+

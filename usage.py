@@ -38,5 +38,8 @@ print()
 print('-'*20)
 print()
 
+for ddi in uj.dditems
+	.elem
+
 print(uj.tree_output())
 

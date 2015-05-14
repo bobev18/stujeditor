@@ -161,6 +161,34 @@ class EditorTest(unittest.TestCase):
         self.assertNotEqual(set(STEP_LIST), set(test_uj.list_step_names()))
         self.assertEqual(set(new_step_names_list), set(test_uj.list_step_names()))
 
+    def test_lone_step_deletion(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.assertEqual(test_uj.find_stepgroup_by_id(12).lead_step, test_uj.find_step_by_id(12))
+        self.assertEqual('{{Homepage}}/ui/maximo.jsp', test_uj.find_stepgroup_by_id(12).lead_step.request)
+        test_uj.delete_step_by_id(12)
+        self.assertIsNone(test_uj.find_step_by_id(12))
+        self.assertIsNone(test_uj.find_stepgroup_by_step_id(12))
+        self.assertIsNone(test_uj.find_stepgroup_by_id(12))
+        self.assertEqual(set(STEPGROUP_LIST) - {'Choose PO'}, set(test_uj.list_stepgroup_names()))
+
+    def test_non_lead_step_deletion(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.assertIsNotNone(test_uj.find_step_by_id(17))
+        self.assertEqual('{{Homepage}}/ui/maximo.jsp', test_uj.find_step_by_id(17).request)
+        self.assertEqual(16, test_uj.find_stepgroup_by_id(test_uj.find_step_by_id(17).stepgroup_id).lead_step.id)
+        test_uj.delete_step_by_id(17)
+        self.assertIsNone(test_uj.find_step_by_id(17))
+        self.assertIsNotNone(test_uj.find_stepgroup_by_id(16))
+
+    def test_lead_step_deletion(self):
+        test_uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.assertEqual(test_uj.find_stepgroup_by_id(16).lead_step, test_uj.find_step_by_id(16))
+        self.assertEqual(test_uj.find_stepgroup_by_id(16).lead_step.request, '{{Homepage}}/webclient/{{Build Date}}/tivoli09/images/img_longdescription_off_over.gif')
+        test_uj.delete_step_by_id(16)
+        self.assertEqual(16, test_uj.find_stepgroup_by_id(16).lead_step.id)
+        self.assertEqual(test_uj.find_step_by_id(test_uj.find_stepgroup_by_id(16).lead_step.id).request, '{{Homepage}}/ui/maximo.jsp')
+
+
 
 
 
