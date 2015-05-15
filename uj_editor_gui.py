@@ -27,6 +27,16 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # osloItem.setText(1, "Yes");
         # self.uj_treeWidget.addTopLevelItem(cities)
 
+        layout = QtWidgets.QVBoxLayout()
+
+        self.ddi_type = QtWidgets.QComboBox(self.ddi_groupBox)
+        self.ddi_type.addItems(DDI_TYPES.values())
+        self.ddi_type.setCurrentText('')
+
+        layout.addWidget(self.ddi_type) # add widget
+        # set my layout to make sure contents are correctly rendered
+        self.ddi_groupBox.setLayout(layout)
+
     def load_item_details(self):
         selected_ddi_name = self.ddi_treeWidget.selectedItems()[0].text(0)
         self.element_name_lineEdit.setText(selected_ddi_name)
@@ -35,14 +45,17 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(self.ddi_groupBox.__dict__)
         # print(type(self.ddi_groupBox).__dict__)
         # layout = self.ddi_groupBox.layout # create layout out
-        layout = QtWidgets.QVBoxLayout()
+        # layout = QtWidgets.QVBoxLayout()
 
-        self.ddi_type = QtWidgets.QComboBox(self.ddi_groupBox)
-        self.ddi_type.addItems(DDI_TYPES.values())
+        # self.ddi_type = QtWidgets.QComboBox(self.ddi_groupBox)
+        # self.ddi_type.addItems(DDI_TYPES.values())
+        self.ddi_type.setCurrentText(selected_ddi.type)
 
-        layout.addWidget(self.ddi_type) # add widget
-        # set my layout to make sure contents are correctly rendered
-        self.setLayout(layout)
+        # layout.addWidget(self.ddi_type) # add widget
+        # # set my layout to make sure contents are correctly rendered
+        # self.ddi_groupBox.clear()
+        # self.ddi_groupBox.setLayout(layout)
+
 
 
         # self.ddi_groupBox.setCentralWidget(self.ddi_type)
