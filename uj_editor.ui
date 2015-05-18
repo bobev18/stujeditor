@@ -103,42 +103,9 @@
     <property name="title">
      <string>DDI Details</string>
     </property>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>21</y>
-       <width>47</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Elemnet</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="element_name_lineEdit">
-     <property name="geometry">
-      <rect>
-       <x>60</x>
-       <y>20</y>
-       <width>431</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>47</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Type</string>
-     </property>
-    </widget>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
    </widget>
    <widget class="QTreeWidget" name="ddi_treeWidget">
     <property name="geometry">
