@@ -78,6 +78,10 @@ The question is, if I have class, stepgroup, should I have step references in th
    - I can have the UJ class show stepgroup elements, and stepgroup to return it's own subtree representation
  - A: try having them separate, because otherwise UJ will need visibility of step objects
 ***
+ - Q: What should be the groupping of UI elements for objects that have "sub" types
+   - all added to single group, and disabled/hidden dependant on the "sub" type (reuse layout)
+   - have separate groups with "sub" type specific layout, and load only the relevant group (more granularity -- may allow for DDI subclasses)
+ - A: Have the common fields in one group, and the fields that differ in "sub" type specific layouts/groups
 
 #### OTHER CONSIDERATIONS
 There are too many design issues that creep from the XML structure into the object structure. I should create an alternative, using my structures, and adjust the XML feed as needed once I get to that point.
