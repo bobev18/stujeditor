@@ -106,3 +106,9 @@ To consider key features:
 * MA has incorporated various communication templates/handshakes to access variety of sources
 * recorder (mostly) integrates
 
+---
+The XML structure is horible -- take the 'constant' DDI:
+ - some values are listed as element arguments (name, valid), others are listed as sub-elements (source, lifecycle). A third kind are listed as repeating sub-element with unique different attributes (encode, fieldname, inurl), and forth kind are siphons, which have complex structure of list of elements, with element that has attributes sequence & type, then each has three consistent sub-elements - starttext, endtext, rfindex; where values for these are in the form of in-element text, rather than attributes
+ - the 'selector' field is not available in the GUI for this DDI type. The default value is "First", but is never ommited in XML, although it cannot be anything different
+ - the 'refresh' (named lifecycle in XML) and 'shared' (scope), are shown in UI, but fully disabled; the defaults cannot be changed, yet are not ommited in XML, nor hidden in UI
+ - seems like every DDI object has an boolen 'encode' attribute, but in XML, that's not in the the DDI element attributes, not even as a child like 'selection' or 'scope', but is under sub-element 'item' identified with specific attribute-value pair i.e `CODE="ENCODE    "` , and the actual boolen value is as in element text: `<ITEM CODE="ENCODE    ">true</ITEM>`

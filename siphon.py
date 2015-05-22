@@ -1,5 +1,5 @@
 SCHEME_PREFIX = '{http://www.reflective.com}'
-SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression',}
+SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
 
 class Siphon():
 

@@ -3,7 +3,8 @@ import itertools
 
 import xml.etree.cElementTree as ET
 from step import Step, StepNameException
-from dynamic_data import DynamicDataItem
+# from dynamic_data import DynamicDataItem
+from dynamic_data import ConstantDDI, DateDDI, DelimitedFileDDI, ListDDI, VariableDDI, RelatedDDI, ResponseDDI, AutoCorrelatedDDI, AutoIncrementDDI
 from stepgroup import StepGroup
 
 SCHEME_PREFIX = '{http://www.reflective.com}'
@@ -32,7 +33,28 @@ class UserJourney():
         self.dditems_element = self.root.find(SCHEME_PREFIX+'DYNAMICDATA')
         self.dditems = []
         for ddi in self.dditems_element.findall(SCHEME_PREFIX+'DDITEM'):
-            self.dditems.append(DynamicDataItem(ddi))
+            ddi_type = ddi.find(SCHEME_PREFIX+'SOURCE').attrib['TYPE']
+            # 'AUTOCORR', 'AUTOINCR', 'CONSTANT', 'DATE    ', 'FLATFILE', 'LIST    ', 'RESPONSE', 'SAMEAS  ', 'VARIABLE',
+            # ConstantDDI DateDDI DelimitedFileDDI ListDDI VariableDDI RelatedDDI ResponseDDI AutoCorrelatedDDI AutoIncrementDDI
+            if ddi_type == 'AUTOCORR':
+                self.dditems.append(AutoCorrelatedDDI(ddi))
+            if ddi_type == 'AUTOINCR':
+                self.dditems.append(AutoIncrementDDI(ddi))
+            if ddi_type == 'CONSTANT':
+                self.dditems.append(ConstantDDI(ddi))
+            if ddi_type == 'DATE    ':
+                self.dditems.append(DateDDI(ddi))
+            if ddi_type == 'FLATFILE':
+                self.dditems.append(DelimitedFileDDI(ddi))
+            if ddi_type == 'LIST    ':
+                self.dditems.append(ListDDI(ddi))
+            if ddi_type == 'RESPONSE':
+                self.dditems.append(ResponseDDI(ddi))
+            if ddi_type == 'SAMEAS  ':
+                self.dditems.append(RelatedDDI(ddi))
+            if ddi_type == 'VARIABLE':
+                self.dditems.append(VariableDDI(ddi))
+
 
         self.stepgroups = self.capture_stepgroups()
 
