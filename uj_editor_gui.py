@@ -21,37 +21,43 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.ddi_treeWidget.itemSelectionChanged.connect(self.load_item_details)
         self.steps_treeWidget.itemSelectionChanged.connect(self.load_item_details)
 
+        # self..ddi_groupBox = QtWidgets.QGroupBox(centralwidget)  <----- this comes from the ui file -- added as reference
+        ddi_layout = QtWidgets.QGridLayout()
+        common_ddi_groupbox = QtWidgets.QGroupBox(self.ddi_groupBox)
         common_ddi_layout = QtWidgets.QGridLayout()
 
-        # DDI Type
-        self.ddi_name_label = QtWidgets.QLabel(self.ddi_groupBox)
+
+        # DDI Name
+        self.ddi_name_label = QtWidgets.QLabel(common_ddi_groupbox)
         self.ddi_name_label.setText('DDI Name')
-        self.ddi_name = QtWidgets.QLineEdit(self.ddi_groupBox)
+        self.ddi_name = QtWidgets.QLineEdit(common_ddi_groupbox)
         common_ddi_layout.addWidget(self.ddi_name_label, 0, 0)
         common_ddi_layout.addWidget(self.ddi_name, 1, 0, 1, 2)
-        self.ddi_type_label = QtWidgets.QLabel(self.ddi_groupBox)
+
+        # DDI Type
+        self.ddi_type_label = QtWidgets.QLabel(common_ddi_groupbox)
         self.ddi_type_label.setText('Type')
-        self.ddi_type = QtWidgets.QComboBox(self.ddi_groupBox)
+        self.ddi_type = QtWidgets.QComboBox(common_ddi_groupbox)
         self.ddi_type.addItems(DDI_TYPES.values())
         self.ddi_type.setCurrentText('')
         common_ddi_layout.addWidget(self.ddi_type_label, 2, 0)
         common_ddi_layout.addWidget(self.ddi_type, 2, 1)
 
         # DDI Description
-        self.ddi_description_label = QtWidgets.QLabel(self.ddi_groupBox)
+        self.ddi_description_label = QtWidgets.QLabel(common_ddi_groupbox)
         self.ddi_description_label.setText('Description')
-        self.ddi_description = QtWidgets.QTextEdit(self.ddi_groupBox)
+        self.ddi_description = QtWidgets.QTextEdit(common_ddi_groupbox)
         # self.ddi_description.setFixedHeight(60)
         self.ddi_description.setText('')
         common_ddi_layout.addWidget(self.ddi_description_label, 0, 2)
         common_ddi_layout.addWidget(self.ddi_description, 1, 2, 2, 3)
 
         # DDI Shared
-        self.ddi_shared_label = QtWidgets.QLabel(self.ddi_groupBox)
+        self.ddi_shared_label = QtWidgets.QLabel(common_ddi_groupbox)
         self.ddi_shared_label.setText('Sharing selector state:')
-        self.shared_group = QtWidgets.QButtonGroup(self.ddi_groupBox)
-        self.ddi_shared_one = QtWidgets.QRadioButton('Single User', self.ddi_groupBox)
-        self.ddi_shared_all = QtWidgets.QRadioButton('All UJ Users', self.ddi_groupBox)
+        self.shared_group = QtWidgets.QButtonGroup(common_ddi_groupbox)
+        self.ddi_shared_one = QtWidgets.QRadioButton('Single User', common_ddi_groupbox)
+        self.ddi_shared_all = QtWidgets.QRadioButton('All UJ Users', common_ddi_groupbox)
         self.shared_group.addButton(self.ddi_shared_one)
         self.shared_group.addButton(self.ddi_shared_all)
         common_ddi_layout.addWidget(self.ddi_shared_label, 4, 0, 1, 2)
@@ -60,13 +66,13 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.shared_button_mapping = {'SCRIPT  ': self.ddi_shared_one, 'THREAD  ': self.ddi_shared_all}
 
         # DDI Refresh
-        self.ddi_refresh_label = QtWidgets.QLabel(self.ddi_groupBox)
+        self.ddi_refresh_label = QtWidgets.QLabel(common_ddi_groupbox)
         self.ddi_refresh_label.setText('Refresh triggers:')
-        self.refresh_group = QtWidgets.QButtonGroup(self.ddi_groupBox)
-        self.ddi_refresh_once_per_run = QtWidgets.QRadioButton('Once per Run', self.ddi_groupBox)
-        self.ddi_refresh_once_per_user = QtWidgets.QRadioButton('Once per User', self.ddi_groupBox)
-        self.ddi_refresh_every_cycle = QtWidgets.QRadioButton('Every Cycle', self.ddi_groupBox)
-        self.ddi_refresh_every_time = QtWidgets.QRadioButton('Every Time', self.ddi_groupBox)
+        self.refresh_group = QtWidgets.QButtonGroup(common_ddi_groupbox)
+        self.ddi_refresh_once_per_run = QtWidgets.QRadioButton('Once per Run', common_ddi_groupbox)
+        self.ddi_refresh_once_per_user = QtWidgets.QRadioButton('Once per User', common_ddi_groupbox)
+        self.ddi_refresh_every_cycle = QtWidgets.QRadioButton('Every Cycle', common_ddi_groupbox)
+        self.ddi_refresh_every_time = QtWidgets.QRadioButton('Every Time', common_ddi_groupbox)
         self.refresh_group.addButton(self.ddi_refresh_once_per_run)
         self.refresh_group.addButton(self.ddi_refresh_once_per_user)
         self.refresh_group.addButton(self.ddi_refresh_every_cycle)
@@ -78,27 +84,41 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         common_ddi_layout.addWidget(self.ddi_refresh_every_time, 5, 4)
         self.refresh_button_mapping = {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
 
+
+
+        specific_ddi_groupbox = QtWidgets.QGroupBox(self.ddi_groupBox)
+        specific_ddi_layout = QtWidgets.QGridLayout()
+
+
         # DDI Selector
-        self.ddi_selector_label = QtWidgets.QLabel(self.ddi_groupBox)
+        self.ddi_selector_label = QtWidgets.QLabel(specific_ddi_groupbox)
         self.ddi_selector_label.setText('Selector')
-        self.ddi_selector = QtWidgets.QComboBox(self.ddi_groupBox)
+        self.ddi_selector = QtWidgets.QComboBox(specific_ddi_groupbox)
         self.ddi_selector.addItems(SELECTOR_TYPES.values())
         self.ddi_selector.setCurrentText('')
-        common_ddi_layout.addWidget(self.ddi_selector_label, 6, 0)
-        common_ddi_layout.addWidget(self.ddi_selector, 6, 1)
+        specific_ddi_layout.addWidget(self.ddi_selector_label, 6, 0)
+        specific_ddi_layout.addWidget(self.ddi_selector, 6, 1)
 
         # DDI Value
-        self.ddi_value_label = QtWidgets.QLabel(self.ddi_groupBox)
+        self.ddi_value_label = QtWidgets.QLabel(specific_ddi_groupbox)
         self.ddi_value_label.setText('Value')
-        self.ddi_value = QtWidgets.QLineEdit(self.ddi_groupBox)
+        self.ddi_value = QtWidgets.QLineEdit(specific_ddi_groupbox)
         self.ddi_value.setText('')
-        common_ddi_layout.addWidget(self.ddi_value_label, 7, 0)
-        common_ddi_layout.addWidget(self.ddi_value, 7, 1, 1, 4)
+        specific_ddi_layout.addWidget(self.ddi_value_label, 7, 0)
+        specific_ddi_layout.addWidget(self.ddi_value, 7, 1, 1, 4)
 
 
 
         # common_ddi_layout.addWidget(self.ddi_type) # add widget
-        self.ddi_groupBox.setLayout(common_ddi_layout)
+        common_ddi_groupbox.setLayout(common_ddi_layout)
+        specific_ddi_groupbox.setLayout(specific_ddi_layout)
+        ddi_layout.addWidget(common_ddi_groupbox, 1, 1, 1, 1)
+        ddi_layout.addWidget(specific_ddi_groupbox, 2, 1, 2, 1)
+        # ddi_layout.addWidget(common_ddi_groupbox)
+        # ddi_layout.addWidget(specific_ddi_groupbox)
+
+        self.ddi_groupBox.setLayout(ddi_layout)
+
 
     def load_item_details(self):
         selected_ddi_name = self.ddi_treeWidget.selectedItems()[0].text(0)

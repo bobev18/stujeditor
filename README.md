@@ -39,6 +39,9 @@ with open(file_name, 'w') as xml_file:
 
 - deletion of DDI ignores the dependence on related DDIs and references of that DDI in steps
 
+- seems like good code structure: https://github.com/baoboa/pyqt5/blob/master/examples/widgets/groupbox.py
+- I should decide whether to use the .ui file, or generate the entire window from scratch
+
 ### BUGS:
 
 
@@ -78,8 +81,8 @@ The question is, if I have class, stepgroup, should I have step references in th
    - I can have the UJ class show stepgroup elements, and stepgroup to return it's own subtree representation
  - A: try having them separate, because otherwise UJ will need visibility of step objects
 ***
- - Q: What should be the groupping of UI elements for objects that have "sub" types
-   - all added to single group, and disabled/hidden dependant on the "sub" type (reuse layout)
+ - Q: What should be the grouping of UI elements for objects that have "sub" types
+   - all added to single group, and disabled/hidden dependent on the "sub" type (reuse layout)
    - have separate groups with "sub" type specific layout, and load only the relevant group (more granularity -- may allow for DDI subclasses)
  - A: Have the common fields in one group, and the fields that differ in "sub" type specific layouts/groups
 
@@ -107,8 +110,16 @@ To consider key features:
 * recorder (mostly) integrates
 
 ---
-The XML structure is horible -- take the 'constant' DDI:
+The XML structure is horrible -- take the 'constant' DDI:
  - some values are listed as element arguments (name, valid), others are listed as sub-elements (source, lifecycle). A third kind are listed as repeating sub-element with unique different attributes (encode, fieldname, inurl), and forth kind are siphons, which have complex structure of list of elements, with element that has attributes sequence & type, then each has three consistent sub-elements - starttext, endtext, rfindex; where values for these are in the form of in-element text, rather than attributes
- - the 'selector' field is not available in the GUI for this DDI type. The default value is "First", but is never ommited in XML, although it cannot be anything different
- - the 'refresh' (named lifecycle in XML) and 'shared' (scope), are shown in UI, but fully disabled; the defaults cannot be changed, yet are not ommited in XML, nor hidden in UI
- - seems like every DDI object has an boolen 'encode' attribute, but in XML, that's not in the the DDI element attributes, not even as a child like 'selection' or 'scope', but is under sub-element 'item' identified with specific attribute-value pair i.e `CODE="ENCODE    "` , and the actual boolen value is as in element text: `<ITEM CODE="ENCODE    ">true</ITEM>`
+ - the 'selector' field is not available in the GUI for this DDI type. The default value is "First", but is never omitted in XML, although it cannot be anything different
+ - the 'refresh' (named lifecycle in XML) and 'shared' (scope), are shown in UI, but fully disabled; the defaults cannot be changed, yet are not omitted in XML, nor hidden in UI
+ - seems like every DDI object has an boolean 'encode' attribute, but in XML, that's not in the the DDI element attributes, not even as a child like 'selection' or 'scope', but is under sub-element 'item' identified with specific attribute-value pair i.e `CODE="ENCODE    "` , and the actual boolean value is as in element text: `<ITEM CODE="ENCODE    ">true</ITEM>`
+
+
+---
+I have set of UJ sub objects and another set of UI elements, and I need certain UJ elements to affect the state of the UI elements; I should add map towards each UJ element indicating the needed state of the UI elements. Example:
+- for Constant DDI - `map = { 'value_field': {set: true, show: true, default: ''}, 'selector_field': {set: false, show: false, default: ''}, ...}`
+- for List DDI - `map = { 'value_field': {set: false, show: false, default: ''}, 'selector_field': {set: true, show: true, default: 'First'}, ...}`
+- ...
+when the signal for update is called, each UI element will look at the map of the UJ object to determine what state to apply to it's self
