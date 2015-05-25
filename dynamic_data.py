@@ -92,12 +92,14 @@ class DateDDI(DynamicDataItem):
         self.starting_value = self.items['STARTVALUE']
 
         # optional
-        self.first_offset_sign = self.items['OFFSETSIGN']
-        self.first_offset_unit = self.items['OFFSETUNIT']
-        self.first_offset_value = int(self.items['OFFSETVAL '])
-        self.second_offset_sign = self.items['OFFSETSIG2']
-        self.second_offset_unit = self.items['OFFSETUNI2']
-        self.second_offset_value = int(self.items['OFFSETVAL2'])
+        if self.offset_type != 'none':
+            self.first_offset_sign = self.items['OFFSETSIGN']
+            self.first_offset_unit = self.items['OFFSETUNIT']
+            self.first_offset_value = int(self.items['OFFSETVAL '])
+        if self.offset_type == 'random':
+            self.second_offset_sign = self.items['OFFSETSIG2']
+            self.second_offset_unit = self.items['OFFSETUNI2']
+            self.second_offset_value = int(self.items['OFFSETVAL2'])
 
 class DelimitedFileDDI(DynamicDataItem):
 
@@ -120,7 +122,7 @@ class ListDDI(DynamicDataItem):
         # </TABLE>
         self.column = int(self.items['COLUMNID  '])
         # self.column_count = int(self.items['COLUMNSCNT'])  # this one gets initialized in the parent class
-        self.delimiter = self.items['DELIMITER ']
+        # self.delimiter = self.items['DELIMITER ']
 
 class VariableDDI(DynamicDataItem):
 

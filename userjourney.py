@@ -47,6 +47,7 @@ class UserJourney():
             if ddi_type == 'FLATFILE':
                 self.dditems.append(DelimitedFileDDI(ddi))
             if ddi_type == 'LIST    ':
+                # print(ddi, ddi.tag, ddi.attrib, '\n', [ (z.tag, z.attrib) for z in ddi])
                 self.dditems.append(ListDDI(ddi))
             if ddi_type == 'RESPONSE':
                 self.dditems.append(ResponseDDI(ddi))

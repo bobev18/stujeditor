@@ -1,10 +1,11 @@
 import os
 from userjourney import UserJourney
+from dynamic_data import ConstantDDI, DateDDI, DelimitedFileDDI, ListDDI, VariableDDI, RelatedDDI, ResponseDDI, AutoCorrelatedDDI, AutoIncrementDDI
 
 from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
         # QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
-from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget,
+from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
     QGridLayout, QVBoxLayout, QHBoxLayout,
     QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem)
 
@@ -133,7 +134,7 @@ class Window(QWidget):
         group_box = QGroupBox()
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector())
+        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector(), self.create_ddi_date_fields())
         group_box.setLayout(vbox)
         return group_box
 
@@ -164,13 +165,124 @@ class Window(QWidget):
         group_box.setLayout(hbox)
         return group_box
 
+    def create_ddi_date_fields(self):
+        group_box = QGroupBox()
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(vbox, self.create_date_starting_point(), self.create_date_fixed_edit(), self.create_date_offset_selector(),
+                                 self.create_date_offset_box1(), self.create_date_offset_box2(), self.create_date_formt())
+        group_box.setLayout(vbox)
+        return group_box
+
+    def create_date_starting_point(self):
+        group_box = QGroupBox('Starting Point:')
+
+        self.ddi_date_starting_now = QRadioButton('Now')
+        self.ddi_date_starting_today = QRadioButton('Today')
+        self.ddi_date_starting_fixed = QRadioButton('Fixed Value')
+        self.ddi_date_starting_related = QRadioButton('Another Date DDI')
+        self.date_starting_button_mapping = {'now': self.ddi_date_starting_now, 'today': self.ddi_date_starting_today,
+                                             'fixed value': self.ddi_date_starting_fixed, 'another date': self.ddi_date_starting_related}
+
+        self.date_starting_point = QButtonGroup()
+        self.date_starting_point.addButton(self.ddi_date_starting_now)
+        self.date_starting_point.addButton(self.ddi_date_starting_today)
+        self.date_starting_point.addButton(self.ddi_date_starting_fixed)
+        self.date_starting_point.addButton(self.ddi_date_starting_related)
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_date_starting_now, self.ddi_date_starting_today, self.ddi_date_starting_fixed, self.ddi_date_starting_related)
+        group_box.setLayout(hbox)
+        return group_box
+
+    def create_date_fixed_edit(self):
+        group_box = QGroupBox()
+
+        self.ddi_date_starting_fixed = QLineEdit()
+        self.ddi_date_starting_fixed.hide()
+        self.ddi_date_starting_related = QComboBox()
+        self.ddi_date_starting_related.hide()
+        # self.ddi_date_starting_related.addItems()
+        # self.ddi_type.setCurrentText('')
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_date_starting_fixed, self.ddi_date_starting_related)
+        group_box.setLayout(hbox)
+        return group_box
+
+    def create_date_offset_selector(self):
+        group_box = QGroupBox('Offset:')
+
+        self.ddi_date_offset_none = QRadioButton('None')
+        self.ddi_date_offset_fixed = QRadioButton('Fixed')
+        self.ddi_date_offset_random = QRadioButton('Random')
+        self.date_offset_button_mapping = {'none': self.ddi_date_offset_none, 'fixed': self.ddi_date_offset_fixed, 'random': self.ddi_date_offset_random}
+
+        self.date_offset = QButtonGroup()
+        self.date_offset.addButton(self.ddi_date_offset_none)
+        self.date_offset.addButton(self.ddi_date_offset_fixed)
+        self.date_offset.addButton(self.ddi_date_offset_random)
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_date_offset_none, self.ddi_date_offset_fixed, self.ddi_date_offset_random)
+        group_box.setLayout(hbox)
+        return group_box
+
+    def create_date_offset_box1(self):
+        self.offset1_group_box = QGroupBox()
+
+        self.ddi_date_offset1_sign = QComboBox()
+        self.ddi_date_offset1_sign.addItems(['+', '-'])
+        self.ddi_date_offset1_amount = QLineEdit()
+        self.ddi_date_offset1_amount.setInputMask('99999999999999999')
+        self.ddi_date_offset1_unit = QComboBox()
+        self.ddi_date_offset1_unit.addItems(['sec', 'min', 'hrs', 'day'])
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_date_offset1_sign, self.ddi_date_offset1_amount, self.ddi_date_offset1_unit)
+        self.offset1_group_box.setLayout(hbox)
+        return self.offset1_group_box
+
+    def create_date_offset_box2(self):
+        self.offset2_group_box = QGroupBox()
+
+        self.ddi_date_offset2_sign = QComboBox()
+        self.ddi_date_offset2_sign.addItems(['+', '-'])
+        self.ddi_date_offset2_amount = QLineEdit()
+        self.ddi_date_offset2_amount.setInputMask('99999999999999999')
+        self.ddi_date_offset2_unit = QComboBox()
+        self.ddi_date_offset2_unit.addItems(['sec', 'min', 'hrs', 'day'])
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_date_offset2_sign, self.ddi_date_offset2_amount, self.ddi_date_offset2_unit)
+        self.offset2_group_box.setLayout(hbox)
+        return self.offset2_group_box
+
+    def create_date_formt(self):
+        group_box = QGroupBox()
+
+        ddi_date_format_label = QLabel()
+        ddi_date_format_label.setText('Date Format:')
+        self.ddi_date_format = QLineEdit()
+        # self.ddi_date_starting_fixed.setText('')
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, ddi_date_format_label, self.ddi_date_format)
+        group_box.setLayout(hbox)
+        return group_box
+
+
     # def create_actions(self):
     #     self.import_act = QAction("&Import...", self, shortcut="Ctrl+I", triggered=self.import_uj)
     #     self.export_act = QAction("&Export...", self, shortcut="Ctrl+E", triggered=self.export_uj)
 
     def import_uj(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
-        self.uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.uj = UserJourney(filename[0])
         self.uj_name.setText(self.uj.name)
 
         ddi_nodes = []
@@ -227,6 +339,41 @@ class Window(QWidget):
             # self.ddi_value_label.hide()
 
 
+        self.ddi_date_starting_fixed.hide()
+        self.ddi_date_starting_related.hide()
+        self.offset1_group_box.hide()
+        self.offset2_group_box.hide()
+        if isinstance(selected_ddi, DateDDI):
+            self.date_starting_button_mapping[selected_ddi.starting_point].setChecked(1)
+            self.date_offset_button_mapping[selected_ddi.offset_type].setChecked(1)
+            self.ddi_date_format.setText(selected_ddi.format)
+
+            if selected_ddi.starting_point == 'fixed value':
+                self.ddi_date_starting_fixed.show()
+            if selected_ddi.starting_point == 'another date':
+                self.ddi_date_starting_related.show()
+
+            if selected_ddi.offset_type != 'none':
+                self.offset1_group_box.show()
+                self.ddi_date_offset1_sign.setCurrentText(selected_ddi.first_offset_sign)
+                self.ddi_date_offset1_amount.setText(str(selected_ddi.first_offset_value))
+                self.ddi_date_offset1_unit.setCurrentText(selected_ddi.first_offset_unit[:-3])
+
+            if selected_ddi.offset_type == 'random':
+                self.offset2_group_box.show()
+                self.ddi_date_offset2_sign.setCurrentText(selected_ddi.second_offset_sign)
+                self.ddi_date_offset2_amount.setText(str(selected_ddi.second_offset_value))
+                self.ddi_date_offset2_unit.setCurrentText(selected_ddi.second_offset_unit[:-3])
+
+
+        else:
+            self.date_starting_point.setExclusive(False)
+            self.date_offset.setExclusive(False)
+            [ z.setChecked(False) for z in self.date_starting_button_mapping.values() ]
+            [ z.setChecked(False) for z in self.date_offset_button_mapping.values() ]
+            self.date_starting_point.setExclusive(True)
+            self.date_offset.setExclusive(True)
+            self.ddi_date_format.setText('')
 
 
         # for item in element.findall(SCHEME_PREFIX+'ITEM'):
