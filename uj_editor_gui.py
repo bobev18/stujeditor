@@ -1,127 +1,206 @@
-import sys
 import os
-from PyQt5 import QtCore, QtGui, uic, QtWidgets
 from userjourney import UserJourney
 
-# DDI_TYPES = {'Auto-Correlated': 'AUTOCORR', 'Auto-Incremented': 'AUTOINCR', 'Constant': 'CONSTANT', 'Date': 'DATE    ', 'Delimited File': 'FLATFILE', 'Java Class': '', 'List': 'LIST    ', 'Related': 'SAMEAS  ', 'Response': 'RESPONSE', 'Variable': 'VARIABLE'}
+from PyQt5.QtCore import Qt
+# from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
+        # QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget,
+    QGridLayout, QVBoxLayout, QHBoxLayout,
+    QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem)
+
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
-# SELECTOR_TYPES = {'Auto-Incremented': 'AUTOINCR', 'First': 'FIRST   ', 'Last': 'LAST    ', 'Random': 'RANDOM  ', 'Related': 'SAMEAS  ', 'Sequential': 'SEQUENTI', 'Date': 'DATE    ', 'Sequential Unique': 'SEQUONCE'}
-# SELECTOR_TYPES = {'First': 'FIRST   ', 'Last': 'LAST    ', 'Random': 'RANDOM  ', 'Random Unique': 'RANDONCE', 'Sequential': 'SEQUENTI', 'Sequential Unique': 'SEQUONCE'}
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
 
-DDI_ITEM_CODES = ['ASSOCIATED', 'DELIMITER ', 'ENCODE    ', 'FIELDINDEX', 'FIELDNAME ', 'FIELDTYPE ', 'FILENAME  ', 'INCREMENT ', 'INDEX     ', 'INHEADERS ', 'INITALVALU', 'INPOST    ', 'INURL     ', 'MINLENGTH ', 'STARTVALUE', 'STEPREF   ', 'VALUE     ',]
-
-form_class = uic.loadUiType("uj_editor.ui")[0]                 # Load the UI
-
-class MyWindowClass(QtWidgets.QMainWindow, form_class):
+class Window(QWidget):
     def __init__(self, parent=None):
-        QtWidgets.QMainWindow.__init__(self, parent)
-        self.setupUi(self)
-        self.import_button.clicked.connect(self.import_uj)
-        self.ddi_treeWidget.itemSelectionChanged.connect(self.load_item_details)
-        self.steps_treeWidget.itemSelectionChanged.connect(self.load_item_details)
+        super(Window, self).__init__(parent)
 
-        # self..ddi_groupBox = QtWidgets.QGroupBox(centralwidget)  <----- this comes from the ui file -- added as reference
-        ddi_layout = QtWidgets.QGridLayout()
-        common_ddi_groupbox = QtWidgets.QGroupBox(self.ddi_groupBox)
-        common_ddi_layout = QtWidgets.QGridLayout()
+        grid = QGridLayout()
+        grid.addWidget(self.create_top_group(), 0, 0)
+        grid.addWidget(self.create_mid_group(), 1, 0)
+        self.setLayout(grid)
 
+        self.setWindowTitle("Group Box")
+        self.resize(1280, 640)
+        # self.create_actions()
 
+    def __wiggets_to_layout(self, layout, *widgets):
+        for widget in widgets:
+            layout.addWidget(widget)
+
+    def create_top_group(self):
+        group_box = QGroupBox()
+        import_button = QPushButton('&Import UJ')
+        import_button.clicked.connect(self.import_uj)
+        export_button = QPushButton('&Export UJ')
+        export_button.clicked.connect(self.export_uj)
+        uj_name_label = QLabel('UJ Name')
+        self.uj_name = QLineEdit()
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, import_button, export_button, uj_name_label, self.uj_name)
+        group_box.setLayout(hbox)
+
+        return group_box
+
+    def create_mid_group(self):
+        group_box = QGroupBox()
+        self.ddi_tree = QTreeWidget()
+        self.ddi_tree.itemSelectionChanged.connect(self.show_ddi_details)
+        ddi_details_layout = QGridLayout()
+        ddi_details_layout.setContentsMargins(0,0,0,0)
+        ddi_details_layout.addWidget(self.create_common_ddi_details())
+        ddi_details_layout.addWidget(self.create_specific_ddi_details())
+        ddi_details = QGroupBox()
+        ddi_details.setLayout(ddi_details_layout)
+
+        self.step_tree = QTreeWidget()
+        self.step_tree.itemSelectionChanged.connect(self.show_step_details)
+        step_details = QGroupBox()
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_tree, ddi_details, self.step_tree, step_details)
+        group_box.setLayout(hbox)
+        return group_box
+
+    def create_common_ddi_details(self):
+        group_box = QGroupBox()
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(vbox, self.create_ddi_type_and_name(), self.create_ddi_description(), self.create_ddi_shared(), self.create_ddi_refresh())
+        group_box.setLayout(vbox)
+        return group_box
+
+    def create_ddi_description(self):
+        group_box = QGroupBox()
+        ddi_description_label = QLabel()
+        ddi_description_label.setText('Description')
+        self.ddi_description = QLineEdit()
+        # self.ddi_description.setFixedHeight(60)
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        hbox.addWidget(ddi_description_label)
+        hbox.addWidget(self.ddi_description)
+        group_box.setLayout(hbox)
+        return group_box
+
+    def create_ddi_type_and_name(self):
+        group_box = QGroupBox()
         # DDI Name
-        self.ddi_name_label = QtWidgets.QLabel(common_ddi_groupbox)
-        self.ddi_name_label.setText('DDI Name')
-        self.ddi_name = QtWidgets.QLineEdit(common_ddi_groupbox)
-        common_ddi_layout.addWidget(self.ddi_name_label, 0, 0)
-        common_ddi_layout.addWidget(self.ddi_name, 1, 0, 1, 2)
-
+        ddi_name_label = QLabel()
+        ddi_name_label.setText('DDI Name')
+        self.ddi_name = QLineEdit()
         # DDI Type
-        self.ddi_type_label = QtWidgets.QLabel(common_ddi_groupbox)
-        self.ddi_type_label.setText('Type')
-        self.ddi_type = QtWidgets.QComboBox(common_ddi_groupbox)
+        ddi_type_label = QLabel()
+        ddi_type_label.setText('Type')
+        self.ddi_type = QComboBox()
         self.ddi_type.addItems(DDI_TYPES.values())
         self.ddi_type.setCurrentText('')
-        common_ddi_layout.addWidget(self.ddi_type_label, 2, 0)
-        common_ddi_layout.addWidget(self.ddi_type, 2, 1)
 
-        # DDI Description
-        self.ddi_description_label = QtWidgets.QLabel(common_ddi_groupbox)
-        self.ddi_description_label.setText('Description')
-        self.ddi_description = QtWidgets.QTextEdit(common_ddi_groupbox)
-        # self.ddi_description.setFixedHeight(60)
-        self.ddi_description.setText('')
-        common_ddi_layout.addWidget(self.ddi_description_label, 0, 2)
-        common_ddi_layout.addWidget(self.ddi_description, 1, 2, 2, 3)
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, ddi_type_label, self.ddi_type, ddi_name_label, self.ddi_name)
+        group_box.setLayout(hbox)
+        return group_box
 
-        # DDI Shared
-        self.ddi_shared_label = QtWidgets.QLabel(common_ddi_groupbox)
-        self.ddi_shared_label.setText('Sharing selector state:')
-        self.shared_group = QtWidgets.QButtonGroup(common_ddi_groupbox)
-        self.ddi_shared_one = QtWidgets.QRadioButton('Single User', common_ddi_groupbox)
-        self.ddi_shared_all = QtWidgets.QRadioButton('All UJ Users', common_ddi_groupbox)
-        self.shared_group.addButton(self.ddi_shared_one)
-        self.shared_group.addButton(self.ddi_shared_all)
-        common_ddi_layout.addWidget(self.ddi_shared_label, 4, 0, 1, 2)
-        common_ddi_layout.addWidget(self.ddi_shared_one, 4, 2)
-        common_ddi_layout.addWidget(self.ddi_shared_all, 4, 3)
+    def create_ddi_shared(self):
+        group_box = QGroupBox('Sharing selector state:')
+        self.ddi_shared_one = QRadioButton('&Single User')
+        self.ddi_shared_all = QRadioButton('&All UJ Users')
         self.shared_button_mapping = {'SCRIPT  ': self.ddi_shared_one, 'THREAD  ': self.ddi_shared_all}
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_shared_one, self.ddi_shared_all)
+        group_box.setLayout(hbox)
+        return group_box
 
-        # DDI Refresh
-        self.ddi_refresh_label = QtWidgets.QLabel(common_ddi_groupbox)
-        self.ddi_refresh_label.setText('Refresh triggers:')
-        self.refresh_group = QtWidgets.QButtonGroup(common_ddi_groupbox)
-        self.ddi_refresh_once_per_run = QtWidgets.QRadioButton('Once per Run', common_ddi_groupbox)
-        self.ddi_refresh_once_per_user = QtWidgets.QRadioButton('Once per User', common_ddi_groupbox)
-        self.ddi_refresh_every_cycle = QtWidgets.QRadioButton('Every Cycle', common_ddi_groupbox)
-        self.ddi_refresh_every_time = QtWidgets.QRadioButton('Every Time', common_ddi_groupbox)
-        self.refresh_group.addButton(self.ddi_refresh_once_per_run)
-        self.refresh_group.addButton(self.ddi_refresh_once_per_user)
-        self.refresh_group.addButton(self.ddi_refresh_every_cycle)
-        self.refresh_group.addButton(self.ddi_refresh_every_time)
-        common_ddi_layout.addWidget(self.ddi_refresh_label, 5, 0)
-        common_ddi_layout.addWidget(self.ddi_refresh_once_per_run, 5, 1)
-        common_ddi_layout.addWidget(self.ddi_refresh_once_per_user, 5, 2)
-        common_ddi_layout.addWidget(self.ddi_refresh_every_cycle, 5, 3)
-        common_ddi_layout.addWidget(self.ddi_refresh_every_time, 5, 4)
+    def create_ddi_refresh(self):
+        group_box = QGroupBox('Refresh triggers:')
+        self.ddi_refresh_once_per_run = QRadioButton('Once per Run')
+        self.ddi_refresh_once_per_user = QRadioButton('Once per User')
+        self.ddi_refresh_every_cycle = QRadioButton('Every Cycle')
+        self.ddi_refresh_every_time = QRadioButton('Every Time')
         self.refresh_button_mapping = {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, self.ddi_refresh_once_per_run, self.ddi_refresh_once_per_user, self.ddi_refresh_every_cycle, self.ddi_refresh_every_time)
+        group_box.setLayout(hbox)
+        return group_box
 
+    def create_specific_ddi_details(self):
+        group_box = QGroupBox()
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector())
+        group_box.setLayout(vbox)
+        return group_box
 
+    def create_ddi_value(self):
+        group_box = QGroupBox()
+        ddi_value_label = QLabel()
+        ddi_value_label.setText('Value')
+        self.ddi_value = QLineEdit()
+        # self.ddi_value.setText('')
 
-        specific_ddi_groupbox = QtWidgets.QGroupBox(self.ddi_groupBox)
-        specific_ddi_layout = QtWidgets.QGridLayout()
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, ddi_value_label, self.ddi_value)
+        group_box.setLayout(hbox)
+        return group_box
 
+    def create_ddi_selector(self):
+        group_box = QGroupBox()
 
-        # DDI Selector
-        self.ddi_selector_label = QtWidgets.QLabel(specific_ddi_groupbox)
-        self.ddi_selector_label.setText('Selector')
-        self.ddi_selector = QtWidgets.QComboBox(specific_ddi_groupbox)
+        ddi_selector_label = QLabel()
+        ddi_selector_label.setText('Selector')
+        self.ddi_selector = QComboBox()
         self.ddi_selector.addItems(SELECTOR_TYPES.values())
-        self.ddi_selector.setCurrentText('')
-        specific_ddi_layout.addWidget(self.ddi_selector_label, 6, 0)
-        specific_ddi_layout.addWidget(self.ddi_selector, 6, 1)
 
-        # DDI Value
-        self.ddi_value_label = QtWidgets.QLabel(specific_ddi_groupbox)
-        self.ddi_value_label.setText('Value')
-        self.ddi_value = QtWidgets.QLineEdit(specific_ddi_groupbox)
-        self.ddi_value.setText('')
-        specific_ddi_layout.addWidget(self.ddi_value_label, 7, 0)
-        specific_ddi_layout.addWidget(self.ddi_value, 7, 1, 1, 4)
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, ddi_selector_label, self.ddi_selector)
+        group_box.setLayout(hbox)
+        return group_box
+
+    # def create_actions(self):
+    #     self.import_act = QAction("&Import...", self, shortcut="Ctrl+I", triggered=self.import_uj)
+    #     self.export_act = QAction("&Export...", self, shortcut="Ctrl+E", triggered=self.export_uj)
+
+    def import_uj(self):
+        filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
+        self.uj = UserJourney('Update Purchase Order User Journey.xml')
+        self.uj_name.setText(self.uj.name)
+
+        ddi_nodes = []
+        for ddi in self.uj.dditems:
+            new_ddi_node = QTreeWidgetItem()
+            new_ddi_node.setText(0, ddi.name)
+            ddi_nodes.append(new_ddi_node)
+
+        self.ddi_tree.addTopLevelItems(ddi_nodes)
+
+        groupnodes = []
+        for stepgroup in self.uj.stepgroups:
+            new_group_node = QTreeWidgetItem()
+            new_group_node.setText(0, stepgroup.name)
+            stepnodes = []
+            for step in stepgroup.steps:
+                new_step_node = QTreeWidgetItem(new_group_node)
+                new_step_node.setText(0, step.name)
+                stepnodes.append(new_step_node)
+
+            groupnodes.append(new_group_node)
 
 
+        self.step_tree.addTopLevelItems(groupnodes)
 
-        # common_ddi_layout.addWidget(self.ddi_type) # add widget
-        common_ddi_groupbox.setLayout(common_ddi_layout)
-        specific_ddi_groupbox.setLayout(specific_ddi_layout)
-        ddi_layout.addWidget(common_ddi_groupbox, 1, 1, 1, 1)
-        ddi_layout.addWidget(specific_ddi_groupbox, 2, 1, 2, 1)
-        # ddi_layout.addWidget(common_ddi_groupbox)
-        # ddi_layout.addWidget(specific_ddi_groupbox)
+    def export_uj(self):
+        pass
 
-        self.ddi_groupBox.setLayout(ddi_layout)
-
-
-    def load_item_details(self):
-        selected_ddi_name = self.ddi_treeWidget.selectedItems()[0].text(0)
+    def show_ddi_details(self):
+        selected_ddi_name = self.ddi_tree.selectedItems()[0].text(0)
         self.ddi_name.setText(selected_ddi_name)
         selected_ddi = self.uj.find_ddi_by_name(selected_ddi_name)
 
@@ -132,20 +211,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         if selected_ddi.selection_type in SELECTOR_TYPES.keys():
             self.ddi_selector.show()
-            self.ddi_selector_label.show()
+            # self.ddi_selector_label.show()
             self.ddi_selector.setCurrentText(SELECTOR_TYPES[selected_ddi.selection_type])
         else:
             self.ddi_selector.hide()
-            self.ddi_selector_label.hide()
+            # self.ddi_selector_label.hide()
 
         if 'VALUE     ' in selected_ddi.items.keys():
             self.ddi_value.show()
-            self.ddi_value_label.show()
+            # self.ddi_value_label.show()
             self.ddi_value.setText(selected_ddi.items['VALUE     '])
         else:
             self.ddi_value.setText('')
             self.ddi_value.hide()
-            self.ddi_value_label.hide()
+            # self.ddi_value_label.hide()
 
 
 
@@ -157,35 +236,18 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.valid = bool(element.get('VALID'))
         # for siphon in siphons_element.findall(SCHEME_PREFIX+'SIPHON'):
 
-    def import_uj(self):
-        filename = QtWidgets.QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
-        self.uj = UserJourney('Update Purchase Order User Journey.xml')
-        self.uj_name.setText(self.uj.name)
-
-        ddi_nodes = []
-        for ddi in self.uj.dditems:
-            new_ddi_node = QtWidgets.QTreeWidgetItem()
-            new_ddi_node.setText(0, ddi.name)
-            ddi_nodes.append(new_ddi_node)
-
-        self.ddi_treeWidget.addTopLevelItems(ddi_nodes)
-
-        groupnodes = []
-        for stepgroup in self.uj.stepgroups:
-            new_group_node = QtWidgets.QTreeWidgetItem()
-            new_group_node.setText(0, stepgroup.name)
-            stepnodes = []
-            for step in stepgroup.steps:
-                new_step_node = QtWidgets.QTreeWidgetItem(new_group_node)
-                new_step_node.setText(0, step.name)
-                stepnodes.append(new_step_node)
-
-            groupnodes.append(new_group_node)
 
 
-        self.steps_treeWidget.addTopLevelItems(groupnodes)
+    def show_step_details(self):
+        pass
 
-app = QtWidgets.QApplication(sys.argv)
-myWindow = MyWindowClass(None)
-myWindow.show()
-app.exec_()
+
+
+if __name__ == '__main__':
+
+    import sys
+
+    app = QApplication(sys.argv)
+    clock = Window()
+    clock.show()
+    sys.exit(app.exec_())
