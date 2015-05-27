@@ -12,6 +12,45 @@ from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
 
+
+class LabelLineEdit(QLineEdit):
+    def __init__(self, label='', *args):
+        super(LabelLineEdit, self).__init__(*args)
+        self.label = QLabel()
+        self.label.setText(label)
+
+    def show(self):
+        super(LabelLineEdit, self).show()
+        self.label.show()
+
+    def hide(self):
+        super(LabelLineEdit, self).hide()
+        self.label.hide()
+
+    def set_text(self, text):
+        self.edit.setText(text)
+
+class LabelComboBox(QComboBox):
+    def __init__(self, label='', *args):
+        super(LabelComboBox, self).__init__(*args)
+        self.label = QLabel()
+        self.label.setText(label)
+
+    def show(self):
+        super(LabelComboBox, self).show()
+        self.label.show()
+
+    def hide(self):
+        super(LabelComboBox, self).hide()
+        self.label.hide()
+
+    def set_text(self, text):
+        self.edit.setCurrentText(text)
+
+
+
+
+
 class Window(QWidget):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
@@ -21,7 +60,7 @@ class Window(QWidget):
         grid.addWidget(self.create_mid_group(), 1, 0)
         self.setLayout(grid)
 
-        self.setWindowTitle("Group Box")
+        self.setWindowTitle("UJ Editor")
         self.resize(1280, 640)
         # self.create_actions()
 
@@ -35,11 +74,10 @@ class Window(QWidget):
         import_button.clicked.connect(self.import_uj)
         export_button = QPushButton('&Export UJ')
         export_button.clicked.connect(self.export_uj)
-        uj_name_label = QLabel('UJ Name')
-        self.uj_name = QLineEdit()
+        self.uj_name = LabelLineEdit('UJ Name')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, import_button, export_button, uj_name_label, self.uj_name)
+        self.__wiggets_to_layout(hbox, import_button, export_button, self.uj_name.label, self.uj_name)
         group_box.setLayout(hbox)
 
         return group_box
@@ -75,34 +113,24 @@ class Window(QWidget):
 
     def create_ddi_description(self):
         group_box = QGroupBox()
-        ddi_description_label = QLabel()
-        ddi_description_label.setText('Description')
-        self.ddi_description = QLineEdit()
-        # self.ddi_description.setFixedHeight(60)
-
+        self.ddi_description = LabelLineEdit('Description')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        hbox.addWidget(ddi_description_label)
+        hbox.addWidget(self.ddi_description.label)
         hbox.addWidget(self.ddi_description)
         group_box.setLayout(hbox)
         return group_box
 
     def create_ddi_type_and_name(self):
         group_box = QGroupBox()
-        # DDI Name
-        ddi_name_label = QLabel()
-        ddi_name_label.setText('DDI Name')
-        self.ddi_name = QLineEdit()
-        # DDI Type
-        ddi_type_label = QLabel()
-        ddi_type_label.setText('Type')
-        self.ddi_type = QComboBox()
+        self.ddi_name = LabelLineEdit('DDI Name')
+        self.ddi_type = LabelComboBox('Type')
         self.ddi_type.addItems(DDI_TYPES.values())
-        self.ddi_type.setCurrentText('')
+        # self.ddi_type.setCurrentText('')
 
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, ddi_type_label, self.ddi_type, ddi_name_label, self.ddi_name)
+        self.__wiggets_to_layout(hbox, self.ddi_type.label, self.ddi_type, self.ddi_name.label, self.ddi_name)
         group_box.setLayout(hbox)
         return group_box
 
@@ -140,28 +168,21 @@ class Window(QWidget):
 
     def create_ddi_value(self):
         group_box = QGroupBox()
-        ddi_value_label = QLabel()
-        ddi_value_label.setText('Value')
-        self.ddi_value = QLineEdit()
-        # self.ddi_value.setText('')
-
+        self.ddi_value = LabelLineEdit('Value')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, ddi_value_label, self.ddi_value)
+        self.__wiggets_to_layout(hbox, self.ddi_value.label, self.ddi_value)
         group_box.setLayout(hbox)
         return group_box
 
     def create_ddi_selector(self):
         group_box = QGroupBox()
-
-        ddi_selector_label = QLabel()
-        ddi_selector_label.setText('Selector')
-        self.ddi_selector = QComboBox()
+        self.ddi_selector = LabelComboBox('Selector')
         self.ddi_selector.addItems(SELECTOR_TYPES.values())
 
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, ddi_selector_label, self.ddi_selector)
+        self.__wiggets_to_layout(hbox, self.ddi_selector.label, self.ddi_selector)
         group_box.setLayout(hbox)
         return group_box
 
@@ -263,57 +284,41 @@ class Window(QWidget):
 
     def create_date_formt(self):
         group_box = QGroupBox()
-
-        ddi_date_format_label = QLabel()
-        ddi_date_format_label.setText('Date Format:')
-        self.ddi_date_format = QLineEdit()
-        # self.ddi_date_starting_fixed.setText('')
-
+        self.ddi_date_format = LabelLineEdit('Date Format:')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, ddi_date_format_label, self.ddi_date_format)
+        self.__wiggets_to_layout(hbox, self.ddi_date_format.label, self.ddi_date_format)
         group_box.setLayout(hbox)
         return group_box
 
     def create_delimited_file_picker(self):
         self.file_picker_group_box = QGroupBox()
-
-        ddi_delimited_filename_label = QLabel()
-        ddi_delimited_filename_label.setText('File Name:')
-        self.ddi_delimited_filename = QLineEdit()
+        self.ddi_delimited_filename = LabelLineEdit('File Name:')
         self.ddi_delimited_file_picker_button = QPushButton('&Load Data File')
         self.ddi_delimited_file_picker_button.clicked.connect(self.load_data_file)
 
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, ddi_delimited_filename_label, self.ddi_delimited_filename, self.ddi_delimited_file_picker_button)
+        self.__wiggets_to_layout(hbox, self.ddi_delimited_filename.label, self.ddi_delimited_filename, self.ddi_delimited_file_picker_button)
         self.file_picker_group_box.setLayout(hbox)
         return self.file_picker_group_box
 
     def create_delimiter(self):
         self.delimiter_group_box = QGroupBox()
-
-        delimiter_character_label = QLabel()
-        delimiter_character_label.setText('Delimiter:')
-        self.ddi_delimiter_character = QLineEdit()
-
+        self.ddi_delimiter_character = LabelLineEdit('Delimiter:')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, delimiter_character_label, self.ddi_delimiter_character)
+        self.__wiggets_to_layout(hbox, self.ddi_delimiter_character.label, self.ddi_delimiter_character)
         self.delimiter_group_box.setLayout(hbox)
         return self.delimiter_group_box
 
     def create_column_index(self):
         self.column_index_group_box = QGroupBox()
-
-        ddi_column_index_label = QLabel()
-        ddi_column_index_label.setText('Column Index:')
-        self.ddi_column_index = QLineEdit()
+        self.ddi_column_index = LabelLineEdit('Column Index:')
         self.ddi_column_index.setInputMask('999')
-
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, ddi_column_index_label, self.ddi_column_index)
+        self.__wiggets_to_layout(hbox, self.ddi_column_index.label, self.ddi_column_index)
         self.column_index_group_box.setLayout(hbox)
         return self.column_index_group_box
 
