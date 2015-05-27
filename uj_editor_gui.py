@@ -134,7 +134,7 @@ class Window(QWidget):
         group_box = QGroupBox()
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(), )
+        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(), self.create_column_index(), self.create_delimiter())
         group_box.setLayout(vbox)
         return group_box
 
@@ -290,6 +290,35 @@ class Window(QWidget):
         self.file_picker_group_box.setLayout(hbox)
         return self.file_picker_group_box
 
+    def create_delimiter(self):
+        self.delimiter_group_box = QGroupBox()
+
+        delimiter_character_label = QLabel()
+        delimiter_character_label.setText('Delimiter:')
+        self.ddi_delimiter_character = QLineEdit()
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, delimiter_character_label, self.ddi_delimiter_character)
+        self.delimiter_group_box.setLayout(hbox)
+        return self.delimiter_group_box
+
+    def create_column_index(self):
+        self.column_index_group_box = QGroupBox()
+
+        ddi_column_index_label = QLabel()
+        ddi_column_index_label.setText('Column Index:')
+        self.ddi_column_index = QLineEdit()
+        self.ddi_column_index.setInputMask('999')
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, ddi_column_index_label, self.ddi_column_index)
+        self.column_index_group_box.setLayout(hbox)
+        return self.column_index_group_box
+
+
+
 
 # ------------------------------------------------------ end of creations ----------------------------------------------------------
 
@@ -400,9 +429,17 @@ class Window(QWidget):
             self.ddi_date_format.setText('')
 
         self.file_picker_group_box.hide()
+        self.column_index_group_box.hide()
+        self.delimiter_group_box.hide()
         if isinstance(self.selected_ddi, DelimitedFileDDI):
             self.ddi_delimited_filename.setText(self.selected_ddi.file_name)
+            self.ddi_column_index.setText(str(self.selected_ddi.column))
+            self.ddi_delimiter_character.setText(self.selected_ddi.delimiter)
             self.file_picker_group_box.show()
+            self.column_index_group_box.show()
+            self.delimiter_group_box.show()
+
+
 
 
         # for item in element.findall(SCHEME_PREFIX+'ITEM'):
