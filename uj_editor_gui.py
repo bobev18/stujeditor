@@ -134,7 +134,7 @@ class Window(QWidget):
         group_box = QGroupBox()
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector(), self.create_ddi_date_fields())
+        self.__wiggets_to_layout(vbox, self.create_ddi_value(), self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(), )
         group_box.setLayout(vbox)
         return group_box
 
@@ -166,13 +166,13 @@ class Window(QWidget):
         return group_box
 
     def create_ddi_date_fields(self):
-        group_box = QGroupBox()
+        self.date_group_box = QGroupBox()
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
         self.__wiggets_to_layout(vbox, self.create_date_starting_point(), self.create_date_fixed_edit(), self.create_date_offset_selector(),
                                  self.create_date_offset_box1(), self.create_date_offset_box2(), self.create_date_formt())
-        group_box.setLayout(vbox)
-        return group_box
+        self.date_group_box.setLayout(vbox)
+        return self.date_group_box
 
     def create_date_starting_point(self):
         group_box = QGroupBox('Starting Point:')
@@ -275,10 +275,32 @@ class Window(QWidget):
         group_box.setLayout(hbox)
         return group_box
 
+    def create_delimited_file_picker(self):
+        self.file_picker_group_box = QGroupBox()
+
+        ddi_delimited_filename_label = QLabel()
+        ddi_delimited_filename_label.setText('File Name:')
+        self.ddi_delimited_filename = QLineEdit()
+        self.ddi_delimited_file_picker_button = QPushButton('&Load Data File')
+        self.ddi_delimited_file_picker_button.clicked.connect(self.load_data_file)
+
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.__wiggets_to_layout(hbox, ddi_delimited_filename_label, self.ddi_delimited_filename, self.ddi_delimited_file_picker_button)
+        self.file_picker_group_box.setLayout(hbox)
+        return self.file_picker_group_box
+
+
+# ------------------------------------------------------ end of creations ----------------------------------------------------------
 
     # def create_actions(self):
     #     self.import_act = QAction("&Import...", self, shortcut="Ctrl+I", triggered=self.import_uj)
     #     self.export_act = QAction("&Export...", self, shortcut="Ctrl+E", triggered=self.export_uj)
+
+    def load_data_file(self):
+        filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
+        self.ddi_delimited_filename.setText(filename[0])
+        self.selected_ddi.file_name = filename
 
     def import_uj(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
@@ -314,25 +336,25 @@ class Window(QWidget):
     def show_ddi_details(self):
         selected_ddi_name = self.ddi_tree.selectedItems()[0].text(0)
         self.ddi_name.setText(selected_ddi_name)
-        selected_ddi = self.uj.find_ddi_by_name(selected_ddi_name)
+        self.selected_ddi = self.uj.find_ddi_by_name(selected_ddi_name)
 
-        self.ddi_description.setText(selected_ddi.description)
-        self.ddi_type.setCurrentText(DDI_TYPES[selected_ddi.type])
-        self.shared_button_mapping[selected_ddi.scope].setChecked(1)
-        self.refresh_button_mapping[selected_ddi.lifecycle].setChecked(1)
+        self.ddi_description.setText(self.selected_ddi.description)
+        self.ddi_type.setCurrentText(DDI_TYPES[self.selected_ddi.type])
+        self.shared_button_mapping[self.selected_ddi.scope].setChecked(1)
+        self.refresh_button_mapping[self.selected_ddi.lifecycle].setChecked(1)
 
-        if selected_ddi.selection_type in SELECTOR_TYPES.keys():
+        if self.selected_ddi.selection_type in SELECTOR_TYPES.keys():
             self.ddi_selector.show()
             # self.ddi_selector_label.show()
-            self.ddi_selector.setCurrentText(SELECTOR_TYPES[selected_ddi.selection_type])
+            self.ddi_selector.setCurrentText(SELECTOR_TYPES[self.selected_ddi.selection_type])
         else:
             self.ddi_selector.hide()
             # self.ddi_selector_label.hide()
 
-        if 'VALUE     ' in selected_ddi.items.keys():
+        if 'VALUE     ' in self.selected_ddi.items.keys():
             self.ddi_value.show()
             # self.ddi_value_label.show()
-            self.ddi_value.setText(selected_ddi.items['VALUE     '])
+            self.ddi_value.setText(self.selected_ddi.items['VALUE     '])
         else:
             self.ddi_value.setText('')
             self.ddi_value.hide()
@@ -343,27 +365,29 @@ class Window(QWidget):
         self.ddi_date_starting_related.hide()
         self.offset1_group_box.hide()
         self.offset2_group_box.hide()
-        if isinstance(selected_ddi, DateDDI):
-            self.date_starting_button_mapping[selected_ddi.starting_point].setChecked(1)
-            self.date_offset_button_mapping[selected_ddi.offset_type].setChecked(1)
-            self.ddi_date_format.setText(selected_ddi.format)
+        self.date_group_box.hide()
+        if isinstance(self.selected_ddi, DateDDI):
+            self.date_group_box.show()
+            self.date_starting_button_mapping[self.selected_ddi.starting_point].setChecked(1)
+            self.date_offset_button_mapping[self.selected_ddi.offset_type].setChecked(1)
+            self.ddi_date_format.setText(self.selected_ddi.format)
 
-            if selected_ddi.starting_point == 'fixed value':
+            if self.selected_ddi.starting_point == 'fixed value':
                 self.ddi_date_starting_fixed.show()
-            if selected_ddi.starting_point == 'another date':
+            if self.selected_ddi.starting_point == 'another date':
                 self.ddi_date_starting_related.show()
 
-            if selected_ddi.offset_type != 'none':
+            if self.selected_ddi.offset_type != 'none':
                 self.offset1_group_box.show()
-                self.ddi_date_offset1_sign.setCurrentText(selected_ddi.first_offset_sign)
-                self.ddi_date_offset1_amount.setText(str(selected_ddi.first_offset_value))
-                self.ddi_date_offset1_unit.setCurrentText(selected_ddi.first_offset_unit[:-3])
+                self.ddi_date_offset1_sign.setCurrentText(self.selected_ddi.first_offset_sign)
+                self.ddi_date_offset1_amount.setText(str(self.selected_ddi.first_offset_value))
+                self.ddi_date_offset1_unit.setCurrentText(self.selected_ddi.first_offset_unit[:-3])
 
-            if selected_ddi.offset_type == 'random':
+            if self.selected_ddi.offset_type == 'random':
                 self.offset2_group_box.show()
-                self.ddi_date_offset2_sign.setCurrentText(selected_ddi.second_offset_sign)
-                self.ddi_date_offset2_amount.setText(str(selected_ddi.second_offset_value))
-                self.ddi_date_offset2_unit.setCurrentText(selected_ddi.second_offset_unit[:-3])
+                self.ddi_date_offset2_sign.setCurrentText(self.selected_ddi.second_offset_sign)
+                self.ddi_date_offset2_amount.setText(str(self.selected_ddi.second_offset_value))
+                self.ddi_date_offset2_unit.setCurrentText(self.selected_ddi.second_offset_unit[:-3])
 
 
         else:
@@ -374,6 +398,11 @@ class Window(QWidget):
             self.date_starting_point.setExclusive(True)
             self.date_offset.setExclusive(True)
             self.ddi_date_format.setText('')
+
+        self.file_picker_group_box.hide()
+        if isinstance(self.selected_ddi, DelimitedFileDDI):
+            self.ddi_delimited_filename.setText(self.selected_ddi.file_name)
+            self.file_picker_group_box.show()
 
 
         # for item in element.findall(SCHEME_PREFIX+'ITEM'):
