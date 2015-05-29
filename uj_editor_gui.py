@@ -47,8 +47,23 @@ class LabelComboBox(QComboBox):
     def set_text(self, text):
         self.setCurrentText(text)
 
+class MyButtonGroup(QButtonGroup):
+    def __init__(self, mapping, *args):
+        super(MyButtonGroup, self).__init__(*args)
+        # example mapping: {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
+        self.mapping = mapping
 
+    def show(self):
+        for item in self.mapping.values():
+            item.show()
 
+    def hide(self):
+        for item in self.mapping.values():
+            item.hide()
+
+    def set_text(self, text):
+        if text != '':
+            self.mapping[text].setChecked(1)
 
 
 class Window(QWidget):
@@ -115,7 +130,7 @@ class Window(QWidget):
         group_box = QGroupBox()
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(vbox, self.create_ddi_type_and_name(), self.create_ddi_description(), self.create_ddi_shared(), self.create_ddi_refresh())
+        self.__mix_to_layout(vbox, self.create_ddi_type_and_name(), self.create_ddi_description(), self.create_ddi_shared(), self.create_ddi_refresh())
         group_box.setLayout(vbox)
         return group_box
 
@@ -143,28 +158,33 @@ class Window(QWidget):
         return group_box
 
     def create_ddi_shared(self):
-        group_box = QGroupBox('Sharing selector state:')
         self.ddi_shared_one = QRadioButton('&Single User')
-        self.ddi_shared_all = QRadioButton('&All UJ Users')
-        self.shared_button_mapping = {'SCRIPT  ': self.ddi_shared_one, 'THREAD  ': self.ddi_shared_all}
+        self.ddi_shared_all = QRadioButton('&All Run Users')
+        shared_button_mapping = {'SCRIPT  ': self.ddi_shared_one, 'THREAD  ': self.ddi_shared_all}
+        self.shared_button_group = MyButtonGroup(shared_button_mapping)
+        [ self.shared_button_group.addButton(z) for z in shared_button_mapping.values()]
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         self.__wiggets_to_layout(hbox, self.ddi_shared_one, self.ddi_shared_all)
-        group_box.setLayout(hbox)
-        return group_box
+        # group_box.setLayout(hbox)
+        # return group_box
+        return hbox
 
     def create_ddi_refresh(self):
-        group_box = QGroupBox('Refresh triggers:')
+        # group_box = QGroupBox('Refresh triggers:')
         self.ddi_refresh_once_per_run = QRadioButton('Once per Run')
         self.ddi_refresh_once_per_user = QRadioButton('Once per User')
         self.ddi_refresh_every_cycle = QRadioButton('Every Cycle')
         self.ddi_refresh_every_time = QRadioButton('Every Time')
-        self.refresh_button_mapping = {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
+        refresh_button_mapping = {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
+        self.refresh_button_group = MyButtonGroup(refresh_button_mapping)
+        [ self.refresh_button_group.addButton(z) for z in refresh_button_mapping.values()]
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         self.__wiggets_to_layout(hbox, self.ddi_refresh_once_per_run, self.ddi_refresh_once_per_user, self.ddi_refresh_every_cycle, self.ddi_refresh_every_time)
-        group_box.setLayout(hbox)
-        return group_box
+        # group_box.setLayout(hbox)
+        # return group_box
+        return hbox
 
     # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
     def create_specific_ddi_details(self):
@@ -202,16 +222,16 @@ class Window(QWidget):
         return vbox
 
     def create_date_starting_point(self):
-        group_box = QGroupBox('Starting Point:')
+        # group_box = QGroupBox('Starting Point:')
 
         self.ddi_date_starting_now = QRadioButton('Now')
         self.ddi_date_starting_today = QRadioButton('Today')
         self.ddi_date_starting_fixed = QRadioButton('Fixed Value')
         self.ddi_date_starting_related = QRadioButton('Another Date DDI')
-        self.date_starting_button_mapping = {'now': self.ddi_date_starting_now, 'today': self.ddi_date_starting_today,
+        date_starting_button_mapping = {'now': self.ddi_date_starting_now, 'today': self.ddi_date_starting_today,
                                              'fixed value': self.ddi_date_starting_fixed, 'another date': self.ddi_date_starting_related}
 
-        self.ddi_date_starting_point = QButtonGroup()
+        self.ddi_date_starting_point = MyButtonGroup(date_starting_button_mapping)
         self.ddi_date_starting_point.addButton(self.ddi_date_starting_now)
         self.ddi_date_starting_point.addButton(self.ddi_date_starting_today)
         self.ddi_date_starting_point.addButton(self.ddi_date_starting_fixed)
@@ -219,8 +239,9 @@ class Window(QWidget):
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         self.__wiggets_to_layout(hbox, self.ddi_date_starting_now, self.ddi_date_starting_today, self.ddi_date_starting_fixed, self.ddi_date_starting_related)
-        group_box.setLayout(hbox)
-        return group_box
+        # group_box.setLayout(hbox)
+        # return group_box
+        return hbox
 
     def create_date_fixed_edit(self):
         self.ddi_date_starting_fixed_edit = LabelLineEdit('Fixed Date:')
@@ -231,32 +252,32 @@ class Window(QWidget):
         return hbox
 
     def create_date_offset_selector(self):
-        group_box = QGroupBox('Offset:')
+        # group_box = QGroupBox('Offset:')
 
         self.ddi_date_offset_none = QRadioButton('None')
         self.ddi_date_offset_fixed = QRadioButton('Fixed')
         self.ddi_date_offset_random = QRadioButton('Random')
-        self.ddi_date_offset_button_mapping = {'none': self.ddi_date_offset_none, 'fixed': self.ddi_date_offset_fixed, 'random': self.ddi_date_offset_random}
+        ddi_date_offset_button_mapping = {'none': self.ddi_date_offset_none, 'fixed': self.ddi_date_offset_fixed, 'random': self.ddi_date_offset_random}
 
-        self.ddi_date_offset = QButtonGroup()
+        self.ddi_date_offset = MyButtonGroup(ddi_date_offset_button_mapping)
         self.ddi_date_offset.addButton(self.ddi_date_offset_none)
         self.ddi_date_offset.addButton(self.ddi_date_offset_fixed)
         self.ddi_date_offset.addButton(self.ddi_date_offset_random)
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         self.__wiggets_to_layout(hbox, self.ddi_date_offset_none, self.ddi_date_offset_fixed, self.ddi_date_offset_random)
-        group_box.setLayout(hbox)
-        print(self.ddi_date_offset, self.ddi_date_offset.children())
-        return group_box
+        # group_box.setLayout(hbox)
+        # return group_box
+        return hbox
 
     def create_date_offset_box1(self):
         # self.offset1_group_box = QGroupBox()
 
-        self.ddi_date_offset1_sign = QComboBox()
+        self.ddi_date_offset1_sign = LabelComboBox('')
         self.ddi_date_offset1_sign.addItems(['+', '-'])
-        self.ddi_date_offset1_amount = QLineEdit()
-        self.ddi_date_offset1_amount.setInputMask('99999999999999999')
-        self.ddi_date_offset1_unit = QComboBox()
+        self.ddi_date_offset1_amount = LabelLineEdit('')
+        self.ddi_date_offset1_amount.setInputMask('99999999')
+        self.ddi_date_offset1_unit = LabelComboBox('')
         self.ddi_date_offset1_unit.addItems(['sec', 'min', 'hrs', 'day'])
 
         hbox = QHBoxLayout()
@@ -269,11 +290,11 @@ class Window(QWidget):
     def create_date_offset_box2(self):
         # self.offset2_group_box = QGroupBox()
 
-        self.ddi_date_offset2_sign = QComboBox()
+        self.ddi_date_offset2_sign = LabelComboBox('')
         self.ddi_date_offset2_sign.addItems(['+', '-'])
-        self.ddi_date_offset2_amount = QLineEdit()
-        self.ddi_date_offset2_amount.setInputMask('99999999999999999')
-        self.ddi_date_offset2_unit = QComboBox()
+        self.ddi_date_offset2_amount = LabelLineEdit('')
+        self.ddi_date_offset2_amount.setInputMask('99999999')
+        self.ddi_date_offset2_unit = LabelComboBox('')
         self.ddi_date_offset2_unit.addItems(['sec', 'min', 'hrs', 'day'])
 
         hbox = QHBoxLayout()
@@ -376,8 +397,10 @@ class Window(QWidget):
 
         self.ddi_description.setText(self.selected_ddi.description)
         self.ddi_type.setCurrentText(DDI_TYPES[self.selected_ddi.type])
-        self.shared_button_mapping[self.selected_ddi.scope].setChecked(1)
-        self.refresh_button_mapping[self.selected_ddi.lifecycle].setChecked(1)
+        # self.shared_button_mapping[self.selected_ddi.scope].setChecked(1)
+        self.shared_button_group.set_text(self.selected_ddi.scope)
+        # self.refresh_button_mapping[self.selected_ddi.lifecycle].setChecked(1)
+        self.refresh_button_group.set_text(self.selected_ddi.lifecycle)
 
         # Specific
         ddi_specific_fields = [
@@ -390,19 +413,22 @@ class Window(QWidget):
             self.ddi_date_offset2_amount,
             self.ddi_date_offset2_sign,
             self.ddi_date_offset2_unit,
-            self.ddi_date_offset_fixed,
-            self.ddi_date_offset_none,
-            self.ddi_date_offset_random,
-            self.ddi_date_starting_fixed,
-            self.ddi_date_starting_now,
-            self.ddi_date_starting_related,
-            self.ddi_date_starting_today,
+            self.ddi_date_starting_fixed_edit,
+            self.ddi_date_starting_related_edit,
+            # self.ddi_date_offset_fixed,
+            # self.ddi_date_offset_none,
+            # self.ddi_date_offset_random,
+            # self.ddi_date_starting_fixed,
+            # self.ddi_date_starting_now,
+            # self.ddi_date_starting_related,
+            # self.ddi_date_starting_today,
             self.ddi_value,
             self.ddi_selector,
             self.ddi_column_index,
             self.ddi_delimited_filename,
             self.ddi_delimited_file_picker_button,
             self.ddi_delimiter_character,
+
         ]
 
         ddi_type_mappings = {
@@ -420,7 +446,7 @@ class Window(QWidget):
                 self.ddi_date_offset2_unit: 'second_offset_unit',
                 self.ddi_date_format: 'format',
             },
-            DelimitedFileDDI: {self.ddi_delimited_filename: 'file_name', self.ddi_delimited_file_picker_button: None, self.ddi_column_index: 'column', self.ddi_delimiter_character: 'delimiter'},
+            DelimitedFileDDI: {self.ddi_delimited_filename: 'file_name', self.ddi_delimited_file_picker_button: 'None', self.ddi_column_index: 'column', self.ddi_delimiter_character: 'delimiter'},
             ListDDI: {},
             VariableDDI: {self.ddi_value: 'value'},
             RelatedDDI: {self.ddi_column_index: 'column'},
@@ -434,10 +460,15 @@ class Window(QWidget):
         for field in ddi_specific_fields:
             # print('field', field, 'keys', object_attribute_pairs.keys())
             if field in object_attribute_pairs.keys():
-                field.show()
-                # print('show must go on')
-                if object_attribute_pairs[field] != None:
-                    field.set_text(str(getattr(self.selected_ddi, object_attribute_pairs[field])))
+                value = ''
+                # if object_attribute_pairs[field] != None:
+                try:
+                    value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
+                except AttributeError:
+                    pass
+                field.set_text(value)
+                if value != '':
+                    field.show()
             else:
                 # if isinstance(field, list):
                 #     # self.ddi_date_offset_button_mapping[self.selected_ddi.offset_type].setChecked(1)
@@ -446,12 +477,14 @@ class Window(QWidget):
                 #     field.set_text('')
                 #     field.hide()
 
-                try:
+                # try:
+                #     field.set_text('')
+                #     field.hide()
+                # except AttributeError:
+                #     pass
+                if not isinstance(field, QPushButton):
                     field.set_text('')
                     field.hide()
-                except AttributeError:
-                    pass
-
 
 
 
