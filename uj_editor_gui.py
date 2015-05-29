@@ -13,57 +13,81 @@ DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CON
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
 
 
-class LabelLineEdit(QLineEdit):
-    def __init__(self, label='', *args):
-        super(LabelLineEdit, self).__init__(*args)
+class LabelLineEdit(QWidget):
+    def __init__(self, label=''):
+        super(LabelLineEdit, self).__init__()
+        self.layout = QHBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.line_edit = QLineEdit()
         self.label = QLabel()
         self.label.setText(label)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.line_edit)
 
     def show(self):
-        super(LabelLineEdit, self).show()
+        self.line_edit.show()
         self.label.show()
 
     def hide(self):
-        super(LabelLineEdit, self).hide()
+        self.line_edit.hide()
         self.label.hide()
 
     def set_text(self, text):
-        self.setText(text)
+        self.line_edit.setText(text)
 
-class LabelComboBox(QComboBox):
-    def __init__(self, label='', *args):
-        super(LabelComboBox, self).__init__(*args)
+class LabelComboBox(QWidget):
+    def __init__(self, label='', items = []):
+        super(LabelComboBox, self).__init__()
         self.label = QLabel()
         self.label.setText(label)
+        self.combo_box = QComboBox()
+        self.combo_box.insertItems(0, items)
+        self.layout = QHBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.combo_box)
 
     def show(self):
-        super(LabelComboBox, self).show()
+        self.combo_box.show()
         self.label.show()
 
     def hide(self):
-        super(LabelComboBox, self).hide()
+        self.combo_box.hide()
         self.label.hide()
 
     def set_text(self, text):
-        self.setCurrentText(text)
+        self.combo_box.setCurrentText(text)
 
-class MyButtonGroup(QButtonGroup):
-    def __init__(self, mapping, *args):
-        super(MyButtonGroup, self).__init__(*args)
-        # example mapping: {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
-        self.mapping = mapping
+class LabelButtonGroup(QWidget):
+    def __init__(self, label = '', buttons = {'UJ object reference value': 'Name to show'}):
+        super(LabelButtonGroup, self).__init__()
+        self.label = QLabel()
+        self.label.setText(label)
+        self.button_group = QButtonGroup()
+        self.buttons = {}
+        self.layout = QHBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.label)
+        for button_key in buttons.keys():
+            self.buttons[button_key] = QRadioButton(buttons[button_key])
+            self.button_group.addButton(self.buttons[button_key])
+            self.layout.addWidget(self.buttons[button_key])
 
     def show(self):
-        for item in self.mapping.values():
-            item.show()
+        for button in self.buttons.values():
+            button.show()
 
     def hide(self):
-        for item in self.mapping.values():
-            item.hide()
+        for button in self.buttons.values():
+            button.hide()
 
-    def set_text(self, text):
-        if text != '':
-            self.mapping[text].setChecked(1)
+    def set_text(self, key):
+        print('key:', key, end='')
+        if key != '':
+            if len(key)>1: print('', self.buttons[key])
+            self.buttons[key].setChecked(1)
+
+
 
 
 class Window(QWidget):
@@ -135,55 +159,32 @@ class Window(QWidget):
         return group_box
 
     def create_ddi_description(self):
-        group_box = QGroupBox()
         self.ddi_description = LabelLineEdit('Description')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        hbox.addWidget(self.ddi_description.label)
-        hbox.addWidget(self.ddi_description)
-        group_box.setLayout(hbox)
-        return group_box
+        hbox.addLayout(self.ddi_description.layout)
+        return hbox
 
     def create_ddi_type_and_name(self):
-        group_box = QGroupBox()
         self.ddi_name = LabelLineEdit('DDI Name')
-        self.ddi_type = LabelComboBox('Type')
-        self.ddi_type.addItems(DDI_TYPES.values())
-        # self.ddi_type.setCurrentText('')
-
+        self.ddi_type = LabelComboBox('Type', DDI_TYPES.values())
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_type.label, self.ddi_type, self.ddi_name.label, self.ddi_name)
-        group_box.setLayout(hbox)
-        return group_box
+        self.__mix_to_layout(hbox, self.ddi_type.layout, self.ddi_name.layout)
+        return hbox
 
     def create_ddi_shared(self):
-        self.ddi_shared_one = QRadioButton('&Single User')
-        self.ddi_shared_all = QRadioButton('&All Run Users')
-        shared_button_mapping = {'SCRIPT  ': self.ddi_shared_one, 'THREAD  ': self.ddi_shared_all}
-        self.shared_button_group = MyButtonGroup(shared_button_mapping)
-        [ self.shared_button_group.addButton(z) for z in shared_button_mapping.values()]
+        self.shared_button_group = LabelButtonGroup('State Sharing', {'SCRIPT  ': '&Single User', 'THREAD  ': '&All Run Users'})
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_shared_one, self.ddi_shared_all)
-        # group_box.setLayout(hbox)
-        # return group_box
+        hbox.addLayout(self.shared_button_group.layout)
         return hbox
 
     def create_ddi_refresh(self):
-        # group_box = QGroupBox('Refresh triggers:')
-        self.ddi_refresh_once_per_run = QRadioButton('Once per Run')
-        self.ddi_refresh_once_per_user = QRadioButton('Once per User')
-        self.ddi_refresh_every_cycle = QRadioButton('Every Cycle')
-        self.ddi_refresh_every_time = QRadioButton('Every Time')
-        refresh_button_mapping = {'C': self.ddi_refresh_every_cycle, 'R': self.ddi_refresh_once_per_run, 'T': self.ddi_refresh_every_time, 'U': self.ddi_refresh_once_per_user}
-        self.refresh_button_group = MyButtonGroup(refresh_button_mapping)
-        [ self.refresh_button_group.addButton(z) for z in refresh_button_mapping.values()]
+        self.refresh_button_group = LabelButtonGroup('Refresh Condition', {'C': 'Every Cycle', 'R': 'Once per Run', 'T': 'Every Time', 'U': 'Once per User'})
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_refresh_once_per_run, self.ddi_refresh_once_per_user, self.ddi_refresh_every_cycle, self.ddi_refresh_every_time)
-        # group_box.setLayout(hbox)
-        # return group_box
+        hbox.addLayout(self.refresh_button_group.layout)
         return hbox
 
     # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
@@ -191,159 +192,163 @@ class Window(QWidget):
         group_box = QGroupBox()
         self.ddi_specific_layout = QVBoxLayout()
         self.ddi_specific_layout.setContentsMargins(0,0,0,0)
-        self.__mix_to_layout(self.ddi_specific_layout, self.create_ddi_value(), self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(),
-                                 self.create_column_index(), self.create_delimiter())
+        # self.value_layout = self.create_ddi_value()
+        self.value_widget = LabelLineEdit('Value')
+        # self.ddi_specific_layout.addWidget(self.value_widget)
+        self.ddi_specific_layout.addLayout(self.value_widget.layout)
+        # self.__mix_to_layout(self.ddi_specific_layout, self.value_layout)
+        # self.__mix_to_layout(self.ddi_specific_layout, self.value_layout, self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(),
+                                 # self.create_column_index(), self.create_delimiter())
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
 
-    def create_ddi_value(self):
-        self.ddi_value = LabelLineEdit('Value')
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_value.label, self.ddi_value)
-        return hbox
+    # def create_ddi_value(self):
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_value.label, self.ddi_value)
+    #     return hbox
 
-    def create_ddi_selector(self):
-        self.ddi_selector = LabelComboBox('Selector')
-        self.ddi_selector.addItems(SELECTOR_TYPES.values())
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_selector.label, self.ddi_selector)
-        return hbox
+    # def create_ddi_selector(self):
+    #     self.ddi_selector = LabelComboBox('Selector')
+    #     self.ddi_selector.addItems(SELECTOR_TYPES.values())
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_selector.label, self.ddi_selector)
+    #     return hbox
 
-    def create_ddi_date_fields(self):
-        # self.date_group_box = QGroupBox()
-        vbox = QVBoxLayout()
-        vbox.setContentsMargins(0,0,0,0)
-        self.__mix_to_layout(vbox, self.create_date_starting_point(), self.create_date_fixed_edit(), self.create_date_offset_selector(),
-                                 self.create_date_offset_box1(), self.create_date_offset_box2(), self.create_date_format())
-        # self.date_group_box.setLayout(vbox)
-        # return self.date_group_box
-        return vbox
+    # def create_ddi_date_fields(self):
+    #     # self.date_group_box = QGroupBox()
+    #     vbox = QVBoxLayout()
+    #     vbox.setContentsMargins(0,0,0,0)
+    #     self.__mix_to_layout(vbox, self.create_date_starting_point(), self.create_date_fixed_edit(), self.create_date_offset_selector(),
+    #                              self.create_date_offset_box1(), self.create_date_offset_box2(), self.create_date_format())
+    #     # self.date_group_box.setLayout(vbox)
+    #     # return self.date_group_box
+    #     return vbox
 
-    def create_date_starting_point(self):
-        # group_box = QGroupBox('Starting Point:')
+    # def create_date_starting_point(self):
+    #     # group_box = QGroupBox('Starting Point:')
 
-        self.ddi_date_starting_now = QRadioButton('Now')
-        self.ddi_date_starting_today = QRadioButton('Today')
-        self.ddi_date_starting_fixed = QRadioButton('Fixed Value')
-        self.ddi_date_starting_related = QRadioButton('Another Date DDI')
-        date_starting_button_mapping = {'now': self.ddi_date_starting_now, 'today': self.ddi_date_starting_today,
-                                             'fixed value': self.ddi_date_starting_fixed, 'another date': self.ddi_date_starting_related}
+    #     self.ddi_date_starting_now = QRadioButton('Now')
+    #     self.ddi_date_starting_today = QRadioButton('Today')
+    #     self.ddi_date_starting_fixed = QRadioButton('Fixed Value')
+    #     self.ddi_date_starting_related = QRadioButton('Another Date DDI')
+    #     date_starting_button_mapping = {'now': self.ddi_date_starting_now, 'today': self.ddi_date_starting_today,
+    #                                          'fixed value': self.ddi_date_starting_fixed, 'another date': self.ddi_date_starting_related}
 
-        self.ddi_date_starting_point = MyButtonGroup(date_starting_button_mapping)
-        self.ddi_date_starting_point.addButton(self.ddi_date_starting_now)
-        self.ddi_date_starting_point.addButton(self.ddi_date_starting_today)
-        self.ddi_date_starting_point.addButton(self.ddi_date_starting_fixed)
-        self.ddi_date_starting_point.addButton(self.ddi_date_starting_related)
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_date_starting_now, self.ddi_date_starting_today, self.ddi_date_starting_fixed, self.ddi_date_starting_related)
-        # group_box.setLayout(hbox)
-        # return group_box
-        return hbox
+    #     self.ddi_date_starting_point = MyButtonGroup(date_starting_button_mapping)
+    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_now)
+    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_today)
+    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_fixed)
+    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_related)
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_date_starting_now, self.ddi_date_starting_today, self.ddi_date_starting_fixed, self.ddi_date_starting_related)
+    #     # group_box.setLayout(hbox)
+    #     # return group_box
+    #     return hbox
 
-    def create_date_fixed_edit(self):
-        self.ddi_date_starting_fixed_edit = LabelLineEdit('Fixed Date:')
-        self.ddi_date_starting_related_edit = LabelComboBox('Another DDI:')
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_date_starting_fixed_edit.label, self.ddi_date_starting_fixed_edit, self.ddi_date_starting_related_edit.label, self.ddi_date_starting_related_edit)
-        return hbox
+    # def create_date_fixed_edit(self):
+    #     self.ddi_date_starting_fixed_edit = LabelLineEdit('Fixed Date:')
+    #     self.ddi_date_starting_related_edit = LabelComboBox('Another DDI:')
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_date_starting_fixed_edit.label, self.ddi_date_starting_fixed_edit, self.ddi_date_starting_related_edit.label, self.ddi_date_starting_related_edit)
+    #     return hbox
 
-    def create_date_offset_selector(self):
-        # group_box = QGroupBox('Offset:')
+    # def create_date_offset_selector(self):
+    #     # group_box = QGroupBox('Offset:')
 
-        self.ddi_date_offset_none = QRadioButton('None')
-        self.ddi_date_offset_fixed = QRadioButton('Fixed')
-        self.ddi_date_offset_random = QRadioButton('Random')
-        ddi_date_offset_button_mapping = {'none': self.ddi_date_offset_none, 'fixed': self.ddi_date_offset_fixed, 'random': self.ddi_date_offset_random}
+    #     self.ddi_date_offset_none = QRadioButton('None')
+    #     self.ddi_date_offset_fixed = QRadioButton('Fixed')
+    #     self.ddi_date_offset_random = QRadioButton('Random')
+    #     ddi_date_offset_button_mapping = {'none': self.ddi_date_offset_none, 'fixed': self.ddi_date_offset_fixed, 'random': self.ddi_date_offset_random}
 
-        self.ddi_date_offset = MyButtonGroup(ddi_date_offset_button_mapping)
-        self.ddi_date_offset.addButton(self.ddi_date_offset_none)
-        self.ddi_date_offset.addButton(self.ddi_date_offset_fixed)
-        self.ddi_date_offset.addButton(self.ddi_date_offset_random)
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_date_offset_none, self.ddi_date_offset_fixed, self.ddi_date_offset_random)
-        # group_box.setLayout(hbox)
-        # return group_box
-        return hbox
+    #     self.ddi_date_offset = MyButtonGroup(ddi_date_offset_button_mapping)
+    #     self.ddi_date_offset.addButton(self.ddi_date_offset_none)
+    #     self.ddi_date_offset.addButton(self.ddi_date_offset_fixed)
+    #     self.ddi_date_offset.addButton(self.ddi_date_offset_random)
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_date_offset_none, self.ddi_date_offset_fixed, self.ddi_date_offset_random)
+    #     # group_box.setLayout(hbox)
+    #     # return group_box
+    #     return hbox
 
-    def create_date_offset_box1(self):
-        # self.offset1_group_box = QGroupBox()
+    # def create_date_offset_box1(self):
+    #     # self.offset1_group_box = QGroupBox()
 
-        self.ddi_date_offset1_sign = LabelComboBox('')
-        self.ddi_date_offset1_sign.addItems(['+', '-'])
-        self.ddi_date_offset1_amount = LabelLineEdit('')
-        self.ddi_date_offset1_amount.setInputMask('99999999')
-        self.ddi_date_offset1_unit = LabelComboBox('')
-        self.ddi_date_offset1_unit.addItems(['sec', 'min', 'hrs', 'day'])
+    #     self.ddi_date_offset1_sign = LabelComboBox('')
+    #     self.ddi_date_offset1_sign.addItems(['+', '-'])
+    #     self.ddi_date_offset1_amount = LabelLineEdit('')
+    #     self.ddi_date_offset1_amount.setInputMask('99999999')
+    #     self.ddi_date_offset1_unit = LabelComboBox('')
+    #     self.ddi_date_offset1_unit.addItems(['sec', 'min', 'hrs', 'day'])
 
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_date_offset1_sign, self.ddi_date_offset1_amount, self.ddi_date_offset1_unit)
-        # self.offset1_group_box.setLayout(hbox)
-        # return self.offset1_group_box
-        return hbox
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_date_offset1_sign, self.ddi_date_offset1_amount, self.ddi_date_offset1_unit)
+    #     # self.offset1_group_box.setLayout(hbox)
+    #     # return self.offset1_group_box
+    #     return hbox
 
-    def create_date_offset_box2(self):
-        # self.offset2_group_box = QGroupBox()
+    # def create_date_offset_box2(self):
+    #     # self.offset2_group_box = QGroupBox()
 
-        self.ddi_date_offset2_sign = LabelComboBox('')
-        self.ddi_date_offset2_sign.addItems(['+', '-'])
-        self.ddi_date_offset2_amount = LabelLineEdit('')
-        self.ddi_date_offset2_amount.setInputMask('99999999')
-        self.ddi_date_offset2_unit = LabelComboBox('')
-        self.ddi_date_offset2_unit.addItems(['sec', 'min', 'hrs', 'day'])
+    #     self.ddi_date_offset2_sign = LabelComboBox('')
+    #     self.ddi_date_offset2_sign.addItems(['+', '-'])
+    #     self.ddi_date_offset2_amount = LabelLineEdit('')
+    #     self.ddi_date_offset2_amount.setInputMask('99999999')
+    #     self.ddi_date_offset2_unit = LabelComboBox('')
+    #     self.ddi_date_offset2_unit.addItems(['sec', 'min', 'hrs', 'day'])
 
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_date_offset2_sign, self.ddi_date_offset2_amount, self.ddi_date_offset2_unit)
-        # self.offset2_group_box.setLayout(hbox)
-        # return self.offset2_group_box
-        return hbox
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_date_offset2_sign, self.ddi_date_offset2_amount, self.ddi_date_offset2_unit)
+    #     # self.offset2_group_box.setLayout(hbox)
+    #     # return self.offset2_group_box
+    #     return hbox
 
-    def create_date_format(self):
-        self.ddi_date_format = LabelLineEdit('Date Format:')
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_date_format.label, self.ddi_date_format)
-        return hbox
+    # def create_date_format(self):
+    #     self.ddi_date_format = LabelLineEdit('Date Format:')
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_date_format.label, self.ddi_date_format)
+    #     return hbox
 
-    def create_delimited_file_picker(self):
-        # self.file_picker_group_box = QGroupBox()
-        self.ddi_delimited_filename = LabelLineEdit('File Name:')
-        self.ddi_delimited_file_picker_button = QPushButton('&Load Data File')
-        self.ddi_delimited_file_picker_button.clicked.connect(self.load_data_file)
+    # def create_delimited_file_picker(self):
+    #     # self.file_picker_group_box = QGroupBox()
+    #     self.ddi_delimited_filename = LabelLineEdit('File Name:')
+    #     self.ddi_delimited_file_picker_button = QPushButton('&Load Data File')
+    #     self.ddi_delimited_file_picker_button.clicked.connect(self.load_data_file)
 
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_delimited_filename.label, self.ddi_delimited_filename, self.ddi_delimited_file_picker_button)
-        # self.file_picker_group_box.setLayout(hbox)
-        # return self.file_picker_group_box
-        return hbox
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_delimited_filename.label, self.ddi_delimited_filename, self.ddi_delimited_file_picker_button)
+    #     # self.file_picker_group_box.setLayout(hbox)
+    #     # return self.file_picker_group_box
+    #     return hbox
 
-    def create_delimiter(self):
-        # self.delimiter_group_box = QGroupBox()
-        self.ddi_delimiter_character = LabelLineEdit('Delimiter:')
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_delimiter_character.label, self.ddi_delimiter_character)
-        # self.delimiter_group_box.setLayout(hbox)
-        # return self.delimiter_group_box
-        return hbox
+    # def create_delimiter(self):
+    #     # self.delimiter_group_box = QGroupBox()
+    #     self.ddi_delimiter_character = LabelLineEdit('Delimiter:')
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_delimiter_character.label, self.ddi_delimiter_character)
+    #     # self.delimiter_group_box.setLayout(hbox)
+    #     # return self.delimiter_group_box
+    #     return hbox
 
-    def create_column_index(self):
-        # self.column_index_group_box = QGroupBox()
-        self.ddi_column_index = LabelLineEdit('Column Index:')
-        self.ddi_column_index.setInputMask('999')
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_column_index.label, self.ddi_column_index)
-        # self.column_index_group_box.setLayout(hbox)
-        # return self.column_index_group_box
-        return hbox
+    # def create_column_index(self):
+    #     # self.column_index_group_box = QGroupBox()
+    #     self.ddi_column_index = LabelLineEdit('Column Index:')
+    #     self.ddi_column_index.setInputMask('999')
+    #     hbox = QHBoxLayout()
+    #     hbox.setContentsMargins(0,0,0,0)
+    #     self.__wiggets_to_layout(hbox, self.ddi_column_index.label, self.ddi_column_index)
+    #     # self.column_index_group_box.setLayout(hbox)
+    #     # return self.column_index_group_box
+    #     return hbox
 
 
 
@@ -362,7 +367,7 @@ class Window(QWidget):
     def import_uj(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
         self.uj = UserJourney(filename[0])
-        self.uj_name.setText(self.uj.name)
+        self.uj_name.set_text(self.uj.name)
 
         ddi_nodes = []
         for ddi in self.uj.dditems:
@@ -392,99 +397,122 @@ class Window(QWidget):
 
     def show_ddi_details(self):
         selected_ddi_name = self.ddi_tree.selectedItems()[0].text(0)
-        self.ddi_name.setText(selected_ddi_name)
+        self.ddi_name.set_text(selected_ddi_name)
         self.selected_ddi = self.uj.find_ddi_by_name(selected_ddi_name)
 
-        self.ddi_description.setText(self.selected_ddi.description)
-        self.ddi_type.setCurrentText(DDI_TYPES[self.selected_ddi.type])
-        # self.shared_button_mapping[self.selected_ddi.scope].setChecked(1)
+        self.ddi_description.set_text(self.selected_ddi.description)
+        self.ddi_type.set_text(DDI_TYPES[self.selected_ddi.type])
+        print(self.shared_button_group.buttons, '>', self.selected_ddi.scope, '<', sep='')
         self.shared_button_group.set_text(self.selected_ddi.scope)
-        # self.refresh_button_mapping[self.selected_ddi.lifecycle].setChecked(1)
         self.refresh_button_group.set_text(self.selected_ddi.lifecycle)
 
         # Specific
-        ddi_specific_fields = [
-            self.ddi_date_offset,
-            self.ddi_date_starting_point,
-            self.ddi_date_format,
-            self.ddi_date_offset1_amount,
-            self.ddi_date_offset1_sign,
-            self.ddi_date_offset1_unit,
-            self.ddi_date_offset2_amount,
-            self.ddi_date_offset2_sign,
-            self.ddi_date_offset2_unit,
-            self.ddi_date_starting_fixed_edit,
-            self.ddi_date_starting_related_edit,
-            # self.ddi_date_offset_fixed,
-            # self.ddi_date_offset_none,
-            # self.ddi_date_offset_random,
-            # self.ddi_date_starting_fixed,
-            # self.ddi_date_starting_now,
-            # self.ddi_date_starting_related,
-            # self.ddi_date_starting_today,
-            self.ddi_value,
-            self.ddi_selector,
-            self.ddi_column_index,
-            self.ddi_delimited_filename,
-            self.ddi_delimited_file_picker_button,
-            self.ddi_delimiter_character,
 
-        ]
+        if isinstance(self.selected_ddi, ConstantDDI):
+            self.value_widget.show()
+            self.value_widget.set_text(self.selected_ddi.value)
+        else:
+            self.value_widget.hide()
 
-        ddi_type_mappings = {
-            ConstantDDI: {self.ddi_value: 'value'},
-            DateDDI: {
-                self.ddi_date_starting_point: 'starting_point',
-                self.ddi_date_starting_fixed_edit: 'starting_value',
-                self.ddi_date_starting_related_edit: 'starting_value',
-                self.ddi_date_offset: 'offset_type',
-                self.ddi_date_offset1_sign: 'first_offset_sign',
-                self.ddi_date_offset1_amount: 'first_offset_value',
-                self.ddi_date_offset1_unit: 'first_offset_unit',
-                self.ddi_date_offset2_sign: 'second_offset_sign',
-                self.ddi_date_offset2_amount: 'second_offset_value',
-                self.ddi_date_offset2_unit: 'second_offset_unit',
-                self.ddi_date_format: 'format',
-            },
-            DelimitedFileDDI: {self.ddi_delimited_filename: 'file_name', self.ddi_delimited_file_picker_button: 'None', self.ddi_column_index: 'column', self.ddi_delimiter_character: 'delimiter'},
-            ListDDI: {},
-            VariableDDI: {self.ddi_value: 'value'},
-            RelatedDDI: {self.ddi_column_index: 'column'},
-            ResponseDDI: {self.ddi_column_index: 'column'},
-            AutoCorrelatedDDI: {},
-            AutoIncrementDDI: {},
-        }
 
-        object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
-        # print('obj', object_attribute_pairs )
-        for field in ddi_specific_fields:
-            # print('field', field, 'keys', object_attribute_pairs.keys())
-            if field in object_attribute_pairs.keys():
-                value = ''
-                # if object_attribute_pairs[field] != None:
-                try:
-                    value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
-                except AttributeError:
-                    pass
-                field.set_text(value)
-                if value != '':
-                    field.show()
-            else:
-                # if isinstance(field, list):
-                #     # self.ddi_date_offset_button_mapping[self.selected_ddi.offset_type].setChecked(1)
-                #     field[getattr(self.selected_ddi, object_attribute_pairs[field])].setChecked(1)
-                # else:
-                #     field.set_text('')
-                #     field.hide()
 
-                # try:
-                #     field.set_text('')
-                #     field.hide()
-                # except AttributeError:
-                #     pass
-                if not isinstance(field, QPushButton):
-                    field.set_text('')
-                    field.hide()
+        # ddi_specific_fields = [
+        #     # self.ddi_date_offset,
+        #     # self.ddi_date_starting_point,
+        #     # self.ddi_date_format,
+        #     # self.ddi_date_offset1_amount,
+        #     # self.ddi_date_offset1_sign,
+        #     # self.ddi_date_offset1_unit,
+        #     # self.ddi_date_offset2_amount,
+        #     # self.ddi_date_offset2_sign,
+        #     # self.ddi_date_offset2_unit,
+        #     # self.ddi_date_starting_fixed_edit,
+        #     # self.ddi_date_starting_related_edit,
+        #     self.value_widget,
+        #     # self.ddi_selector,
+        #     # self.ddi_column_index,
+        #     # self.ddi_delimited_filename,
+        #     # self.ddi_delimited_file_picker_button,
+        #     # self.ddi_delimiter_character,
+        # ]
+
+        # print ('specific layout', self.ddi_specific_layout.children())
+        # # ddi_specific_field_layouts = [
+        # #     self.create_ddi_value(),
+        # #     self.create_ddi_selector(),
+        # #     self.create_ddi_date_fields(),
+        # #     self.create_delimited_file_picker(),
+        # #     self.create_column_index(),
+        # #     self.create_delimiter(),
+        # # ]
+
+        # ddi_type_mappings = {
+        #     # ConstantDDI: {'layout': '', 'vlaues': [(self.ddi_value, 'value')] },
+        #     ConstantDDI: {self.value_widget: 'value'},
+        #     DateDDI: {
+        #         # self.ddi_date_starting_point: 'starting_point',
+        #         # self.ddi_date_starting_fixed_edit: 'starting_value',
+        #         # self.ddi_date_starting_related_edit: 'starting_value',
+        #         # self.ddi_date_offset: 'offset_type',
+        #         # self.ddi_date_offset1_sign: 'first_offset_sign',
+        #         # self.ddi_date_offset1_amount: 'first_offset_value',
+        #         # self.ddi_date_offset1_unit: 'first_offset_unit',
+        #         # self.ddi_date_offset2_sign: 'second_offset_sign',
+        #         # self.ddi_date_offset2_amount: 'second_offset_value',
+        #         # self.ddi_date_offset2_unit: 'second_offset_unit',
+        #         # self.ddi_date_format: 'format',
+        #     },
+        #     DelimitedFileDDI: {
+        #         # self.ddi_delimited_filename: 'file_name', self.ddi_delimited_file_picker_button: 'None', self.ddi_column_index: 'column', self.ddi_delimiter_character: 'delimiter'
+        #     },
+        #     ListDDI: {},
+        #     # VariableDDI: {self.ddi_value: 'value'},
+        #     # RelatedDDI: {self.ddi_column_index: 'column'},
+        #     # ResponseDDI: {self.ddi_column_index: 'column'},
+        #     VariableDDI: {},
+        #     RelatedDDI: {},
+        #     ResponseDDI: {},
+        #     AutoCorrelatedDDI: {},
+        #     AutoIncrementDDI: {},
+        # }
+
+        # object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
+        # # print('obj', object_attribute_pairs )
+        # for field in ddi_specific_fields:
+        #     # print('field', field, 'keys', object_attribute_pairs.keys())
+        #     if field in object_attribute_pairs.keys():
+        #         value = ''
+        #         # if object_attribute_pairs[field] != None:
+        #         if object_attribute_pairs[field] == 'value':
+        #             self.ddi_specific_layout.addWidget(field)
+
+        #         else:
+
+        #             try:
+        #                 value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
+        #             except AttributeError:
+        #                 pass
+        #             field.set_text(value)
+        #             if value != '':
+        #                 field.show()
+        #     else:
+        #         # if isinstance(field, list):
+        #         #     # self.ddi_date_offset_button_mapping[self.selected_ddi.offset_type].setChecked(1)
+        #         #     field[getattr(self.selected_ddi, object_attribute_pairs[field])].setChecked(1)
+        #         # else:
+        #         #     field.set_text('')
+        #         #     field.hide()
+
+        #         # try:
+        #         #     field.set_text('')
+        #         #     field.hide()
+        #         # except AttributeError:
+        #         #     pass
+        #         if not isinstance(field, QPushButton):
+        #             self.ddi_specific_layout.removeWidget(field)
+        #             self.ddi_specific_layout.update()
+        #             # field.set_text('')
+        #             # field.hide()
 
 
 
