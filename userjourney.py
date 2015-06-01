@@ -100,12 +100,12 @@ class UserJourney():
                 return ddi
         return None
 
-    # def find_ddis_by_attribute(self, attrib, value):
-    #     result = []
-    #     for ddi in self.dditems:
-    #         if getattr(ddi, attrib) == value:
-    #             result.append(ddi)
-    #     return result
+    def find_ddis_by_attribute(self, attrib, value):
+        result = []
+        for ddi in self.dditems:
+            if getattr(ddi, attrib) == value:
+                result.append(ddi)
+        return result
 
     def list_step_names(self):
         return functools.reduce(lambda x,y: x+y, [z.list_step_names() for z in self. stepgroups])

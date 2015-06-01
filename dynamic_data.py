@@ -121,6 +121,8 @@ class ListDDI(DynamicDataItem):
         #     <ROW COLUMN0="5" COLUMN1="55" ROWNUM="1"/>
         # </TABLE>
         self.column = int(self.items['COLUMNID  '])
+
+        # self.table =  # this one gets initialized in the parent class
         # self.column_count = int(self.items['COLUMNSCNT'])  # this one gets initialized in the parent class
         # self.delimiter = self.items['DELIMITER ']
 

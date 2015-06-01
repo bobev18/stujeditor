@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
         # QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
 from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
     QGridLayout, QVBoxLayout, QHBoxLayout, QLayout,
-    QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem)
+    QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem)
 
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
@@ -46,6 +46,12 @@ class LabelComboBox(QWidget):
         self.layout.setContentsMargins(0,0,0,0)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.combo_box, stretch = 1)
+
+    def reset_items(self, items):
+        # if self.combo_box.count() > 0:
+        while self.combo_box.count() != 0:
+            self.combo_box.removeItem(0)
+        self.combo_box.addItems(items)
 
     def show(self):
         self.combo_box.show()
@@ -114,7 +120,7 @@ class OffsetRow(QWidget):
 
     def set_values(self, sign, amount, unit):
         self.sign.setCurrentText(sign)
-        self.amount.setText(amount)
+        self.amount.setText(str(amount))
         self.unit.setCurrentText(unit)
 
 
@@ -182,9 +188,6 @@ class DateFieldsGroup(QWidget):
         self.related_ddi_box.hide()
         self.offset1.hide()
         self.offset2.hide()
-        # self.toggle_fixed_value_edit()
-        # self.toggle_another_date_dropbox()
-        # self.toggle_offset_details()
 
     def set_values(self, starting_point, starting_fixed_edit, starting_related_ddi, offset, format_, sign1='', amount1='', unit1='', sign2='', amount2='', unit2=''):
         self.starting_point.set_text(starting_point)
@@ -195,6 +198,63 @@ class DateFieldsGroup(QWidget):
         self.offset1.set_values(sign1, amount1, unit1)
         self.offset2.set_values(sign2, amount2, unit2)
 
+class MyTableWidget(QWidget):
+    def __init__(self, items = [['']]):
+        super(MyTableWidget, self).__init__()
+        self.table = QTableWidget(len(items), len(items[0]))
+        self.add_row_button = QPushButton('Add Row')
+        self.add_row_button.clicked.connect(self.add_row)
+        self.delete_row_button = QPushButton('Delete Row')
+        self.delete_row_button.clicked.connect(self.delete_row)
+        self.add_column_button = QPushButton('Add Column')
+        self.add_column_button.clicked.connect(self.add_column)
+        self.delete_column_button = QPushButton('Delete Column')
+        self.delete_column_button.clicked.connect(self.delete_column)
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        hbox.addWidget(self.add_row_button)
+        hbox.addWidget(self.delete_row_button)
+        hbox.addWidget(self.add_column_button)
+        hbox.addWidget(self.delete_column_button)
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addLayout(hbox)
+        self.layout.addWidget(self.table)
+
+    def add_row(self):
+        self.table.setRowCount(self.table.rowCount()+1)
+
+    def delete_row(self):
+        self.table.removeRow(self.table.currentRow())
+
+    def add_column(self):
+        self.table.setColumnCount(self.table.columnCount()+1)
+
+    def delete_column(self):
+        self.table.removeColumn(self.table.currentColumn())
+
+    def show(self):
+        self.table.show()
+        self.add_row_button.show()
+        self.delete_row_button.show()
+        self.add_column_button.show()
+        self.delete_column_button.show()
+
+    def hide(self):
+        self.table.hide()
+        self.add_row_button.hide()
+        self.delete_row_button.hide()
+        self.add_column_button.hide()
+        self.delete_column_button.hide()
+
+    def set_values(self, items):
+        self.table.setRowCount(len(items))
+        self.table.setColumnCount(len(items[0]))
+        for i, row in enumerate(items):
+            for j, value in enumerate(row):
+                item = QTableWidgetItem(value)
+                self.table.setItem(i, j, item)
 
 class Window(QWidget):
     def __init__(self, parent=None):
@@ -259,39 +319,19 @@ class Window(QWidget):
     def create_common_ddi_details(self):
         group_box = QGroupBox()
         vbox = QVBoxLayout()
+        self.ddi_description = LabelLineEdit('Description')
+        type_name_layout = QHBoxLayout()
+        type_name_layout.setContentsMargins(0,0,0,0)
+        self.ddi_name = LabelLineEdit('DDI Name')
+        self.ddi_type = LabelComboBox('Type', DDI_TYPES.values())
+        self.__mix_to_layout(type_name_layout, self.ddi_type.layout, self.ddi_name.layout)
+        self.ddi_sharing = LabelButtonGroup('State Sharing', {'SCRIPT  ': '&Single User', 'THREAD  ': '&All Run Users'})
+        self.ddi_refresh = LabelButtonGroup('Refresh Condition', {'C': 'Every Cycle', 'R': 'Once per Run', 'T': 'Every Time', 'U': 'Once per User'})
         vbox.setContentsMargins(0,0,0,0)
-        self.__mix_to_layout(vbox, self.create_ddi_type_and_name(), self.create_ddi_description(), self.create_ddi_shared(), self.create_ddi_refresh())
+        self.__mix_to_layout(vbox, type_name_layout, self.ddi_description.layout, self.ddi_sharing.layout, self.ddi_refresh.layout)
         group_box.setLayout(vbox)
         return group_box
 
-    def create_ddi_description(self):
-        self.ddi_description = LabelLineEdit('Description')
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        hbox.addLayout(self.ddi_description.layout)
-        return hbox
-
-    def create_ddi_type_and_name(self):
-        self.ddi_name = LabelLineEdit('DDI Name')
-        self.ddi_type = LabelComboBox('Type', DDI_TYPES.values())
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        self.__mix_to_layout(hbox, self.ddi_type.layout, self.ddi_name.layout)
-        return hbox
-
-    def create_ddi_shared(self):
-        self.shared_button_group = LabelButtonGroup('State Sharing', {'SCRIPT  ': '&Single User', 'THREAD  ': '&All Run Users'})
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        hbox.addLayout(self.shared_button_group.layout)
-        return hbox
-
-    def create_ddi_refresh(self):
-        self.refresh_button_group = LabelButtonGroup('Refresh Condition', {'C': 'Every Cycle', 'R': 'Once per Run', 'T': 'Every Time', 'U': 'Once per User'})
-        hbox = QHBoxLayout()
-        hbox.setContentsMargins(0,0,0,0)
-        hbox.addLayout(self.refresh_button_group.layout)
-        return hbox
 
     # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
     def create_specific_ddi_details(self):
@@ -324,150 +364,14 @@ class Window(QWidget):
         self.ddi_column_index_widget.line_edit.setInputMask('999')
         self.ddi_specific_layout.addLayout(self.ddi_column_index_widget.layout)
 
+        self.ddi_list_table = MyTableWidget()
+        self.ddi_specific_layout.addLayout(self.ddi_list_table.layout)
+
+
 
 
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
-
-
-
-    # def create_ddi_date_fields(self):
-    #     # self.date_group_box = QGroupBox()
-    #     vbox = QVBoxLayout()
-    #     vbox.setContentsMargins(0,0,0,0)
-    #     self.__mix_to_layout(vbox, self.create_date_starting_point(), self.create_date_fixed_edit(), self.create_date_offset_selector(),
-    #                              self.create_date_offset_box1(), self.create_date_offset_box2(), self.create_date_format())
-    #     # self.date_group_box.setLayout(vbox)
-    #     # return self.date_group_box
-    #     return vbox
-
-    # def create_date_starting_point(self):
-    #     # group_box = QGroupBox('Starting Point:')
-
-    #     self.ddi_date_starting_now = QRadioButton('Now')
-    #     self.ddi_date_starting_today = QRadioButton('Today')
-    #     self.ddi_date_starting_fixed = QRadioButton('Fixed Value')
-    #     self.ddi_date_starting_related = QRadioButton('Another Date DDI')
-    #     date_starting_button_mapping = {'now': self.ddi_date_starting_now, 'today': self.ddi_date_starting_today,
-    #                                          'fixed value': self.ddi_date_starting_fixed, 'another date': self.ddi_date_starting_related}
-
-    #     self.ddi_date_starting_point = MyButtonGroup(date_starting_button_mapping)
-    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_now)
-    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_today)
-    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_fixed)
-    #     self.ddi_date_starting_point.addButton(self.ddi_date_starting_related)
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_date_starting_now, self.ddi_date_starting_today, self.ddi_date_starting_fixed, self.ddi_date_starting_related)
-    #     # group_box.setLayout(hbox)
-    #     # return group_box
-    #     return hbox
-
-    # def create_date_fixed_edit(self):
-    #     self.ddi_date_starting_fixed_edit = LabelLineEdit('Fixed Date:')
-    #     self.ddi_date_starting_related_edit = LabelComboBox('Another DDI:')
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_date_starting_fixed_edit.label, self.ddi_date_starting_fixed_edit, self.ddi_date_starting_related_edit.label, self.ddi_date_starting_related_edit)
-    #     return hbox
-
-    # def create_date_offset_selector(self):
-    #     # group_box = QGroupBox('Offset:')
-
-    #     self.ddi_date_offset_none = QRadioButton('None')
-    #     self.ddi_date_offset_fixed = QRadioButton('Fixed')
-    #     self.ddi_date_offset_random = QRadioButton('Random')
-    #     ddi_date_offset_button_mapping = {'none': self.ddi_date_offset_none, 'fixed': self.ddi_date_offset_fixed, 'random': self.ddi_date_offset_random}
-
-    #     self.ddi_date_offset = MyButtonGroup(ddi_date_offset_button_mapping)
-    #     self.ddi_date_offset.addButton(self.ddi_date_offset_none)
-    #     self.ddi_date_offset.addButton(self.ddi_date_offset_fixed)
-    #     self.ddi_date_offset.addButton(self.ddi_date_offset_random)
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_date_offset_none, self.ddi_date_offset_fixed, self.ddi_date_offset_random)
-    #     # group_box.setLayout(hbox)
-    #     # return group_box
-    #     return hbox
-
-    # def create_date_offset_box1(self):
-    #     # self.offset1_group_box = QGroupBox()
-
-    #     self.ddi_date_offset1_sign = LabelComboBox('')
-    #     self.ddi_date_offset1_sign.addItems(['+', '-'])
-    #     self.ddi_date_offset1_amount = LabelLineEdit('')
-    #     self.ddi_date_offset1_amount.setInputMask('99999999')
-    #     self.ddi_date_offset1_unit = LabelComboBox('')
-    #     self.ddi_date_offset1_unit.addItems(['sec', 'min', 'hrs', 'day'])
-
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_date_offset1_sign, self.ddi_date_offset1_amount, self.ddi_date_offset1_unit)
-    #     # self.offset1_group_box.setLayout(hbox)
-    #     # return self.offset1_group_box
-    #     return hbox
-
-    # def create_date_offset_box2(self):
-    #     # self.offset2_group_box = QGroupBox()
-
-    #     self.ddi_date_offset2_sign = LabelComboBox('')
-    #     self.ddi_date_offset2_sign.addItems(['+', '-'])
-    #     self.ddi_date_offset2_amount = LabelLineEdit('')
-    #     self.ddi_date_offset2_amount.setInputMask('99999999')
-    #     self.ddi_date_offset2_unit = LabelComboBox('')
-    #     self.ddi_date_offset2_unit.addItems(['sec', 'min', 'hrs', 'day'])
-
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_date_offset2_sign, self.ddi_date_offset2_amount, self.ddi_date_offset2_unit)
-    #     # self.offset2_group_box.setLayout(hbox)
-    #     # return self.offset2_group_box
-    #     return hbox
-
-    # def create_date_format(self):
-    #     self.ddi_date_format = LabelLineEdit('Date Format:')
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_date_format.label, self.ddi_date_format)
-    #     return hbox
-
-
-
-    # def create_delimited_file_picker(self):
-    #     # self.file_picker_group_box = QGroupBox()
-    #     self.ddi_delimited_filename = LabelLineEdit('File Name:')
-    #     self.ddi_delimited_file_picker_button = QPushButton('&Load Data File')
-    #     self.ddi_delimited_file_picker_button.clicked.connect(self.load_data_file)
-
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_delimited_filename.label, self.ddi_delimited_filename, self.ddi_delimited_file_picker_button)
-    #     # self.file_picker_group_box.setLayout(hbox)
-    #     # return self.file_picker_group_box
-    #     return hbox
-
-    # def create_delimiter(self):
-    #     # self.delimiter_group_box = QGroupBox()
-    #     self.ddi_delimiter_character = LabelLineEdit('Delimiter:')
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_delimiter_character.label, self.ddi_delimiter_character)
-    #     # self.delimiter_group_box.setLayout(hbox)
-    #     # return self.delimiter_group_box
-    #     return hbox
-
-    # def create_column_index(self):
-    #     # self.column_index_group_box = QGroupBox()
-    #     self.ddi_column_index = LabelLineEdit('Column Index:')
-    #     self.ddi_column_index.setInputMask('999')
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_column_index.label, self.ddi_column_index)
-    #     # self.column_index_group_box.setLayout(hbox)
-    #     # return self.column_index_group_box
-    #     return hbox
-
-
 
 
 # ------------------------------------------------------ end of creations ----------------------------------------------------------
@@ -493,6 +397,10 @@ class Window(QWidget):
             ddi_nodes.append(new_ddi_node)
 
         self.ddi_tree.addTopLevelItems(ddi_nodes)
+
+        date_type_ddis = self.uj.find_ddis_by_attribute('type', 'DATE    ')
+        if date_type_ddis:
+            self.ddi_date.related_ddi_box.reset_items([z.name for z in date_type_ddis])
 
         groupnodes = []
         for stepgroup in self.uj.stepgroups:
@@ -520,8 +428,8 @@ class Window(QWidget):
         self.ddi_name.set_text(selected_ddi_name)
         self.ddi_description.set_text(self.selected_ddi.description)
         self.ddi_type.set_text(DDI_TYPES[self.selected_ddi.type])
-        self.shared_button_group.set_text(self.selected_ddi.scope)
-        self.refresh_button_group.set_text(self.selected_ddi.lifecycle)
+        self.ddi_sharing.set_text(self.selected_ddi.scope)
+        self.ddi_refresh.set_text(self.selected_ddi.lifecycle)
 
         # Specific
         ddi_specific_fields = [
@@ -532,6 +440,7 @@ class Window(QWidget):
             self.ddi_delimited_file_picker_button,
             self.ddi_column_index_widget,
             self.ddi_date,
+            self.ddi_list_table,
         ]
 
         ddi_type_mappings = {
@@ -558,7 +467,7 @@ class Window(QWidget):
                 self.ddi_column_index_widget: 'column',
                 self.ddi_selector_widget: 'selection_type',
             },
-            ListDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column'},
+            ListDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_list_table: ['table']},
             VariableDDI: {self.ddi_value_widget: 'value'},
             # RelatedDDI: {self.ddi_column_index: 'column'},
             # ResponseDDI: {self.ddi_column_index: 'column'},
@@ -584,7 +493,8 @@ class Window(QWidget):
                     values =[]
                     for attribute in target_attribute_name:
                         try:
-                            values.append(str(getattr(self.selected_ddi, attribute)))
+                            # values.append(str(getattr(self.selected_ddi, attribute)))
+                            values.append(getattr(self.selected_ddi, attribute))
                         except AttributeError:
                             pass
                         # print('values', values)
