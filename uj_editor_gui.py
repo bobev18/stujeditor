@@ -82,9 +82,7 @@ class LabelButtonGroup(QWidget):
             button.hide()
 
     def set_text(self, key):
-        print('key:', key, end='')
         if key != '':
-            if len(key)>1: print('', self.buttons[key])
             self.buttons[key].setChecked(1)
 
 
@@ -103,9 +101,9 @@ class Window(QWidget):
         self.resize(1280, 640)
         # self.create_actions()
 
-    def __wiggets_to_layout(self, layout, *widgets):
-        for widget in widgets:
-            layout.addWidget(widget)
+    # def __wiggets_to_layout(self, layout, *widgets):
+    #     for widget in widgets:
+    #         layout.addWidget(widget)
 
     def __mix_to_layout(self, layout, *mix):
         for item in mix:
@@ -123,7 +121,7 @@ class Window(QWidget):
         self.uj_name = LabelLineEdit('UJ Name')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, import_button, export_button, self.uj_name.label, self.uj_name)
+        self.__mix_to_layout(hbox, import_button, export_button, self.uj_name.layout)
         group_box.setLayout(hbox)
 
         return group_box
@@ -146,7 +144,7 @@ class Window(QWidget):
 
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__wiggets_to_layout(hbox, self.ddi_tree, ddi_details, self.step_tree, step_details)
+        self.__mix_to_layout(hbox, self.ddi_tree, ddi_details, self.step_tree, step_details)
         group_box.setLayout(hbox)
         return group_box
 
@@ -193,20 +191,17 @@ class Window(QWidget):
         self.ddi_specific_layout = QVBoxLayout()
         self.ddi_specific_layout.setContentsMargins(0,0,0,0)
         # self.value_layout = self.create_ddi_value()
-        self.value_widget = LabelLineEdit('Value')
-        # self.ddi_specific_layout.addWidget(self.value_widget)
-        self.ddi_specific_layout.addLayout(self.value_widget.layout)
+        self.ddi_value_widget = LabelLineEdit('Value')
+        self.ddi_selector_widget = LabelComboBox('Selector', SELECTOR_TYPES.values())
+        # self.ddi_specific_layout.addWidget(self.ddi_value_widget)
+        self.ddi_specific_layout.addLayout(self.ddi_value_widget.layout)
+        self.ddi_specific_layout.addLayout(self.ddi_selector_widget.layout)
         # self.__mix_to_layout(self.ddi_specific_layout, self.value_layout)
         # self.__mix_to_layout(self.ddi_specific_layout, self.value_layout, self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(),
                                  # self.create_column_index(), self.create_delimiter())
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
 
-    # def create_ddi_value(self):
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_value.label, self.ddi_value)
-    #     return hbox
 
     # def create_ddi_selector(self):
     #     self.ddi_selector = LabelComboBox('Selector')
@@ -402,17 +397,23 @@ class Window(QWidget):
 
         self.ddi_description.set_text(self.selected_ddi.description)
         self.ddi_type.set_text(DDI_TYPES[self.selected_ddi.type])
-        print(self.shared_button_group.buttons, '>', self.selected_ddi.scope, '<', sep='')
         self.shared_button_group.set_text(self.selected_ddi.scope)
         self.refresh_button_group.set_text(self.selected_ddi.lifecycle)
 
         # Specific
 
         if isinstance(self.selected_ddi, ConstantDDI):
-            self.value_widget.show()
-            self.value_widget.set_text(self.selected_ddi.value)
+            self.ddi_value_widget.show()
+            self.ddi_value_widget.set_text(self.selected_ddi.value)
         else:
-            self.value_widget.hide()
+            self.ddi_value_widget.hide()
+
+        if isinstance(self.selected_ddi, ListDDI):
+            self.ddi_selector_widget.show()
+            self.ddi_selector_widget.set_text(self.selected_ddi.selection_type)
+        else:
+            self.ddi_selector_widget.hide()
+
 
 
 
