@@ -22,7 +22,7 @@ class LabelLineEdit(QWidget):
         self.label = QLabel()
         self.label.setText(label)
         self.layout.addWidget(self.label)
-        self.layout.addWidget(self.line_edit)
+        self.layout.addWidget(self.line_edit, stretch = 1)
 
     def show(self):
         self.line_edit.show()
@@ -45,7 +45,7 @@ class LabelComboBox(QWidget):
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
         self.layout.addWidget(self.label)
-        self.layout.addWidget(self.combo_box)
+        self.layout.addWidget(self.combo_box, stretch = 1)
 
     def show(self):
         self.combo_box.show()
@@ -196,6 +196,23 @@ class Window(QWidget):
         # self.ddi_specific_layout.addWidget(self.ddi_value_widget)
         self.ddi_specific_layout.addLayout(self.ddi_value_widget.layout)
         self.ddi_specific_layout.addLayout(self.ddi_selector_widget.layout)
+
+        self.ddi_delimiter_character_widget = LabelLineEdit('Delimiter:')
+        self.ddi_delimiter_character_widget.line_edit.setMaxLength(1)
+        self.ddi_delimited_filename_widget = LabelLineEdit('File Name:')
+        self.ddi_delimited_file_picker_button = QPushButton('&Load Data File')
+        self.ddi_delimited_file_picker_button.clicked.connect(self.load_data_file)
+        delimited_layout = QHBoxLayout()
+        delimited_layout.setContentsMargins(0,0,0,0)
+        delimited_layout.addLayout(self.ddi_delimiter_character_widget.layout, stretch = 0)
+        delimited_layout.addLayout(self.ddi_delimited_filename_widget.layout, stretch = 2)
+        delimited_layout.addWidget(self.ddi_delimited_file_picker_button, stretch = 1)
+        self.ddi_specific_layout.addLayout(delimited_layout)
+
+        self.ddi_column_index_widget = LabelLineEdit('Column Index:')
+        self.ddi_column_index_widget.line_edit.setInputMask('999')
+        self.ddi_specific_layout.addLayout(self.ddi_column_index_widget.layout)
+
         # self.__mix_to_layout(self.ddi_specific_layout, self.value_layout)
         # self.__mix_to_layout(self.ddi_specific_layout, self.value_layout, self.create_ddi_selector(), self.create_ddi_date_fields(), self.create_delimited_file_picker(),
                                  # self.create_column_index(), self.create_delimiter())
@@ -203,13 +220,6 @@ class Window(QWidget):
         return group_box
 
 
-    # def create_ddi_selector(self):
-    #     self.ddi_selector = LabelComboBox('Selector')
-    #     self.ddi_selector.addItems(SELECTOR_TYPES.values())
-    #     hbox = QHBoxLayout()
-    #     hbox.setContentsMargins(0,0,0,0)
-    #     self.__wiggets_to_layout(hbox, self.ddi_selector.label, self.ddi_selector)
-    #     return hbox
 
     # def create_ddi_date_fields(self):
     #     # self.date_group_box = QGroupBox()
@@ -311,6 +321,8 @@ class Window(QWidget):
     #     self.__wiggets_to_layout(hbox, self.ddi_date_format.label, self.ddi_date_format)
     #     return hbox
 
+
+
     # def create_delimited_file_picker(self):
     #     # self.file_picker_group_box = QGroupBox()
     #     self.ddi_delimited_filename = LabelLineEdit('File Name:')
@@ -356,7 +368,7 @@ class Window(QWidget):
 
     def load_data_file(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
-        self.ddi_delimited_filename.setText(filename[0])
+        self.ddi_delimited_filename_widget.set_text(filename[0])
         self.selected_ddi.file_name = filename
 
     def import_uj(self):
@@ -401,198 +413,61 @@ class Window(QWidget):
         self.refresh_button_group.set_text(self.selected_ddi.lifecycle)
 
         # Specific
-
-        if isinstance(self.selected_ddi, ConstantDDI):
-            self.ddi_value_widget.show()
-            self.ddi_value_widget.set_text(self.selected_ddi.value)
-        else:
-            self.ddi_value_widget.hide()
-
-        if isinstance(self.selected_ddi, ListDDI):
-            self.ddi_selector_widget.show()
-            self.ddi_selector_widget.set_text(self.selected_ddi.selection_type)
-        else:
-            self.ddi_selector_widget.hide()
+        ddi_specific_fields = [
+            self.ddi_value_widget,
+            self.ddi_selector_widget,
+            self.ddi_delimiter_character_widget,
+            self.ddi_delimited_filename_widget,
+            self.ddi_delimited_file_picker_button,
+            self.ddi_column_index_widget
+        ]
 
 
+        ddi_type_mappings = {
+            ConstantDDI: {self.ddi_value_widget: 'value'},
+            DateDDI: {
+                # self.ddi_date_starting_point: 'starting_point',
+                # self.ddi_date_starting_fixed_edit: 'starting_value',
+                # self.ddi_date_starting_related_edit: 'starting_value',
+                # self.ddi_date_offset: 'offset_type',
+                # self.ddi_date_offset1_sign: 'first_offset_sign',
+                # self.ddi_date_offset1_amount: 'first_offset_value',
+                # self.ddi_date_offset1_unit: 'first_offset_unit',
+                # self.ddi_date_offset2_sign: 'second_offset_sign',
+                # self.ddi_date_offset2_amount: 'second_offset_value',
+                # self.ddi_date_offset2_unit: 'second_offset_unit',
+                # self.ddi_date_format: 'format',
+            },
+            DelimitedFileDDI: {
+                self.ddi_delimiter_character_widget: 'delimiter',
+                self.ddi_delimited_filename_widget: 'file_name',
+                self.ddi_delimited_file_picker_button: '',
+                self.ddi_column_index_widget: 'column',
+                self.ddi_selector_widget: 'selection_type',
+            },
+            ListDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column'},
+            VariableDDI: {self.ddi_value_widget: 'value'},
+            # RelatedDDI: {self.ddi_column_index: 'column'},
+            # ResponseDDI: {self.ddi_column_index: 'column'},
+            VariableDDI: {},
+            RelatedDDI: {},
+            ResponseDDI: {},
+            AutoCorrelatedDDI: {},
+            AutoIncrementDDI: {},
+        }
 
+        object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
+        # print('obj', object_attribute_pairs )
+        for field in ddi_specific_fields:
+            # print('field', field, 'keys', object_attribute_pairs.keys())
+            if field in object_attribute_pairs.keys():
+                field.show()
+                if object_attribute_pairs[field] != '':
+                    value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
+                    field.set_text(value)
 
-        # ddi_specific_fields = [
-        #     # self.ddi_date_offset,
-        #     # self.ddi_date_starting_point,
-        #     # self.ddi_date_format,
-        #     # self.ddi_date_offset1_amount,
-        #     # self.ddi_date_offset1_sign,
-        #     # self.ddi_date_offset1_unit,
-        #     # self.ddi_date_offset2_amount,
-        #     # self.ddi_date_offset2_sign,
-        #     # self.ddi_date_offset2_unit,
-        #     # self.ddi_date_starting_fixed_edit,
-        #     # self.ddi_date_starting_related_edit,
-        #     self.value_widget,
-        #     # self.ddi_selector,
-        #     # self.ddi_column_index,
-        #     # self.ddi_delimited_filename,
-        #     # self.ddi_delimited_file_picker_button,
-        #     # self.ddi_delimiter_character,
-        # ]
-
-        # print ('specific layout', self.ddi_specific_layout.children())
-        # # ddi_specific_field_layouts = [
-        # #     self.create_ddi_value(),
-        # #     self.create_ddi_selector(),
-        # #     self.create_ddi_date_fields(),
-        # #     self.create_delimited_file_picker(),
-        # #     self.create_column_index(),
-        # #     self.create_delimiter(),
-        # # ]
-
-        # ddi_type_mappings = {
-        #     # ConstantDDI: {'layout': '', 'vlaues': [(self.ddi_value, 'value')] },
-        #     ConstantDDI: {self.value_widget: 'value'},
-        #     DateDDI: {
-        #         # self.ddi_date_starting_point: 'starting_point',
-        #         # self.ddi_date_starting_fixed_edit: 'starting_value',
-        #         # self.ddi_date_starting_related_edit: 'starting_value',
-        #         # self.ddi_date_offset: 'offset_type',
-        #         # self.ddi_date_offset1_sign: 'first_offset_sign',
-        #         # self.ddi_date_offset1_amount: 'first_offset_value',
-        #         # self.ddi_date_offset1_unit: 'first_offset_unit',
-        #         # self.ddi_date_offset2_sign: 'second_offset_sign',
-        #         # self.ddi_date_offset2_amount: 'second_offset_value',
-        #         # self.ddi_date_offset2_unit: 'second_offset_unit',
-        #         # self.ddi_date_format: 'format',
-        #     },
-        #     DelimitedFileDDI: {
-        #         # self.ddi_delimited_filename: 'file_name', self.ddi_delimited_file_picker_button: 'None', self.ddi_column_index: 'column', self.ddi_delimiter_character: 'delimiter'
-        #     },
-        #     ListDDI: {},
-        #     # VariableDDI: {self.ddi_value: 'value'},
-        #     # RelatedDDI: {self.ddi_column_index: 'column'},
-        #     # ResponseDDI: {self.ddi_column_index: 'column'},
-        #     VariableDDI: {},
-        #     RelatedDDI: {},
-        #     ResponseDDI: {},
-        #     AutoCorrelatedDDI: {},
-        #     AutoIncrementDDI: {},
-        # }
-
-        # object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
-        # # print('obj', object_attribute_pairs )
-        # for field in ddi_specific_fields:
-        #     # print('field', field, 'keys', object_attribute_pairs.keys())
-        #     if field in object_attribute_pairs.keys():
-        #         value = ''
-        #         # if object_attribute_pairs[field] != None:
-        #         if object_attribute_pairs[field] == 'value':
-        #             self.ddi_specific_layout.addWidget(field)
-
-        #         else:
-
-        #             try:
-        #                 value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
-        #             except AttributeError:
-        #                 pass
-        #             field.set_text(value)
-        #             if value != '':
-        #                 field.show()
-        #     else:
-        #         # if isinstance(field, list):
-        #         #     # self.ddi_date_offset_button_mapping[self.selected_ddi.offset_type].setChecked(1)
-        #         #     field[getattr(self.selected_ddi, object_attribute_pairs[field])].setChecked(1)
-        #         # else:
-        #         #     field.set_text('')
-        #         #     field.hide()
-
-        #         # try:
-        #         #     field.set_text('')
-        #         #     field.hide()
-        #         # except AttributeError:
-        #         #     pass
-        #         if not isinstance(field, QPushButton):
-        #             self.ddi_specific_layout.removeWidget(field)
-        #             self.ddi_specific_layout.update()
-        #             # field.set_text('')
-        #             # field.hide()
-
-
-
-        # if self.selected_ddi.selection_type in SELECTOR_TYPES.keys():
-        #     self.ddi_selector.show()
-        #     # self.ddi_selector_label.show()
-        #     self.ddi_selector.setCurrentText(SELECTOR_TYPES[self.selected_ddi.selection_type])
-        # else:
-        #     self.ddi_selector.hide()
-        #     # self.ddi_selector_label.hide()
-
-        # if 'VALUE     ' in self.selected_ddi.items.keys():
-        #     self.ddi_value.show()
-        #     # self.ddi_value_label.show()
-        #     self.ddi_value.setText(self.selected_ddi.items['VALUE     '])
-        # else:
-        #     self.ddi_value.setText('')
-        #     self.ddi_value.hide()
-        #     # self.ddi_value_label.hide()
-
-
-        # self.ddi_date_starting_fixed.hide()
-        # self.ddi_date_starting_related.hide()
-        # self.offset1_group_box.hide()
-        # self.offset2_group_box.hide()
-        # self.date_group_box.hide()
-        # if isinstance(self.selected_ddi, DateDDI):
-        #     self.date_group_box.show()
-        #     self.date_starting_button_mapping[self.selected_ddi.starting_point].setChecked(1)
-        #     self.ddi_date_offset_button_mapping[self.selected_ddi.offset_type].setChecked(1)
-        #     self.ddi_date_format.setText(self.selected_ddi.format)
-
-        #     if self.selected_ddi.starting_point == 'fixed value':
-        #         self.ddi_date_starting_fixed.show()
-        #     if self.selected_ddi.starting_point == 'another date':
-        #         self.ddi_date_starting_related.show()
-
-        #     if self.selected_ddi.offset_type != 'none':
-        #         self.offset1_group_box.show()
-        #         self.ddi_date_offset1_sign.setCurrentText(self.selected_ddi.first_offset_sign)
-        #         self.ddi_date_offset1_amount.setText(str(self.selected_ddi.first_offset_value))
-        #         self.ddi_date_offset1_unit.setCurrentText(self.selected_ddi.first_offset_unit[:-3])
-
-        #     if self.selected_ddi.offset_type == 'random':
-        #         self.offset2_group_box.show()
-        #         self.ddi_date_offset2_sign.setCurrentText(self.selected_ddi.second_offset_sign)
-        #         self.ddi_date_offset2_amount.setText(str(self.selected_ddi.second_offset_value))
-        #         self.ddi_date_offset2_unit.setCurrentText(self.selected_ddi.second_offset_unit[:-3])
-
-
-        # else:
-        #     self.ddi_date_starting_point.setExclusive(False)
-        #     self.ddi_date_offset.setExclusive(False)
-        #     [ z.setChecked(False) for z in self.date_starting_button_mapping.values() ]
-        #     [ z.setChecked(False) for z in self.ddi_date_offset_button_mapping.values() ]
-        #     self.ddi_date_starting_point.setExclusive(True)
-        #     self.ddi_date_offset.setExclusive(True)
-        #     self.ddi_date_format.setText('')
-
-        # self.file_picker_group_box.hide()
-        # self.column_index_group_box.hide()
-        # self.delimiter_group_box.hide()
-        # if isinstance(self.selected_ddi, DelimitedFileDDI):
-        #     self.ddi_delimited_filename.setText(self.selected_ddi.file_name)
-        #     self.ddi_column_index.setText(str(self.selected_ddi.column))
-        #     self.ddi_delimiter_character.setText(self.selected_ddi.delimiter)
-        #     self.file_picker_group_box.show()
-        #     self.column_index_group_box.show()
-        #     self.delimiter_group_box.show()
-
-
-
-
-        # for item in element.findall(SCHEME_PREFIX+'ITEM'):
-        #    - VALUE
-        #    -
-        # self.existing = bool(element.get('EXISTING'))
-        # self.valid = bool(element.get('VALID'))
-        # for siphon in siphons_element.findall(SCHEME_PREFIX+'SIPHON'):
+            else:
+                field.hide()
 
 
 
