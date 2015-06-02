@@ -8,7 +8,7 @@ from PyQt5.QtCore import Qt
         # QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
 from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
     QGridLayout, QVBoxLayout, QHBoxLayout, QLayout,
-    QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem)
+    QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QPlainTextEdit)
 
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
@@ -20,6 +20,7 @@ class Window(QWidget):
         grid = QGridLayout()
         grid.addWidget(self.create_top_group(), 0, 0)
         grid.addWidget(self.create_mid_group(), 1, 0)
+        grid.addWidget(self.create_bottom_group(), 2, 0)
         self.setLayout(grid)
 
         self.setWindowTitle("UJ Editor")
@@ -70,6 +71,15 @@ class Window(QWidget):
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
         self.__mix_to_layout(hbox, self.ddi_tree, ddi_details, self.step_tree, step_details)
+        group_box.setLayout(hbox)
+        return group_box
+
+    def create_bottom_group(self):
+        group_box = QGroupBox()
+        self.debug_edit = QPlainTextEdit()
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        hbox.addWidget(self.debug_edit)
         group_box.setLayout(hbox)
         return group_box
 
@@ -136,6 +146,9 @@ class Window(QWidget):
     # def create_actions(self):
     #     self.import_act = QAction("&Import...", self, shortcut="Ctrl+I", triggered=self.import_uj)
     #     self.export_act = QAction("&Export...", self, shortcut="Ctrl+E", triggered=self.export_uj)
+
+    def debug__(self, message):
+        self.debug_edit.appendPlainText(message)
 
     def load_data_file(self):
         filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
@@ -239,6 +252,7 @@ class Window(QWidget):
         object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
         # print('obj', object_attribute_pairs )
         for field in ddi_specific_fields:
+            debug_message = ''
             # print('field', field, 'keys', object_attribute_pairs.keys())
             if field in object_attribute_pairs.keys():
                 field.show()
@@ -247,6 +261,10 @@ class Window(QWidget):
                     if target_attribute_name != '':
                         value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
                         field.set_text(value)
+
+                        # --- debug ---
+                        if field == self.ddi_value_widget:
+                            debug_message += 'field: '+str(field)+'; local value: '+ str(value) + '\n'
                 else:
                     values =[]
                     for attribute in target_attribute_name:
@@ -263,6 +281,11 @@ class Window(QWidget):
 
             else:
                 field.hide()
+
+            # --- debug ---
+            if field == self.ddi_value_widget:
+                debug_message += 'object value: ' + self.ddi_value_widget.line_edit.text() + '; visibility: ' + str(self.ddi_value_widget.line_edit.isVisible()) + '\n'
+                self.debug__(debug_message)
 
 
 

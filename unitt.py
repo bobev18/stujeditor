@@ -236,6 +236,8 @@ class UITest(unittest.TestCase):
         self.assertNotEqual(self.window.ddi_value_widget.line_edit.text(), '0')
         const_ddi = self.window.ddi_tree.findItems('const', Qt.MatchExactly)[0]
         self.window.ddi_tree.setCurrentItem(const_ddi)
+        print(self.window.ddi_tree.selectedItems())
+        print(self.window.ddi_tree.selectedItems()[0].text(0))
         self.assertEqual(self.window.ddi_value_widget.line_edit.text(), '0')
         self.assertTrue(self.window.ddi_value_widget.line_edit.isVisible())
 
