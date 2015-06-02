@@ -43,11 +43,10 @@ with open(file_name, 'w') as xml_file:
 
 - seems like good code structure: https://github.com/baoboa/pyqt5/blob/master/examples/widgets/groupbox.py
 
-- The py file with the GUI has become over 500 lines - should split that in lib/module
 - I should find, learn and utilize PyQt's unit testing
 
 ### BUGS:
-
+- trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
 
 
 

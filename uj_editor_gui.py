@@ -39,14 +39,14 @@ class Window(QWidget):
 
     def create_top_group(self):
         group_box = QGroupBox()
-        import_button = QPushButton('&Import UJ')
-        import_button.clicked.connect(self.import_uj)
+        self.import_button = QPushButton('&Import UJ')
+        self.import_button.clicked.connect(self.import_uj)
         export_button = QPushButton('&Export UJ')
         export_button.clicked.connect(self.export_uj)
         self.uj_name = LabelLineEdit('UJ Name')
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__mix_to_layout(hbox, import_button, export_button, self.uj_name.layout)
+        self.__mix_to_layout(hbox, self.import_button, export_button, self.uj_name.layout)
         group_box.setLayout(hbox)
 
         return group_box
@@ -142,8 +142,9 @@ class Window(QWidget):
         self.ddi_delimited_filename_widget.set_text(filename[0])
         self.selected_ddi.file_name = filename
 
-    def import_uj(self):
-        filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
+    def import_uj(self, filename=[]):
+        if not filename:
+            filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
         self.uj = UserJourney(filename[0])
         self.uj_name.set_text(self.uj.name)
 
@@ -275,6 +276,6 @@ if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
-    clock = Window()
-    clock.show()
+    form = Window()
+    form.show()
     sys.exit(app.exec_())

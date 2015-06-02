@@ -1,13 +1,18 @@
-import unittest
+import unittest, sys
 from userjourney import UserJourney, DDINameException
 from step import StepNameException
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtTest import QTest
+from PyQt5.QtWidgets import QApplication
+
+from uj_editor_gui import Window
 
 DDI_LIST = ["Build Date", "csrftoken", "Cycle Success", "Friendly Name", "Homepage", "loginstamp", "pageseqnum", "Password", "PO Code", "PO Description", "PO Number", "uisessionid", "Update Purchase Order ID 1", "Update Purchase Order ID 10", "Update Purchase Order ID 11", "Update Purchase Order ID 12", "Update Purchase Order ID 13", "Update Purchase Order ID 14", "Update Purchase Order ID 15", "Update Purchase Order ID 16", "Update Purchase Order ID 17", "Update Purchase Order ID 18", "Update Purchase Order ID 2", "Update Purchase Order ID 20", "Update Purchase Order ID 21", "Update Purchase Order ID 22", "Update Purchase Order ID 23", "Update Purchase Order ID 24", "Update Purchase Order ID 25", "Update Purchase Order ID 26", "Update Purchase Order ID 3", "Update Purchase Order ID 4", "Update Purchase Order ID 5", "Update Purchase Order ID 6", "Update Purchase Order ID 7", "Update Purchase Order ID 8", "Update Purchase Order ID 9", "Update Purchase Order ID 9b", "Username", "xhrseqnum"]
 STEP_LIST = ['Home Page', 'Login', 'portletrenderer.jsp', 'portletrenderer.jsp (2)', 'portletrenderer.jsp (3)', 'portletrenderer.jsp (4)', 'Go To', 'blank.gif', 'modimg_asset.gif', 'modimg_consists.gif', 'modimg_financial.gif', 'modimg_int.gif', 'modimg_contract.gif', 'modimg_inventor.gif', 'modimg_plustmp.gif', 'modimg_pm.gif', 'modimg_plans.gif', 'modimg_purchase.gif', 'modimg_sd.gif', 'modimg_sla.gif', 'modimg_util.gif', 'modimg_plustwarr.gif', 'modimg_wo.gif', 'menuback.png', 'item_over.gif', 'Purchase Orders', 'vcobappspr43/maximo/ui/', 'Search WAPPR', 'Next Page', 'More Pages', 'Choose PO', 'PO Lines', 'New Row', 'maximo.jsp', 'Line Type', 'maximo.jsp (2)', 'Item Description', 'Order Unit', 'Unit Cost', 'Work Order', 'SWP', 'Change Status', 'IE_dropdown.gif', 'Open Drop Down', 'maximo.jsp (3)', 'Approved', 'Status OK',]
 STEPGROUP_LIST = ['More Pages', 'Purchase Orders', 'Home Page', 'Work Order', 'Next Page', 'Choose PO', 'Status OK', 'SWP', 'Login', 'Go To', 'PO Lines', 'Order Unit', 'Open Drop Down', 'Item Description', 'Unit Cost', 'Search WAPPR', 'Change Status', 'New Row', 'Approved', 'Line Type']
 
 class EditorTest(unittest.TestCase):
-
     def test_load(self):
         test_uj = UserJourney('Update Purchase Order User Journey.xml')
         self.assertEqual('Update Purchase Order', test_uj.name)
@@ -202,6 +207,37 @@ class EditorTest(unittest.TestCase):
 
 
 
+# OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+# OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+# OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
+
+class UITest(unittest.TestCase):
+    def setUp(self):
+        '''Create the GUI'''
+        self.app = QApplication(sys.argv)
+        self.window = Window()
+        self.window.import_uj(['ddi_exmples UJ.xml'])
+
+    # def test_import_button(self):
+    #     # makes handle to the object that would be actioned
+    #     import_button = self.window.import_button
+    #     # simulates click
+    #     QTest.mouseClick(import_button, Qt.LeftButton)
+
+    def test_import_function(self):
+        ddi_tree_root = self.window.ddi_tree.invisibleRootItem()
+        child_count = ddi_tree_root.childCount()
+        self.assertEqual(child_count, 57)
+        step_tree_root = self.window.step_tree.invisibleRootItem()
+        self.assertEqual(step_tree_root.childCount(), 2)
+
+    def test_constant_ddi_selection(self):
+        self.assertNotEqual(self.window.ddi_value_widget.line_edit.text(), '0')
+        const_ddi = self.window.ddi_tree.findItems('const', Qt.MatchExactly)[0]
+        self.window.ddi_tree.setCurrentItem(const_ddi)
+        self.assertEqual(self.window.ddi_value_widget.line_edit.text(), '0')
+        self.assertTrue(self.window.ddi_value_widget.line_edit.isVisible())
 
 
 

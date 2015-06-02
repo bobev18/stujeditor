@@ -45,7 +45,7 @@ class Step():
         self.first_cycle_only = bool(element.get('FIRSTCYCLEONLY'))
         self.last_cycle_only = bool(element.get('LASTCYCLEONLY'))
         self.name = element.get('NAME')
-        self.name_user_defined = bool(element.get('NAMEUSERDEFINED'))
+        self.name_user_defined = element.get('NAMEUSERDEFINED') == 'true'
         self.nameuserdefined = bool(element.get('NAMEUSERDEFINED'))
         # print('>>>>', element.tag, element.attrib)
         self.id = int(element.get('ORDER'))
@@ -122,7 +122,7 @@ class Step():
             if len(matches):
                 referenced_ddis.extend(matches)
         # Headers
-        matches = re.findall(DDI_PATTERN, str([ z['name']+z['value'] for z in self.headers ]))
+        matches = re.findall(DDI_PATTERN, str([ z['name']+str(z['value']) for z in self.headers ]))
         if len(matches):
             referenced_ddis.extend(matches)
 

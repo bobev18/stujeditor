@@ -22,7 +22,12 @@ class DynamicDataItem():
         self.items = {}
         for item in element.findall(SCHEME_PREFIX+'ITEM'):
             self.items[item.get('CODE')] = item.text
-        self.encode = bool(self.items['ENCODE    '])
+
+        # print('proceesing ENCODE for step', self.name)
+        if 'ENCODE    ' in self.items.keys():
+            self.encode = bool(self.items['ENCODE    '])
+        else:
+            self.encode = None
 
         # optional
         self.table = []
@@ -85,11 +90,16 @@ class DateDDI(DynamicDataItem):
         self.format = self.items['FORMAT    ']
         self.offset_type = self.items['OFFSETTYPE']
         self.starting_point = self.items['START     ']
+                                       # >START     <
 
         # starting_value is always listed, but it's given value only for offset types 'fixed' and 'another date'
         #   - for fixed, datetime format is enforced by the UI
         #   - for another date - drop down with relevant DDIs is given
-        self.starting_value = self.items['STARTVALUE']
+        if self.starting_point in ['fixed value', 'another date']:
+            self.starting_value = self.items['STARTVALUE']
+        else:
+            self.starting_value = None
+
 
         # optional
         if self.offset_type != 'none':
