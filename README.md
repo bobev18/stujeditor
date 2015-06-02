@@ -15,6 +15,8 @@
  	... xmlns="http://www.reflective.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.reflective.com stschema.xsd" ...
  3. add classes for post & flow_control
 
+ 99. add option to populate table from CSV file for the List DDI
+
 ### NOTES:
 - http://eli.thegreenplace.net/2012/03/15/processing-xml-in-python-with-elementtree
 
@@ -40,7 +42,9 @@ with open(file_name, 'w') as xml_file:
 - deletion of DDI ignores the dependence on related DDIs and references of that DDI in steps
 
 - seems like good code structure: https://github.com/baoboa/pyqt5/blob/master/examples/widgets/groupbox.py
-- I should decide whether to use the .ui file, or generate the entire window from scratch
+
+- The py file with the GUI has become over 500 lines - should split that in lib/module
+- I should find, learn and utilize PyQt's unit testing
 
 ### BUGS:
 
