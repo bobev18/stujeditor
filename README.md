@@ -47,6 +47,7 @@ with open(file_name, 'w') as xml_file:
 
 ### BUGS:
 - trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
+- ddi_type combo box works by passing `DDI_TYPES[self.selected_ddi.type]`, but selector combo box fails becasue is used raw attribute value instead of pass the dictionary like `field.set_text(SELECTION_TYPES[value])`; in the same time, all other DDIs expect to use the raw attribute value
 
 
 

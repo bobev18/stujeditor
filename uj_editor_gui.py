@@ -250,17 +250,19 @@ class Window(QWidget):
         }
 
         object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
-        # print('obj', object_attribute_pairs )
+        print('obj', object_attribute_pairs )
         for field in ddi_specific_fields:
             debug_message = ''
-            # print('field', field, 'keys', object_attribute_pairs.keys())
+            print('field', field, 'keys', object_attribute_pairs.keys())
             if field in object_attribute_pairs.keys():
                 field.show()
                 target_attribute_name = object_attribute_pairs[field]
+                print('target attribute', target_attribute_name)
                 if isinstance(target_attribute_name, str):
                     if target_attribute_name != '':
                         value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
                         field.set_text(value)
+                        print('target attribute value', value)
 
                         # --- debug ---
                         if field == self.ddi_value_widget:
@@ -268,9 +270,14 @@ class Window(QWidget):
                 else:
                     values =[]
                     for attribute in target_attribute_name:
+                        if attribute == 'selection_type':
+                            print('processing selector')
                         try:
                             # values.append(str(getattr(self.selected_ddi, attribute)))
                             values.append(getattr(self.selected_ddi, attribute))
+                            if attribute == 'selection_type':
+                                print('inner processing selector')
+                                print('value', getattr(self.selected_ddi, attribute))
                         except AttributeError:
                             pass
                         # print('values', values)

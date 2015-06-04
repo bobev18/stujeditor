@@ -355,6 +355,29 @@ class UITest(unittest.TestCase, CustomAssertions):
         self.assertEqual(self.window.ddi_date.format.line_edit.text(), 'dd/MM/yyyy HH:mm')
         self.assertIsVisibleToParent(self.window.ddi_date.format.line_edit)
 
+    def test_delimited_ddi_selection(self):
+        # self.ddi_delimiter_character_widget: 'delimiter',
+        #         self.ddi_delimited_filename_widget: 'file_name',
+        #         self.ddi_delimited_file_picker_button: '',
+        #         self.ddi_column_index_widget: 'column',
+        #         self.ddi_selector_widget: 'selection_type',
+        self.assertIsNotVisibleToParent(self.window.ddi_delimiter_character_widget.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_delimited_filename_widget.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_delimited_file_picker_button)
+        self.assertIsNotVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_selector_widget.combo_box)
+        # now select contant type DDI
+        self.select('delimited')
+        self.assertEqual(self.window.ddi_delimiter_character_widget.line_edit.text(), ',')
+        self.assertIsVisibleToParent(self.window.ddi_delimiter_character_widget.line_edit)
+        self.assertEqual(self.window.ddi_delimited_filename_widget.line_edit.text(), 'a.txt')
+        self.assertIsVisibleToParent(self.window.ddi_delimited_filename_widget.line_edit)
+        self.assertIsVisibleToParent(self.window.ddi_delimited_file_picker_button)
+        self.assertEqual(self.window.ddi_column_index_widget.line_edit.text(), '1')
+        self.assertIsVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+        self.assertEqual(self.window.ddi_selector_widget.text(), 'Sequential')
+        self.assertIsVisibleToParent(self.window.ddi_selector_widget.combo_box)
+
 
 
 
