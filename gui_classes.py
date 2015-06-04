@@ -64,6 +64,9 @@ class LabelComboBox(QWidget):
     def set_text(self, text):
         self.combo_box.setCurrentText(text)
 
+    def text(self):
+        return self.combo_box.currentText()
+
 class LabelButtonGroup(QWidget):
     def __init__(self, label = '', buttons = {'UJ object reference value': 'Name to show'}):
         super(LabelButtonGroup, self).__init__()
@@ -92,6 +95,13 @@ class LabelButtonGroup(QWidget):
     def set_text(self, key):
         if key != '':
             self.buttons[key].setChecked(1)
+
+    def text(self):
+        return self.button_group.checkedButton().text()
+
+    def checked(self):
+        return self.button_group.checkedButton()
+
 
 class OffsetRow(QWidget):
     def __init__(self):

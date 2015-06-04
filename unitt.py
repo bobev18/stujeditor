@@ -211,13 +211,38 @@ class EditorTest(unittest.TestCase):
 # OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 # OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
 
+class CustomAssertions:
+    def assertIsVisibleToParent(self, widget):
+        if not widget.isVisibleTo(widget.parent()):
+            widget_ = str(widget)
+            try:
+                widget_ = widget.text()
+            except AttributeError:
+                widget_ = str(widget)
+            raise AssertionError('widget ' + widget_ +' is not visible')
 
-class UITest(unittest.TestCase):
+    def assertIsNotVisibleToParent(self, widget):
+        if widget.isVisibleTo(widget.parent()):
+            widget_ = str(widget)
+            try:
+                widget_ = widget.text()
+            except AttributeError:
+                widget_ = str(widget)
+            raise AssertionError('widget ' + widget_ +' is visible')
+
+class UITest(unittest.TestCase, CustomAssertions):
     def setUp(self):
         '''Create the GUI'''
         self.app = QApplication(sys.argv)
         self.window = Window()
         self.window.import_uj(['ddi_exmples UJ.xml'])
+        self.select('const') #clears visibility on all special fields apart from Value
+
+    def select(self, name):
+        ddi = self.window.ddi_tree.findItems(name, Qt.MatchExactly)[0]
+        self.window.ddi_tree.setCurrentItem(ddi)
+
+
 
     # def test_import_button(self):
     #     # makes handle to the object that would be actioned
@@ -233,13 +258,107 @@ class UITest(unittest.TestCase):
         self.assertEqual(step_tree_root.childCount(), 2)
 
     def test_constant_ddi_selection(self):
+        # select some DDI type that doesn't show 'value' field
+        self.select('Homepage')
+        self.select('list')
         self.assertNotEqual(self.window.ddi_value_widget.line_edit.text(), '0')
-        const_ddi = self.window.ddi_tree.findItems('const', Qt.MatchExactly)[0]
-        self.window.ddi_tree.setCurrentItem(const_ddi)
-        print(self.window.ddi_tree.selectedItems())
-        print(self.window.ddi_tree.selectedItems()[0].text(0))
+        self.assertIsNotVisibleToParent(self.window.ddi_value_widget.line_edit)
+        # now select contant type DDI
+        self.select('const')
         self.assertEqual(self.window.ddi_value_widget.line_edit.text(), '0')
-        self.assertTrue(self.window.ddi_value_widget.line_edit.isVisible())
+        self.assertIsVisibleToParent(self.window.ddi_value_widget.line_edit)
+        # self.assertTrue(self.window.ddi_value_widget.line_edit.isVisibleTo(self.window.ddi_value_widget.line_edit.parent()))
+
+    def test_common_fields(self):
+        # self.select('const')    # now covered in SetUp
+        self.assertEqual(self.window.ddi_name.line_edit.text(), 'const')
+        self.assertIsVisibleToParent(self.window.ddi_name.line_edit)
+        self.assertEqual(self.window.ddi_description.line_edit.text(), '')
+        self.assertIsVisibleToParent(self.window.ddi_description.line_edit)
+        self.assertEqual(self.window.ddi_type.text(), 'Constant')
+        self.assertIsVisibleToParent(self.window.ddi_type.combo_box)
+        self.assertEqual(self.window.ddi_sharing.text(), '&Single User')
+        self.assertIsVisibleToParent(self.window.ddi_sharing.checked())
+        self.assertEqual(self.window.ddi_refresh.text(), 'Once per Run')
+        self.assertIsVisibleToParent(self.window.ddi_refresh.checked())
+
+    def test_date_ddi_no_offset_now_selection(self):
+        self.select('date')
+        # self.layout.addLayout(self.starting_point.layout)
+        # self.layout.addLayout(self.fixed_value_edit.layout)
+        # self.layout.addLayout(self.related_ddi_box.layout)
+        # self.layout.addLayout(self.offset_type.layout)
+        # self.layout.addLayout(self.offset1.layout)
+        # self.layout.addLayout(self.offset2.layout)
+        # self.layout.addLayout(self.format.layout)
+        self.assertEqual(self.window.ddi_date.starting_point.text(), 'now')
+        self.assertIsVisibleToParent(self.window.ddi_date.starting_point.checked())
+        self.assertEqual(self.window.ddi_date.fixed_value_edit.line_edit.text(), '')
+        self.assertIsNotVisibleToParent(self.window.ddi_date.fixed_value_edit.line_edit)
+        # self.assertEqual(self.window.ddi_date.related_ddi_box.text(), '')
+        self.assertIsNotVisibleToParent(self.window.ddi_date.related_ddi_box.combo_box)
+        self.assertEqual(self.window.ddi_date.offset_type.text(), 'none')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset_type.checked())
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset1.sign)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset1.amount)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset1.unit)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset2.sign)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset2.amount)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset2.unit)
+        self.assertEqual(self.window.ddi_date.format.line_edit.text(), 'dd/MM/yyyy HH:mm')
+        self.assertIsVisibleToParent(self.window.ddi_date.format.line_edit)
+
+    def test_date_ddi_fixed_offset_another_date_selection(self):
+        self.select('date 3')
+        self.assertEqual(self.window.ddi_date.starting_point.text(), 'another date')
+        self.assertIsVisibleToParent(self.window.ddi_date.starting_point.checked())
+        # self.assertEqual(self.window.ddi_date.fixed_value_edit.line_edit.text(), '')
+        self.assertIsNotVisibleToParent(self.window.ddi_date.fixed_value_edit.line_edit)
+        self.assertEqual(self.window.ddi_date.related_ddi_box.text(), 'date')
+        self.assertIsVisibleToParent(self.window.ddi_date.related_ddi_box.combo_box)
+        self.assertEqual(self.window.ddi_date.offset_type.text(), 'fixed')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset_type.checked())
+        self.assertEqual(self.window.ddi_date.offset1.sign.currentText(), '+')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset1.sign)
+        self.assertEqual(self.window.ddi_date.offset1.amount.text(), '33')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset1.amount)
+        self.assertEqual(self.window.ddi_date.offset1.unit.currentText(), 'sec')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset1.unit)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset2.sign)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset2.amount)
+        self.assertIsNotVisibleToParent(self.window.ddi_date.offset2.unit)
+        self.assertEqual(self.window.ddi_date.format.line_edit.text(), 'dd/MM/yyyy HH:mm mm:HH')
+        self.assertIsVisibleToParent(self.window.ddi_date.format.line_edit)
+
+    def test_date_ddi_random_offset_fixed_date_selection(self):
+        self.select('date2')
+        self.assertEqual(self.window.ddi_date.starting_point.text(), 'fixed value')
+        self.assertIsVisibleToParent(self.window.ddi_date.starting_point.checked())
+        self.assertEqual(self.window.ddi_date.fixed_value_edit.line_edit.text(), '21/05/2015 12:00')
+        self.assertIsVisibleToParent(self.window.ddi_date.fixed_value_edit.line_edit)
+        # self.assertEqual(self.window.ddi_date.related_ddi_box.text(), '')
+        self.assertIsNotVisibleToParent(self.window.ddi_date.related_ddi_box.combo_box)
+        self.assertEqual(self.window.ddi_date.offset_type.text(), 'random')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset_type.checked())
+        self.assertEqual(self.window.ddi_date.offset1.sign.currentText(), '-')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset1.sign)
+        self.assertEqual(self.window.ddi_date.offset1.amount.text(), '3')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset1.amount)
+        self.assertEqual(self.window.ddi_date.offset1.unit.currentText(), 'sec')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset1.unit)
+        self.assertEqual(self.window.ddi_date.offset2.sign.currentText(), '+')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset2.sign)
+        self.assertEqual(self.window.ddi_date.offset2.amount.text(), '4')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset2.amount)
+        self.assertEqual(self.window.ddi_date.offset2.unit.currentText(), 'sec')
+        self.assertIsVisibleToParent(self.window.ddi_date.offset2.unit)
+        self.assertEqual(self.window.ddi_date.format.line_edit.text(), 'dd/MM/yyyy HH:mm')
+        self.assertIsVisibleToParent(self.window.ddi_date.format.line_edit)
+
+
+
+
+
 
 
 
