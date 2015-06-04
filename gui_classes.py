@@ -36,22 +36,23 @@ class LabelLineEdit(QWidget):
         self.line_edit.setText(text)
 
 class LabelComboBox(QWidget):
-    def __init__(self, label='', items = []):
+    def __init__(self, label='', items = {'UJ object reference value': 'Name to show'}):
         super(LabelComboBox, self).__init__()
         self.label = QLabel()
         self.label.setText(label)
+        self.items = items
         self.combo_box = QComboBox()
-        self.combo_box.insertItems(0, items)
+        self.combo_box.insertItems(0, self.items.values())
         self.layout = QHBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.combo_box, stretch = 1)
 
-    def reset_items(self, items):
-        # if self.combo_box.count() > 0:
+    def reset_items(self, items = {'UJ object reference value': 'Name to show'}):
         while self.combo_box.count() != 0:
             self.combo_box.removeItem(0)
-        self.combo_box.addItems(items)
+        self.items = items
+        self.combo_box.addItems(self.items.values())
 
     def show(self):
         self.combo_box.show()
@@ -62,7 +63,11 @@ class LabelComboBox(QWidget):
         self.label.hide()
 
     def set_text(self, text):
-        self.combo_box.setCurrentText(text)
+        if text in self.items.values():
+            self.combo_box.setCurrentText(text)
+
+        if text in self.items.keys():
+            self.combo_box.setCurrentText(self.items[text])
 
     def text(self):
         return self.combo_box.currentText()
@@ -140,7 +145,7 @@ class DateFieldsGroup(QWidget):
         self.starting_point = LabelButtonGroup('Starting Point:', { z:z for z in ['now', 'today', 'fixed value', 'another date'] } )
         self.fixed_value_edit = LabelLineEdit('Fixed Value:')
         self.starting_point.buttons['fixed value'].toggled.connect(self.toggle_fixed_value_edit)
-        self.related_ddi_box = LabelComboBox('Related Date DDI:', date_related_ddis)
+        self.related_ddi_box = LabelComboBox('Related Date DDI:', { z:z for z in date_related_ddis})
         self.starting_point.buttons['another date'].toggled.connect(self.toggle_another_date_dropbox)
         self.offset_type = LabelButtonGroup('Offset:', { z:z for z in ['none', 'fixed', 'random'] })
         self.offset1 = OffsetRow()

@@ -90,7 +90,7 @@ class Window(QWidget):
         type_name_layout = QHBoxLayout()
         type_name_layout.setContentsMargins(0,0,0,0)
         self.ddi_name = LabelLineEdit('DDI Name')
-        self.ddi_type = LabelComboBox('Type', DDI_TYPES.values())
+        self.ddi_type = LabelComboBox('Type', DDI_TYPES)
         self.__mix_to_layout(type_name_layout, self.ddi_type.layout, self.ddi_name.layout)
         self.ddi_sharing = LabelButtonGroup('State Sharing', {'SCRIPT  ': '&Single User', 'THREAD  ': '&All Run Users'})
         self.ddi_refresh = LabelButtonGroup('Refresh Condition', {'C': 'Every Cycle', 'R': 'Once per Run', 'T': 'Every Time', 'U': 'Once per User'})
@@ -107,7 +107,7 @@ class Window(QWidget):
         self.ddi_specific_layout.setContentsMargins(0,0,0,0)
         # self.value_layout = self.create_ddi_value()
         self.ddi_value_widget = LabelLineEdit('Value')
-        self.ddi_selector_widget = LabelComboBox('Selector', SELECTOR_TYPES.values())
+        self.ddi_selector_widget = LabelComboBox('Selector', SELECTOR_TYPES)
         # self.ddi_specific_layout.addWidget(self.ddi_value_widget)
         self.ddi_specific_layout.addLayout(self.ddi_value_widget.layout)
         self.ddi_specific_layout.addLayout(self.ddi_selector_widget.layout)
@@ -171,7 +171,7 @@ class Window(QWidget):
 
         date_type_ddis = self.uj.find_ddis_by_attribute('type', 'DATE    ')
         if date_type_ddis:
-            self.ddi_date.related_ddi_box.reset_items([z.name for z in date_type_ddis])
+            self.ddi_date.related_ddi_box.reset_items({z.name:z.name for z in date_type_ddis})
 
         groupnodes = []
         for stepgroup in self.uj.stepgroups:
@@ -250,19 +250,19 @@ class Window(QWidget):
         }
 
         object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
-        print('obj', object_attribute_pairs )
+        # print('obj', object_attribute_pairs )
         for field in ddi_specific_fields:
             debug_message = ''
-            print('field', field, 'keys', object_attribute_pairs.keys())
+            # print('field', field, 'keys', object_attribute_pairs.keys())
             if field in object_attribute_pairs.keys():
                 field.show()
                 target_attribute_name = object_attribute_pairs[field]
-                print('target attribute', target_attribute_name)
+                # print('target attribute', target_attribute_name)
                 if isinstance(target_attribute_name, str):
                     if target_attribute_name != '':
                         value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
                         field.set_text(value)
-                        print('target attribute value', value)
+                        # print('target attribute value', value)
 
                         # --- debug ---
                         if field == self.ddi_value_widget:
@@ -270,14 +270,9 @@ class Window(QWidget):
                 else:
                     values =[]
                     for attribute in target_attribute_name:
-                        if attribute == 'selection_type':
-                            print('processing selector')
                         try:
                             # values.append(str(getattr(self.selected_ddi, attribute)))
                             values.append(getattr(self.selected_ddi, attribute))
-                            if attribute == 'selection_type':
-                                print('inner processing selector')
-                                print('value', getattr(self.selected_ddi, attribute))
                         except AttributeError:
                             pass
                         # print('values', values)

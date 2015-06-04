@@ -375,7 +375,7 @@ class UITest(unittest.TestCase, CustomAssertions):
         self.assertIsVisibleToParent(self.window.ddi_delimited_file_picker_button)
         self.assertEqual(self.window.ddi_column_index_widget.line_edit.text(), '1')
         self.assertIsVisibleToParent(self.window.ddi_column_index_widget.line_edit)
-        self.assertEqual(self.window.ddi_selector_widget.text(), 'Sequential')
+        self.assertEqual(self.window.ddi_selector_widget.text(), 'Sequential Unique')
         self.assertIsVisibleToParent(self.window.ddi_selector_widget.combo_box)
 
 
