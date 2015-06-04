@@ -271,3 +271,15 @@ class MyTableWidget(QWidget):
                 item = QTableWidgetItem(value)
                 self.table.setItem(i, j, item)
 
+    def get_values(self):
+        rows = self.table.rowCount()
+        cols = self.table.columnCount()
+        table = []
+        for i in range(rows):
+            row = []
+            for j in range(cols):
+                row.append(self.table.item(i, j).text())
+            table.append(row)
+
+        return table
+

@@ -253,7 +253,7 @@ class UITest(unittest.TestCase, CustomAssertions):
     def test_import_function(self):
         ddi_tree_root = self.window.ddi_tree.invisibleRootItem()
         child_count = ddi_tree_root.childCount()
-        self.assertEqual(child_count, 57)
+        self.assertEqual(child_count, 58)
         step_tree_root = self.window.step_tree.invisibleRootItem()
         self.assertEqual(step_tree_root.childCount(), 2)
 
@@ -284,13 +284,6 @@ class UITest(unittest.TestCase, CustomAssertions):
 
     def test_date_ddi_no_offset_now_selection(self):
         self.select('date')
-        # self.layout.addLayout(self.starting_point.layout)
-        # self.layout.addLayout(self.fixed_value_edit.layout)
-        # self.layout.addLayout(self.related_ddi_box.layout)
-        # self.layout.addLayout(self.offset_type.layout)
-        # self.layout.addLayout(self.offset1.layout)
-        # self.layout.addLayout(self.offset2.layout)
-        # self.layout.addLayout(self.format.layout)
         self.assertEqual(self.window.ddi_date.starting_point.text(), 'now')
         self.assertIsVisibleToParent(self.window.ddi_date.starting_point.checked())
         self.assertEqual(self.window.ddi_date.fixed_value_edit.line_edit.text(), '')
@@ -356,17 +349,11 @@ class UITest(unittest.TestCase, CustomAssertions):
         self.assertIsVisibleToParent(self.window.ddi_date.format.line_edit)
 
     def test_delimited_ddi_selection(self):
-        # self.ddi_delimiter_character_widget: 'delimiter',
-        #         self.ddi_delimited_filename_widget: 'file_name',
-        #         self.ddi_delimited_file_picker_button: '',
-        #         self.ddi_column_index_widget: 'column',
-        #         self.ddi_selector_widget: 'selection_type',
         self.assertIsNotVisibleToParent(self.window.ddi_delimiter_character_widget.line_edit)
         self.assertIsNotVisibleToParent(self.window.ddi_delimited_filename_widget.line_edit)
         self.assertIsNotVisibleToParent(self.window.ddi_delimited_file_picker_button)
         self.assertIsNotVisibleToParent(self.window.ddi_column_index_widget.line_edit)
         self.assertIsNotVisibleToParent(self.window.ddi_selector_widget.combo_box)
-        # now select contant type DDI
         self.select('delimited')
         self.assertEqual(self.window.ddi_delimiter_character_widget.line_edit.text(), ',')
         self.assertIsVisibleToParent(self.window.ddi_delimiter_character_widget.line_edit)
@@ -377,6 +364,38 @@ class UITest(unittest.TestCase, CustomAssertions):
         self.assertIsVisibleToParent(self.window.ddi_column_index_widget.line_edit)
         self.assertEqual(self.window.ddi_selector_widget.text(), 'Sequential Unique')
         self.assertIsVisibleToParent(self.window.ddi_selector_widget.combo_box)
+
+    def test_list_ddi_selection(self):
+        # self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_list_table: ['table']
+        self.assertIsNotVisibleToParent(self.window.ddi_selector_widget.combo_box)
+        self.assertIsNotVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_list_table.table)
+        self.select('list')
+        self.assertEqual(self.window.ddi_selector_widget.text(), 'First')
+        self.assertIsVisibleToParent(self.window.ddi_selector_widget.combo_box)
+        self.assertEqual(self.window.ddi_column_index_widget.line_edit.text(), '1')
+        self.assertIsVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+        self.assertEqual(self.window.ddi_list_table.get_values(), [['2', 'a'], ['5', '55']])
+        self.assertIsVisibleToParent(self.window.ddi_list_table.table)
+
+    def test_variable_ddi_selection(self):
+        self.select('list')
+        self.assertIsNotVisibleToParent(self.window.ddi_value_widget.line_edit)
+        self.select('variable')
+        self.assertEqual(self.window.ddi_value_widget.line_edit.text(), '99')
+        self.assertIsVisibleToParent(self.window.ddi_value_widget.line_edit)
+
+    def test_related_ddi_selection(self):
+        self.assertIsNotVisibleToParent(self.window.ddi_related_ddi.combo_box)
+        self.assertIsNotVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+        self.select('related')
+        self.assertEqual(self.window.ddi_related_ddi.text(), 'list')
+        self.assertIsVisibleToParent(self.window.ddi_related_ddi.combo_box)
+        self.assertEqual(self.window.ddi_column_index_widget.line_edit.text(), '33')
+        self.assertIsVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+
+
+
 
 
 

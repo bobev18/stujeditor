@@ -134,6 +134,8 @@ class Window(QWidget):
         self.ddi_list_table = MyTableWidget()
         self.ddi_specific_layout.addLayout(self.ddi_list_table.layout)
 
+        self.ddi_related_ddi = LabelComboBox()
+        self.ddi_specific_layout.addLayout(self.ddi_related_ddi.layout)
 
 
 
@@ -172,6 +174,12 @@ class Window(QWidget):
         date_type_ddis = self.uj.find_ddis_by_attribute('type', 'DATE    ')
         if date_type_ddis:
             self.ddi_date.related_ddi_box.reset_items({z.name:z.name for z in date_type_ddis})
+
+        relatable_type_ddis = []
+        for type_ in ['FLATFILE', 'LIST    ', 'RESPONSE']:
+            relatable_type_ddis.extend(self.uj.find_ddis_by_attribute('type', type_))
+        if relatable_type_ddis:
+            self.ddi_related_ddi.reset_items({z.name:z.name for z in relatable_type_ddis})
 
         groupnodes = []
         for stepgroup in self.uj.stepgroups:
@@ -212,6 +220,7 @@ class Window(QWidget):
             self.ddi_column_index_widget,
             self.ddi_date,
             self.ddi_list_table,
+            self.ddi_related_ddi,
         ]
 
         ddi_type_mappings = {
@@ -240,20 +249,18 @@ class Window(QWidget):
             },
             ListDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_list_table: ['table']},
             VariableDDI: {self.ddi_value_widget: 'value'},
-            RelatedDDI: {self.ddi_column_index_widget: 'column'},
+            RelatedDDI: {self.ddi_column_index_widget: 'column', self.ddi_related_ddi: 'associated'},
             ResponseDDI: {self.ddi_column_index_widget: 'column'},
-            VariableDDI: {},
-            RelatedDDI: {},
-            ResponseDDI: {},
             AutoCorrelatedDDI: {},
             AutoIncrementDDI: {},
         }
 
         object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]
         # print('obj', object_attribute_pairs )
+        # print('selected type', type(self.selected_ddi) ,'selected item expected attributes', object_attribute_pairs.values() )
         for field in ddi_specific_fields:
             debug_message = ''
-            # print('field', field, 'keys', object_attribute_pairs.keys())
+            # print('field', field, 'values', object_attribute_pairs.values())
             if field in object_attribute_pairs.keys():
                 field.show()
                 target_attribute_name = object_attribute_pairs[field]
@@ -268,6 +275,7 @@ class Window(QWidget):
                         if field == self.ddi_value_widget:
                             debug_message += 'field: '+str(field)+'; local value: '+ str(value) + '\n'
                 else:
+                    # currently this section covers for Date group & table widget
                     values =[]
                     for attribute in target_attribute_name:
                         try:
