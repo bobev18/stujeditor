@@ -150,6 +150,20 @@ class Window(QWidget):
         self.ddi_auto_correlate_appears_in = LabelCheckboxesGroup('Appears In:', ['URL', 'Post', 'Headers'])
         self.ddi_specific_layout.addLayout(self.ddi_auto_correlate_appears_in.layout)
 
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        self.ddi_auto_increment_starting_value = LabelLineEdit('Starting Value:')
+        hbox.addLayout(self.ddi_auto_increment_starting_value.layout)
+        self.ddi_auto_increment_increment = LabelLineEdit('Increment:')
+        hbox.addLayout(self.ddi_auto_increment_increment.layout)
+        self.ddi_auto_increment_prefix = LabelLineEdit('Prefix:')
+        hbox.addLayout(self.ddi_auto_increment_prefix.layout)
+        self.ddi_auto_increment_suffix = LabelLineEdit('Suffix:')
+        hbox.addLayout(self.ddi_auto_increment_suffix.layout)
+        self.ddi_auto_increment_min_lenght = LabelLineEdit('Minimum Length:')
+        hbox.addLayout(self.ddi_auto_increment_min_lenght.layout)
+        self.ddi_specific_layout.addLayout(hbox)
+
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
 
@@ -244,6 +258,11 @@ class Window(QWidget):
             self.ddi_auto_correlate_type,
             self.ddi_auto_correlate_name,
             self.ddi_auto_correlate_appears_in,
+            self.ddi_auto_increment_starting_value,
+            self.ddi_auto_increment_increment,
+            self.ddi_auto_increment_prefix,
+            self.ddi_auto_increment_suffix,
+            self.ddi_auto_increment_min_lenght,
         ]
 
         ddi_type_mappings = {
@@ -275,7 +294,8 @@ class Window(QWidget):
             RelatedDDI: {self.ddi_column_index_widget: 'column', self.ddi_related_ddi: 'associated'},
             ResponseDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_response_source_step: 'source_step_id', self.ddi_siphon_table: 'dict_siphons'},
             AutoCorrelatedDDI: {self.ddi_auto_correlate_type: 'field_type', self.ddi_auto_correlate_name: 'field_name', self.ddi_auto_correlate_appears_in: ['find_in_url', 'find_in_post', 'find_in_headers']},
-            AutoIncrementDDI: {},
+            AutoIncrementDDI: {self.ddi_auto_increment_starting_value: 'starting_value', self.ddi_auto_increment_increment: 'increment', self.ddi_auto_increment_prefix: 'prefix',
+                               self.ddi_auto_increment_suffix: 'suffix', self.ddi_auto_increment_min_lenght: 'minimum_length'},
         }
 
         object_attribute_pairs = ddi_type_mappings[type(self.selected_ddi)]

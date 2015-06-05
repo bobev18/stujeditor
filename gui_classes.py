@@ -36,6 +36,9 @@ class LabelLineEdit(QWidget):
     def set_text(self, text):
         self.line_edit.setText(text)
 
+    def text(self):
+        return self.line_edit.text()
+
 class LabelComboBox(QWidget):
     def __init__(self, label='', items = {'UJ object reference value': 'Name to show'}):
         super(LabelComboBox, self).__init__()

@@ -414,6 +414,23 @@ class UITest(unittest.TestCase, CustomAssertions):
         for box in boxes:
             self.assertIsVisibleToParent(box)
 
+    def test_auto_increment_ddi_selection(self):
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_increment_starting_value.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_increment_increment.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_increment_prefix.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_increment_suffix.line_edit)
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_increment_min_lenght.line_edit)
+        self.select('auto_increment')
+        self.assertEqual(self.window.ddi_auto_increment_starting_value.text(), '55')
+        self.assertIsVisibleToParent(self.window.ddi_auto_increment_starting_value.line_edit)
+        self.assertEqual(self.window.ddi_auto_increment_increment.text(), '43')
+        self.assertIsVisibleToParent(self.window.ddi_auto_increment_increment.line_edit)
+        self.assertEqual(self.window.ddi_auto_increment_prefix.text(), 'asda')
+        self.assertIsVisibleToParent(self.window.ddi_auto_increment_prefix.line_edit)
+        self.assertEqual(self.window.ddi_auto_increment_suffix.text(), '342sdf')
+        self.assertIsVisibleToParent(self.window.ddi_auto_increment_suffix.line_edit)
+        self.assertEqual(self.window.ddi_auto_increment_min_lenght.text(), '2')
+        self.assertIsVisibleToParent(self.window.ddi_auto_increment_min_lenght.line_edit)
 
 
 
