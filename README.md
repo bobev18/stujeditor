@@ -14,6 +14,7 @@
  2. understand the effect of :
  	... xmlns="http://www.reflective.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.reflective.com stschema.xsd" ...
  3. add classes for post & flow_control
+ 4. make UI enforce data types and mandatory fields
 
  99. add option to populate table from CSV file for the List DDI
 
@@ -47,6 +48,7 @@ with open(file_name, 'w') as xml_file:
 
 ### BUGS:
 - trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
+- showing DDI that has invalid step reference, silently uses the last value of the 'source step' field
 
 
 

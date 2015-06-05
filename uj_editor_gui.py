@@ -1,7 +1,7 @@
 import os
 from userjourney import UserJourney
 from dynamic_data import ConstantDDI, DateDDI, DelimitedFileDDI, ListDDI, VariableDDI, RelatedDDI, ResponseDDI, AutoCorrelatedDDI, AutoIncrementDDI
-from gui_classes import LabelLineEdit, LabelComboBox, LabelButtonGroup, DateFieldsGroup, MyTableWidget
+from gui_classes import LabelLineEdit, LabelComboBox, LabelButtonGroup, DateFieldsGroup, MyTableWidget, SiphonTableWidget
 
 from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
@@ -134,10 +134,14 @@ class Window(QWidget):
         self.ddi_list_table = MyTableWidget()
         self.ddi_specific_layout.addLayout(self.ddi_list_table.layout)
 
-        self.ddi_related_ddi = LabelComboBox()
+        self.ddi_related_ddi = LabelComboBox('Related to:')
         self.ddi_specific_layout.addLayout(self.ddi_related_ddi.layout)
 
+        self.ddi_response_source_step = LabelComboBox('Source Step:')
+        self.ddi_specific_layout.addLayout(self.ddi_response_source_step.layout)
 
+        self.ddi_siphon_table = SiphonTableWidget()
+        self.ddi_specific_layout.addLayout(self.ddi_siphon_table.layout)
 
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
@@ -181,6 +185,10 @@ class Window(QWidget):
         if relatable_type_ddis:
             self.ddi_related_ddi.reset_items({z.name:z.name for z in relatable_type_ddis})
 
+        sourceable_steps = self.uj.find_steps_by_attribute('name_user_defined', True)
+        if sourceable_steps:
+            self.ddi_response_source_step.reset_items({ str(z.id):z.name for z in sourceable_steps })
+
         groupnodes = []
         for stepgroup in self.uj.stepgroups:
             new_group_node = QTreeWidgetItem()
@@ -221,6 +229,8 @@ class Window(QWidget):
             self.ddi_date,
             self.ddi_list_table,
             self.ddi_related_ddi,
+            self.ddi_response_source_step,
+            self.ddi_siphon_table,
         ]
 
         ddi_type_mappings = {
@@ -250,7 +260,7 @@ class Window(QWidget):
             ListDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_list_table: ['table']},
             VariableDDI: {self.ddi_value_widget: 'value'},
             RelatedDDI: {self.ddi_column_index_widget: 'column', self.ddi_related_ddi: 'associated'},
-            ResponseDDI: {self.ddi_column_index_widget: 'column'},
+            ResponseDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_response_source_step: 'source_step_id', self.ddi_siphon_table: 'dict_siphons'},
             AutoCorrelatedDDI: {},
             AutoIncrementDDI: {},
         }
@@ -267,13 +277,18 @@ class Window(QWidget):
                 # print('target attribute', target_attribute_name)
                 if isinstance(target_attribute_name, str):
                     if target_attribute_name != '':
-                        value = str(getattr(self.selected_ddi, object_attribute_pairs[field]))
+                        # print('ttt', type(getattr(self.selected_ddi, object_attribute_pairs[field])))
+                        value = getattr(self.selected_ddi, object_attribute_pairs[field])
+                        if callable(value):
+                            value = value()
+                        else:
+                            value = str(value)
                         field.set_text(value)
                         # print('target attribute value', value)
 
                         # --- debug ---
                         if field == self.ddi_value_widget:
-                            debug_message += 'field: '+str(field)+'; local value: '+ str(value) + '\n'
+                            debug_message += 'field: '+str(field)+'; uj object value: '+ str(value) + '\n'
                 else:
                     # currently this section covers for Date group & table widget
                     values =[]
@@ -283,6 +298,7 @@ class Window(QWidget):
                             values.append(getattr(self.selected_ddi, attribute))
                         except AttributeError:
                             pass
+
                         # print('values', values)
                     field.set_values(*values)
                     # where set_values(self, starting_point, starting_fixed_edit, starting_related_ddi, offset, sign1='', amount1=0, unit1='', sign2='', amount2=0, unit2=''):
@@ -293,8 +309,8 @@ class Window(QWidget):
                 field.hide()
 
             # --- debug ---
-            if field == self.ddi_value_widget:
-                debug_message += 'object value: ' + self.ddi_value_widget.line_edit.text() + '; visibility: ' + str(self.ddi_value_widget.line_edit.isVisible()) + '\n'
+            if field == self.ddi_response_source_step:
+                debug_message += 'ui object value: ' + self.ddi_response_source_step.text() + '; visibility: ' + str(self.ddi_response_source_step.combo_box.isVisible()) + '\n'
                 self.debug__(debug_message)
 
 

@@ -5,13 +5,14 @@
 from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
         # QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
-from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
+from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup, QMenu, QWidgetAction,
     QGridLayout, QVBoxLayout, QHBoxLayout, QLayout,
     QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem)
 
 # DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 # SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
 
+SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
 
 class LabelLineEdit(QWidget):
     def __init__(self, label=''):
@@ -279,6 +280,82 @@ class MyTableWidget(QWidget):
             row = []
             for j in range(cols):
                 row.append(self.table.item(i, j).text())
+            table.append(row)
+
+        return table
+
+# SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
+# {'Position': 'I', 'Regular Expression': 'R', 'Text Substring': 'T', 'Replace': 'Y', 'Delimiter': 'D'}
+class SiphonTableWidget(QWidget):
+    def __init__(self, items = [{'type': 'T', 'start': '', 'end': '', 'match_number': '1'}]):
+        super(SiphonTableWidget, self).__init__()
+        self.table = QTableWidget(len(items), 4)
+        self.add_row_button = QPushButton('Add Row')
+        self.add_row_button.clicked.connect(self.add_row)
+        self.delete_row_button = QPushButton('Delete Row')
+        self.delete_row_button.clicked.connect(self.delete_row)
+        hbox = QHBoxLayout()
+        hbox.setContentsMargins(0,0,0,0)
+        hbox.addWidget(self.add_row_button)
+        hbox.addWidget(self.delete_row_button)
+
+        self.layout = QVBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addLayout(hbox)
+        self.layout.addWidget(self.table)
+
+    def add_row(self):
+        new_row_number = self.table.rowCount()
+        self.table.setRowCount(self.table.rowCount()+1)
+        type_box = QComboBox()
+        type_box.insertItems(0, SIPHON_TYPES.values())
+        self.table.setCellWidget(new_row_number, 0, type_box)
+        # item = QTableWidgetItem(row['start'])
+        # self.table.setItem(new_row_number, 1, item)
+        # item = QTableWidgetItem(row['end'])
+        #     self.table.setItem(i, 2, item)
+        # edit_combo = QLineEdit()
+        # edit_combo.setText('1')
+        # self.table.setCellWidget(new_row_number, 3, edit_combo)
+
+    def delete_row(self):
+        self.table.removeRow(self.table.currentRow())
+
+    def show(self):
+        self.table.show()
+        self.add_row_button.show()
+        self.delete_row_button.show()
+
+    def hide(self):
+        self.table.hide()
+        self.add_row_button.hide()
+        self.delete_row_button.hide()
+
+    def set_text(self, items):
+        # print('siphon itmes', items)
+        self.table.setRowCount(len(items))
+        for i, row in enumerate(items):
+            # print('siphon row', row)
+            type_box = QComboBox()
+            type_box.insertItems(0, SIPHON_TYPES.values())
+            type_box.setCurrentText(SIPHON_TYPES[row['type']])
+            self.table.setCellWidget(i, 0, type_box)
+            item = QTableWidgetItem(row['start'])
+            self.table.setItem(i, 1, item)
+            item = QTableWidgetItem(row['end'])
+            self.table.setItem(i, 2, item)
+            item = QTableWidgetItem(row['match_number'])
+            self.table.setItem(i, 3, item)
+
+    def get_values(self):
+        rows = self.table.rowCount()
+        table = []
+        for i in range(rows):
+            type_long_name = self.table.cellWidget(i, 0).currentText()
+            type_code = {v:k for k,v in SIPHON_TYPES.items()}[type_long_name]
+            row = {'type': type_code}
+            for j, key in enumerate(['start', 'end', 'match_number']):
+                row[key] = self.table.item(i, j+1).text()
             table.append(row)
 
         return table

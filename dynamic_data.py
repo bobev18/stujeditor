@@ -48,6 +48,15 @@ class DynamicDataItem():
         self.element.set('NAME', new_name)
         self.name = new_name
 
+    def dict_siphons(self):
+        table = []
+        for siphon in self.siphons:
+            table.append({'type': siphon.type, 'start': siphon.start, 'end': siphon.end, 'match_number': siphon.match_number})
+
+        return table
+
+
+
 class ConstantDDI(DynamicDataItem):
 
     def __init__(self, element):

@@ -242,18 +242,10 @@ class UITest(unittest.TestCase, CustomAssertions):
         ddi = self.window.ddi_tree.findItems(name, Qt.MatchExactly)[0]
         self.window.ddi_tree.setCurrentItem(ddi)
 
-
-
-    # def test_import_button(self):
-    #     # makes handle to the object that would be actioned
-    #     import_button = self.window.import_button
-    #     # simulates click
-    #     QTest.mouseClick(import_button, Qt.LeftButton)
-
     def test_import_function(self):
         ddi_tree_root = self.window.ddi_tree.invisibleRootItem()
         child_count = ddi_tree_root.childCount()
-        self.assertEqual(child_count, 58)
+        self.assertEqual(child_count, 59)
         step_tree_root = self.window.step_tree.invisibleRootItem()
         self.assertEqual(step_tree_root.childCount(), 2)
 
@@ -393,6 +385,20 @@ class UITest(unittest.TestCase, CustomAssertions):
         self.assertIsVisibleToParent(self.window.ddi_related_ddi.combo_box)
         self.assertEqual(self.window.ddi_column_index_widget.line_edit.text(), '33')
         self.assertIsVisibleToParent(self.window.ddi_column_index_widget.line_edit)
+
+    def test_response_ddi(self):
+        self.assertIsNotVisibleToParent(self.window.ddi_selector_widget.combo_box)
+        self.assertIsNotVisibleToParent(self.window.ddi_response_source_step.combo_box)
+        self.assertIsNotVisibleToParent(self.window.ddi_siphon_table.table)
+        self.select('response multiline')
+        self.assertEqual(self.window.ddi_response_source_step.text(), 'bbb')
+        self.assertIsVisibleToParent(self.window.ddi_response_source_step.combo_box)
+        self.assertEqual(self.window.ddi_selector_widget.text(), 'Random Unique')
+        self.assertIsVisibleToParent(self.window.ddi_selector_widget.combo_box)
+        self.assertEqual(self.window.ddi_siphon_table.get_values(), [{'type': 'T', 'start': 'tuka', 'end':'taka', 'match_number': '2'},
+                                                                     {'type': 'R', 'start': 'the(.+?)test', 'end':'', 'match_number': '1'},
+                                                                     {'type': 'D', 'start': '', 'end':'', 'match_number': 'All'}])
+        self.assertIsVisibleToParent(self.window.ddi_siphon_table.table)
 
 
 
