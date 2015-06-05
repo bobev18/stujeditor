@@ -400,6 +400,20 @@ class UITest(unittest.TestCase, CustomAssertions):
                                                                      {'type': 'D', 'start': '', 'end':'', 'match_number': 'All'}])
         self.assertIsVisibleToParent(self.window.ddi_siphon_table.table)
 
+    def test_auto_correlated_ddi_selection(self):
+        boxes = list(self.window.ddi_auto_correlate_appears_in.boxes.values())
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_correlate_type.combo_box)
+        self.assertIsNotVisibleToParent(self.window.ddi_auto_correlate_name.combo_box)
+        self.assertIsNotVisibleToParent(boxes[0])
+        self.select('auto_correlated_repeated')
+        self.assertEqual(self.window.ddi_auto_correlate_type.text(), 'Repeated Fields')
+        self.assertIsVisibleToParent(self.window.ddi_auto_correlate_type.combo_box)
+        self.assertEqual(self.window.ddi_auto_correlate_name.text(), 'Host')
+        self.assertIsVisibleToParent(self.window.ddi_auto_correlate_name.combo_box)
+        self.assertEqual(self.window.ddi_auto_correlate_appears_in.text(), {'URL': True, 'Post': False, 'Headers': False})
+        for box in boxes:
+            self.assertIsVisibleToParent(box)
+
 
 
 

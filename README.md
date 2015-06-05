@@ -49,6 +49,7 @@ with open(file_name, 'w') as xml_file:
 ### BUGS:
 - trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
 - showing DDI that has invalid step reference, silently uses the last value of the 'source step' field
+- Field Name dropdown for Correlated DDI mixes the possible selections for Repeated and Known fields.
 
 
 

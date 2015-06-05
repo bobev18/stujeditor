@@ -1,7 +1,7 @@
 import os
 from userjourney import UserJourney
 from dynamic_data import ConstantDDI, DateDDI, DelimitedFileDDI, ListDDI, VariableDDI, RelatedDDI, ResponseDDI, AutoCorrelatedDDI, AutoIncrementDDI
-from gui_classes import LabelLineEdit, LabelComboBox, LabelButtonGroup, DateFieldsGroup, MyTableWidget, SiphonTableWidget
+from gui_classes import LabelLineEdit, LabelComboBox, LabelButtonGroup, DateFieldsGroup, MyTableWidget, SiphonTableWidget, LabelCheckboxesGroup
 
 from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
@@ -143,6 +143,13 @@ class Window(QWidget):
         self.ddi_siphon_table = SiphonTableWidget()
         self.ddi_specific_layout.addLayout(self.ddi_siphon_table.layout)
 
+        self.ddi_auto_correlate_type = LabelComboBox('Field Type:', { z:z for z in ['Repeated Fields', 'Known Fields'] })
+        self.ddi_specific_layout.addLayout(self.ddi_auto_correlate_type.layout)
+        self.ddi_auto_correlate_name = LabelComboBox('Field Name:')
+        self.ddi_specific_layout.addLayout(self.ddi_auto_correlate_name.layout)
+        self.ddi_auto_correlate_appears_in = LabelCheckboxesGroup('Appears In:', ['URL', 'Post', 'Headers'])
+        self.ddi_specific_layout.addLayout(self.ddi_auto_correlate_appears_in.layout)
+
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
 
@@ -189,6 +196,9 @@ class Window(QWidget):
         if sourceable_steps:
             self.ddi_response_source_step.reset_items({ str(z.id):z.name for z in sourceable_steps })
 
+        self.correlated_names = { z.field_name:z.field_name for z in self.uj.find_ddis_by_attribute('type', 'AUTOCORR') } # if z.field_type == 'Repeated Fields' }
+        self.ddi_auto_correlate_name.reset_items(self.correlated_names)
+
         groupnodes = []
         for stepgroup in self.uj.stepgroups:
             new_group_node = QTreeWidgetItem()
@@ -231,6 +241,9 @@ class Window(QWidget):
             self.ddi_related_ddi,
             self.ddi_response_source_step,
             self.ddi_siphon_table,
+            self.ddi_auto_correlate_type,
+            self.ddi_auto_correlate_name,
+            self.ddi_auto_correlate_appears_in,
         ]
 
         ddi_type_mappings = {
@@ -261,7 +274,7 @@ class Window(QWidget):
             VariableDDI: {self.ddi_value_widget: 'value'},
             RelatedDDI: {self.ddi_column_index_widget: 'column', self.ddi_related_ddi: 'associated'},
             ResponseDDI: {self.ddi_selector_widget: 'selection_type', self.ddi_column_index_widget: 'column', self.ddi_response_source_step: 'source_step_id', self.ddi_siphon_table: 'dict_siphons'},
-            AutoCorrelatedDDI: {},
+            AutoCorrelatedDDI: {self.ddi_auto_correlate_type: 'field_type', self.ddi_auto_correlate_name: 'field_name', self.ddi_auto_correlate_appears_in: ['find_in_url', 'find_in_post', 'find_in_headers']},
             AutoIncrementDDI: {},
         }
 

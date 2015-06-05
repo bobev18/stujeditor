@@ -189,9 +189,9 @@ class AutoCorrelatedDDI(DynamicDataItem):
         #     <ITEM CODE="INURL     ">true</ITEM>
         self.field_name = self.items['FIELDNAME ']
         self.field_type = self.items['FIELDTYPE ']
-        self.find_in_headers = bool(self.items['INHEADERS '])
-        self.find_in_post = bool(self.items['INPOST    '])
-        self.find_in_url = bool(self.items['INURL     '])
+        self.find_in_headers = self.items['INHEADERS '] == 'true'
+        self.find_in_post = self.items['INPOST    '] == 'true'
+        self.find_in_url = self.items['INURL     '] == 'true'
 
 class AutoIncrementDDI(DynamicDataItem):
 

@@ -360,3 +360,35 @@ class SiphonTableWidget(QWidget):
 
         return table
 
+class LabelCheckboxesGroup(QWidget):
+    def __init__(self, label = '', boxes = ['name_to_show']):
+        super(LabelCheckboxesGroup, self).__init__()
+        self.label = QLabel()
+        self.label.setText(label)
+        self.button_group = QButtonGroup()
+        self.box_key_order = boxes
+        self.boxes = {}
+        self.layout = QHBoxLayout()
+        self.layout.setContentsMargins(0,0,0,0)
+        self.layout.addWidget(self.label)
+        for name in boxes:
+            self.boxes[name] = QCheckBox(name)
+            self.layout.addWidget(self.boxes[name])
+
+    def show(self):
+        self.label.show()
+        for box in self.boxes.values():
+            box.show()
+
+    def hide(self):
+        self.label.hide()
+        for box in self.boxes.values():
+            box.hide()
+
+    def set_values(self, *checks):
+        for key, value in zip(self.box_key_order, checks):
+            self.boxes[key].setChecked(value)
+
+    def text(self):
+        return { k:v.isChecked() for k, v in self.boxes.items() }
+
