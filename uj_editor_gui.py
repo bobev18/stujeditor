@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
         # QMenu, QPushButton, QRadioButton, QVBoxLayout, QWidget)
 from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
-    QGridLayout, QVBoxLayout, QHBoxLayout, QLayout,
+    QGridLayout, QVBoxLayout, QHBoxLayout, QLayout, QSplitter,
     QPushButton, QLineEdit, QLabel, QRadioButton, QCheckBox, QTreeWidget, QComboBox, QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QPlainTextEdit)
 
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
@@ -19,7 +19,7 @@ class Window(QWidget):
 
         grid = QGridLayout()
         grid.addWidget(self.create_top_group(), 0, 0)
-        grid.addWidget(self.create_mid_group(), 1, 0)
+        grid.addLayout(self.create_mid_group(), 1, 0)
         grid.addWidget(self.create_bottom_group(), 2, 0)
         self.setLayout(grid)
 
@@ -49,11 +49,10 @@ class Window(QWidget):
         hbox.setContentsMargins(0,0,0,0)
         self.__mix_to_layout(hbox, self.import_button, export_button, self.uj_name.layout)
         group_box.setLayout(hbox)
-
+        group_box.setMaximumHeight(60)
         return group_box
 
     def create_mid_group(self):
-        group_box = QGroupBox()
         self.ddi_tree = QTreeWidget()
         self.ddi_tree.itemSelectionChanged.connect(self.show_ddi_details)
 
@@ -68,17 +67,27 @@ class Window(QWidget):
         self.step_tree.itemSelectionChanged.connect(self.show_step_details)
         step_details = QGroupBox()
 
+        splitter = QSplitter(self)
+        splitter.addWidget(self.ddi_tree)
+        splitter.addWidget(ddi_details)
+        splitter.addWidget(self.step_tree)
+        splitter.addWidget(step_details)
+
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
-        self.__mix_to_layout(hbox, self.ddi_tree, ddi_details, self.step_tree, step_details)
-        group_box.setLayout(hbox)
-        return group_box
+        # self.__mix_to_layout(hbox, self.ddi_tree, ddi_details, self.step_tree, step_details)
+        hbox.addWidget(splitter)
+        # group_box.setLayout(hbox)
+        return hbox
 
     def create_bottom_group(self):
         group_box = QGroupBox()
+        group_box.setMaximumHeight(200)
         self.debug_edit = QPlainTextEdit()
+        self.debug_edit.setMaximumHeight(160)
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0,0,0,0)
+        # hbox.setSizeConstraint(200)
         hbox.addWidget(self.debug_edit)
         group_box.setLayout(hbox)
         return group_box

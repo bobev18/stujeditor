@@ -15,6 +15,12 @@
  	... xmlns="http://www.reflective.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.reflective.com stschema.xsd" ...
  3. add classes for post & flow_control
  4. make UI enforce data types and mandatory fields
+ 5. implement step details
+ 5. implement Save
+ 6. implement Undo
+ 7. implement Copy/Paste/Move/Drag
+ 8. implement Search/Replace
+ 9. implement additional features like list of Steps referencing selected DDI
 
  99. add option to populate table from CSV file for the List DDI
 
