@@ -16,7 +16,7 @@
  3. add classes for post & flow_control
  4. make UI enforce data types and mandatory fields
  5. implement step details
- 5. implement Save
+ 5. implement Save on switching element
  6. implement Undo
  7. implement Copy/Paste/Move/Drag
  8. implement Search/Replace
@@ -97,6 +97,13 @@ The question is, if I have class, stepgroup, should I have step references in th
    - all added to single group, and disabled/hidden dependent on the "sub" type (reuse layout)
    - have separate groups with "sub" type specific layout, and load only the relevant group (more granularity -- may allow for DDI subclasses)
  - A: Have the common fields in one group, and the fields that differ in "sub" type specific layouts/groups
+***
+ - Q: How to implement Undo if triggered on after element change (i.e. Save)
+   - undo all changes made since prior Save
+   - undo just last field change
+ - A: If you apply undo just to the last field, you can keep using Undo to revert all changes for that element i.e. covers both use cases; Alternatively provide two separate undo flavours - 'undo' & 'undo element';
+ - Q: Should there be multi-select edit, where each field change is applied to all selected fields, while fields that are not altered remain different for the different elements.
+ - A: Sure, why not. Especially if Undo works.
 
 #### OTHER CONSIDERATIONS
 There are too many design issues that creep from the XML structure into the object structure. I should create an alternative, using my structures, and adjust the XML feed as needed once I get to that point.
@@ -135,3 +142,13 @@ I have set of UJ sub objects and another set of UI elements, and I need certain 
 - for List DDI - `map = { 'value_field': {set: false, show: false, default: ''}, 'selector_field': {set: true, show: true, default: 'First'}, ...}`
 - ...
 when the signal for update is called, each UI element will look at the map of the UJ object to determine what state to apply to it's self
+
+
+---
+I have 4 structures:
+0. ST's native objects
+1. XML objects
+2. My UJ objects
+3. UI objects
+So far I have altered the MY UJ & XML objects in paralel to avoid the need of composing XML. Now that I'm using UI, I'll need save primitive that does not involve the XML objects.
+I have to loose the XML objects, and generate the XML for the export from scratch.
