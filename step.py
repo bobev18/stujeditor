@@ -1,4 +1,5 @@
 import re
+import xml.etree.cElementTree as ET
 
 DDI_PATTERN = r'\{\{(.+?)\}\}'
 SCHEME_PREFIX = '{http://www.reflective.com}'
@@ -29,27 +30,18 @@ class StepNameException(Exception):
         # </STEP>
 
 class Step():
-
     def __init__(self, element):
-
-        def booleanize(element):
-            if element.get('TYPE') == 'java.lang.Boolean':
-                return bool(element.text)
-            else:
-                return element.text
-
-
         self.element = element
-        self.count_as_transaction = bool(element.get('COUNTASTRANSACTION'))
-        self.execute_separately = bool(element.get('EXECUTESEPARATELY'))
-        self.first_cycle_only = bool(element.get('FIRSTCYCLEONLY'))
-        self.last_cycle_only = bool(element.get('LASTCYCLEONLY'))
+        self.count_as_transaction = element.get('COUNTASTRANSACTION')
+        self.execute_separately = element.get('EXECUTESEPARATELY')
+        self.first_cycle_only = element.get('FIRSTCYCLEONLY')
+        self.last_cycle_only = element.get('LASTCYCLEONLY')
         self.name = element.get('NAME')
         self.name_user_defined = element.get('NAMEUSERDEFINED') == 'true'
-        self.nameuserdefined = bool(element.get('NAMEUSERDEFINED'))
+        self.nameuserdefined = element.get('NAMEUSERDEFINED')
         # print('>>>>', element.tag, element.attrib)
         self.id = int(element.get('ORDER'))
-        self.processresponse = bool(element.get('PROCESSRESPONSE'))
+        self.processresponse = element.get('PROCESSRESPONSE')
         self.type = element.get('TYPE')
 
         self.request_element = element.find(SCHEME_PREFIX+'REQUEST')
@@ -85,7 +77,7 @@ class Step():
         self.items = []
         self.headers = []
         for nvp_item in element.findall(SCHEME_PREFIX+'NVP'):
-            record = {'element': nvp_item, 'name': nvp_item.get('NAME'), 'type': nvp_item.get('TYPE'), 'value': booleanize(nvp_item)}
+            record = {'element': nvp_item, 'name': nvp_item.get('NAME'), 'type': nvp_item.get('TYPE'), 'value': nvp_item.text}
             if nvp_item.get('PLUGIN') == '1':
                 self.headers.append(record)
             else:
@@ -100,6 +92,57 @@ class Step():
                 self.flow_items.append({'name': nvp_item.get('NAME'), 'order': nvp_item.get('ORDER'), 'value': nvp_item.text})
 
         self.referenced_ddis = self.find_ddi_references()
+
+    def xml(self):
+
+        step_element = ET.Element("STEP", {'COUNTASTRANSACTION': self.count_as_transaction, 'EXECUTESEPARATELY': self.execute_separately,
+                                            'FIRSTCYCLEONLY': self.first_cycle_only, 'LASTCYCLEONLY': self.last_cycle_only,
+                                            'NAME': self.name, 'NAMEUSERDEFINED': str(self.name_user_defined).lower(), 'ORDER': str(self.id),
+                                            'PROCESSRESPONSE': self.processresponse, 'TYPE': self.type})
+
+        request_element = ET.SubElement(step_element, 'REQUEST', {'URL': self.request})
+        # for nvp in
+        # <REQUEST URL="{{Homepage}}/webclient/components/portletrenderer.jsp">
+        #         <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
+        #         <NVP NAME="dojo.preventCache" VALUE="1406214763557"/>
+        #         <NVP NAME="gt;" VALUE=""/>
+        #         <NVP NAME="lt;!-- RICH TEXT --" VALUE=""/>
+        #         <NVP NAME="pcompid" VALUE="{{Update Purchase Order ID 2}}"/>
+        #         <NVP NAME="title" VALUE="Favorite Applications"/>
+        #         <NVP NAME="uisessionid" VALUE="{{uisessionid}}"/>
+        #     </REQUEST>
+
+        if self.type == 'POST':
+            post_element = ET.SubElement(step_element, 'POST')
+            for nvp in self.post_items:
+                if nvp['name'] == '':
+                    text_data = ET.SubElement(post_element, 'TEXTDATA')
+                    text_data.text = nvp['value']
+                else:
+                    new_nvp = ET.SubElement(post_element, 'NVP', {'NAME': nvp['name'], 'VALUE': nvp['value']})
+
+
+        # ===========================
+        if self.success != None:
+            success = ET.SubElement(step_element, 'SUCCESS')
+            success.text = self.success
+        description = ET.SubElement(step_element, 'DESCRIPTION')
+        description.text = self.description
+        sleeptime = ET.SubElement(step_element, 'SLEEPTIME')
+        sleeptime.text = str(self.sleeptime)
+        for nvp in self.headers:
+            new_nvp = ET.SubElement(step_element, 'NVP', {'NAME': nvp['name'], 'PLUGIN': '1', 'TYPE': nvp['type']})
+            new_nvp.text = nvp['value']
+
+        for nvp in self.items:
+            new_nvp = ET.SubElement(step_element, 'NVP', {'NAME': nvp['name'], 'TYPE': nvp['type']})
+            new_nvp.text = nvp['value']
+
+        stepgroup = ET.SubElement(step_element, 'STEPGROUP')
+        stepgroup.text = str(self.stepgroup_id)
+
+        return step_element
+
 
     def __repr__(self):
         return self.name

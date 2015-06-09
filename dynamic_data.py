@@ -1,4 +1,5 @@
 from siphon import Siphon
+import xml.etree.cElementTree as ET
 
 SCHEME_PREFIX = '{http://www.reflective.com}'
 
@@ -9,8 +10,8 @@ class DynamicDataItem():
         # common attributes
         self.name = element.get('NAME')
         self.description = element.find(SCHEME_PREFIX+'DESCRIPTION').text
-        self.existing = bool(element.get('EXISTING'))
-        self.valid = bool(element.get('VALID'))
+        self.existing = element.get('EXISTING')
+        self.valid = element.get('VALID')
         # common sub-elements
         self.type = element.find(SCHEME_PREFIX+'SOURCE').attrib['TYPE']
         self.scope = element.find(SCHEME_PREFIX+'SCOPE').attrib['TYPE']
@@ -43,6 +44,31 @@ class DynamicDataItem():
             for siphon in siphons_element.findall(SCHEME_PREFIX+'SIPHON'):
                 self.siphons.append(Siphon(siphon))
 
+    def xml(self):
+        ddi_element = ET.Element("DDITEM", {'EXISTING': self.existing, 'NAME': self.name, 'VALID': self.valid})
+        source = ET.SubElement(ddi_element, 'SOURCE', {'TYPE': self.type})
+        selection = ET.SubElement(ddi_element, 'SELECTION', {'TYPE': self.selection_type})
+        scope = ET.SubElement(ddi_element, 'SCOPE', {'TYPE': self.scope})
+        lifecycle = ET.SubElement(ddi_element, 'LIFECYCLE', {'TYPE': self.lifecycle})
+        description = ET.SubElement(ddi_element, 'DESCRIPTION')
+        description.text = self.description
+        for key, value in self.items.items():
+            new_item = ET.SubElement(ddi_element, 'ITEM', {'CODE': key})
+            new_item.text = value
+
+        if len(self.siphons):
+            siphons_element = ET.SubElement(ddi_element, 'SIPHONS')
+            for index, siphon in enumerate(self.siphons):
+                new_siphon = ET.SubElement(siphons_element, 'SIPHON', {'SEQUENCE': str(index), 'TYPE': siphon.type})
+                start = ET.SubElement(new_siphon, 'STARTTEXT')
+                start.text = siphon.start
+                end = ET.SubElement(new_siphon, 'ENDTEXT')
+                end.text = siphon.end
+                rfindex = ET.SubElement(new_siphon, 'RFINDEX')
+                rfindex.text = siphon.match_number
+
+        return ddi_element
+
     def rename(self, new_name):
         self.element.set('NAME', new_name)
         self.name = new_name
@@ -53,6 +79,7 @@ class DynamicDataItem():
             table.append({'type': siphon.type, 'start': siphon.start, 'end': siphon.end, 'match_number': siphon.match_number})
 
         return table
+
 
 class ConstantDDI(DynamicDataItem):
 

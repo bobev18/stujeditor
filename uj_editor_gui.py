@@ -194,7 +194,8 @@ class Window(QWidget):
     def import_uj(self, filename=[]):
         if not filename:
             filename = QFileDialog.getOpenFileName(self, 'Open File', os.getenv('HOME'))
-        self.uj = UserJourney(filename[0])
+        self.uj = UserJourney('')
+        self.uj.import_uj(filename[0])
         self.uj_name.set_text(self.uj.name)
 
         ddi_nodes = []

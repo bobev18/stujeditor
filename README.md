@@ -56,7 +56,18 @@ with open(file_name, 'w') as xml_file:
 - trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
 - showing DDI that has invalid step reference, silently uses the last value of the 'source step' field
 - Field Name dropdown for Correlated DDI mixes the possible selections for Repeated and Known fields.
+- exporting siphon strings adds extra encoding on some characters i.e. double quotes:
 
+```
+<STARTTEXT>&lt;td    nowrap="nowrap"  id="mx\d{2,8}(\[R:\d+?\])_0"  align="left"   valign="top".+?id="(mx\d{2,8})\1_holder" class="bc"&gt;&lt;span ctype="label"  id="\2\1".+?title="([^"]+?)"&gt;[^"]+?&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?&lt;td    nowrap="nowrap"  id="mx\d{2,8}\1_0"[^~]+?id="mx\d{2,8}\1_holder" class="bc"&gt;&lt;span ctype="label"  id="mx\d{2,8}\1"[^~]+?title="([^"]+?)"&gt;\4&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?title="([^"]+?)"[^~]+?title="WAPPR"&gt;WAPPR&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
+```
+to
+```
+<STARTTEXT>&lt;td    nowrap=&quot;nowrap&quot;  id=&quot;mx\d{2,8}(\[R:\d+?\])_0&quot;  align=&quot;left&quot;   valign=&quot;top&quot;.+?id=&quot;(mx\d{2,8})\1_holder&quot; class=&quot;bc&quot;&gt;&lt;span ctype=&quot;label&quot;  id=&quot;\2\1&quot;.+?title=&quot;([^&quot;]+?)&quot;&gt;[^&quot;]+?&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?&lt;td    nowrap=&quot;nowrap&quot;  id=&quot;mx\d{2,8}\1_0&quot;[^~]+?id=&quot;mx\d{2,8}\1_holder&quot; class=&quot;bc&quot;&gt;&lt;span ctype=&quot;label&quot;  id=&quot;mx\d{2,8}\1&quot;[^~]+?title=&quot;([^&quot;]+?)&quot;&gt;\4&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?title=&quot;([^&quot;]+?)&quot;[^~]+?title=&quot;WAPPR&quot;&gt;WAPPR&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
+```
+- GET requests can have table data, that is listed in the XML as NVPs under the REQUEST element
+- Export forces STEPGROUP tag on steps that didn't have one
+- Export ommits Flow Control details
 
 
 #### DESIGN DECISIONS:
@@ -134,6 +145,7 @@ The XML structure is horrible -- take the 'constant' DDI:
  - the 'selector' field is not available in the GUI for this DDI type. The default value is "First", but is never omitted in XML, although it cannot be anything different
  - the 'refresh' (named lifecycle in XML) and 'shared' (scope), are shown in UI, but fully disabled; the defaults cannot be changed, yet are not omitted in XML, nor hidden in UI
  - seems like every DDI object has an boolean 'encode' attribute, but in XML, that's not in the the DDI element attributes, not even as a child like 'selection' or 'scope', but is under sub-element 'item' identified with specific attribute-value pair i.e `CODE="ENCODE    "` , and the actual boolean value is as in element text: `<ITEM CODE="ENCODE    ">true</ITEM>`
+ - indication whether the success validation string should be RegEx or strig is in NVP towards the step, while it fits better as attribute to the SUCCESS tag
 
 
 ---

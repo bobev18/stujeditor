@@ -1,6 +1,8 @@
 import functools
 import itertools
 
+from xml.dom import minidom
+
 import xml.etree.cElementTree as ET
 from step import Step, StepNameException
 # from dynamic_data import DynamicDataItem
@@ -20,31 +22,45 @@ StepGroupIDException = DDINameException
 
 class UserJourney():
 
-    def __init__(self, filename):
+    def __init__(self, uj_name, app_name='', version ='7.7'):
+        self.name = uj_name
+        self.app_name = app_name
+        self.version = version
+
+    def import_uj(self, filename):
         # self.filename = filename
         with open(filename, 'r') as f:
-            self.raw = f.read()
+            raw = f.readlines()
 
-        ET.register_namespace('', 'http://www.reflective.com')
-        self.tree = ET.parse(filename)
-        # self.tree = ET.ElementTree(file=filename)
-        self.root = self.tree.getroot()
-        self.name = self.root.attrib['NAME']
+        self.first_import_line = raw[0]
 
-        self.dditems_element = self.root.find(SCHEME_PREFIX+'DYNAMICDATA')
+        ET.register_namespace('', SCHEME_PREFIX[1:-1])
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        self.name = root.attrib['NAME']
+        self.app_name = root.attrib['APPNAME']
+        self.version = root.attrib['VERSION']
+
+        created = root.find(SCHEME_PREFIX+'CREATED')
+        self.created = created.text
+
+        self.uj_global_settings = []
+        for nvp in root.findall(SCHEME_PREFIX+'NVP'):
+            self.uj_global_settings.append({'NAME': nvp.attrib['NAME'], 'PLUGIN': nvp.attrib['PLUGIN'], 'TYPE': nvp.attrib['TYPE'], 'text': nvp.text})
+
+
+
+        #### Dynamic Data Items ###
+        dditems_element = root.find(SCHEME_PREFIX+'DYNAMICDATA')
         self.dditems = []
 
-        for ddi in self.dditems_element.findall(SCHEME_PREFIX+'DDITEM'):
+        for ddi in dditems_element.findall(SCHEME_PREFIX+'DDITEM'):
             ddi_type = ddi.find(SCHEME_PREFIX+'SOURCE').attrib['TYPE']
             self.dditems.append(TYPE_TO_CLASS_MAP[ddi_type](ddi))
 
-        self.stepgroups = self.capture_stepgroups()
-
-        # self.parent_map = {child:parent for parent in self.tree.iter() for child in parent}
-
-    def capture_stepgroups(self):
+        #### Steps & Step-Groups ####
         # stepgroups are not defined in the XML, so to construct a stepgroup, we need list of all the steps
-        steps_element = self.root.find(SCHEME_PREFIX+'STEPS')
+        steps_element = root.find(SCHEME_PREFIX+'STEPS')
         stepgroups = []
         stepgroup_steps = []
         lead_step = None
@@ -66,11 +82,11 @@ class UserJourney():
 
         # finalize after last step
         stepgroups.append(StepGroup(lead_step, stepgroup_steps))
-        lead_step = current_step
-        stepgroup_steps = [current_step]
-        last_step_stepgroup_id = current_step.id
+        # lead_step = current_step
+        # stepgroup_steps = [current_step]
+        # last_step_stepgroup_id = current_step.id
 
-        return stepgroups
+        self.stepgroups = stepgroups
 
     def list_ddi_names(self):
         return [z.name for z in self.dditems]
@@ -142,8 +158,8 @@ class UserJourney():
     def list_stepgroup_names(self):
         return [z.name for z in self.stepgroups]
 
-    def __repr__(self):
-        return str(ET.tostring(self.root))
+    # def __repr__(self):
+        # return str(ET.tostring(self.root))
 
     def tree_output(self):
         result = ''
@@ -184,7 +200,52 @@ class UserJourney():
 
     def change_uj_name(self, new_name):
         self.name = new_name
-        self.root.set('NAME', new_name)
+        # self.root.set('NAME', new_name)
+
+    def xml(self):
+        ET.register_namespace('', SCHEME_PREFIX[1:-1])
+        root = ET.Element("USERJOURNEY", {'APPNAME': self.app_name, 'NAME': self.name, 'VALID': 'true', 'VERSION': self.version})
+        root.set('xmlns', "http://www.reflective.com")
+        root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
+        root.set('xsi:schemaLocation', "http://www.reflective.com stschema.xsd")
+        # root.set('APPNAME', self.app_name)
+        # root.set('NAME', self.name)
+        # root.set('VALID', 'true')
+        # root.set('VERSION', self.version)
+
+        description = ET.SubElement(root, 'DESCRIPTION')
+        plugin = ET.SubElement(root, 'PLUGIN', {'ID': '1'})
+        responseprocessor = ET.SubElement(root, 'RESPONSEPROCESSOR')
+        created = ET.SubElement(root, 'CREATED')
+        created.text = self.created
+
+        for nvp in self.uj_global_settings:
+            text = nvp['text']
+            attributes = {key: value for key, value in nvp.items() if key is not 'text'}
+            new_nvp = ET.SubElement(root, 'NVP', attributes)
+            new_nvp.text = text
+
+        dynamic_data_element = ET.SubElement(root, 'DYNAMICDATA')
+        for ddi in self.dditems:
+            dynamic_data_element.append(ddi.xml())
+
+        steps_element = ET.SubElement(root, 'STEPS')
+        for step in [step for sg in self.stepgroups for step in sg.steps]:
+            st = step.xml()
+            steps_element.append(step.xml())
+
+
+        # tree = ET.ElementTree(root)
+        # tree.write("page.xhtml")
+
+        rough_string = ET.tostring(root, 'utf-8')
+        reparsed = minidom.parseString(rough_string)
+        return reparsed.toprettyxml(indent='\t').replace('<?xml version="1.0" ?>\n', self.first_import_line)
+
+    def export_uj(self, filename):
+        with open(filename, 'w') as xml_file:
+            xml_file.write(self.xml())
+
 
     def push_stepgroup_changes_to_XML(self):
         new_step_list = list(itertools.chain(*[z.steps for z in self.stepgroups]))
@@ -217,7 +278,7 @@ class UserJourney():
 
     def delete_ddi(self, ddi_name):
         target_ddi = self.find_ddi_by_name(ddi_name)
-        self.dditems_element.remove(target_ddi.element)
+        # self.dditems_element.remove(target_ddi.element)
         self.dditems.remove(target_ddi)
 
 

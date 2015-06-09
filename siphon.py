@@ -10,6 +10,7 @@ class Siphon():
         self.start = element.find(SCHEME_PREFIX+'STARTTEXT').text
         self.end = element.find(SCHEME_PREFIX+'ENDTEXT').text
         self.match_number = element.find(SCHEME_PREFIX+'RFINDEX').text
+        # self.as_dict = {'SEQUENCE': self.sequence, 'TYPE': self.type, 'STARTTEXT': self.start, 'ENDTEXT': self.end, 'RFINDEX': self.match_number}
 
     def __repr__(self):
         result = 'Type: ' + SIPHON_TYPES[self.type] + '\n'
@@ -17,3 +18,4 @@ class Siphon():
         result+= 'Start text: ' + self.start + '\n'
         if self.end: result+= 'End text  : ' + self.end + '\n'
         return result+'\n'
+
