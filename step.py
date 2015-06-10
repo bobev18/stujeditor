@@ -45,6 +45,11 @@ class Step():
         self.type = element.get('TYPE')
 
         self.request_element = element.find(SCHEME_PREFIX+'REQUEST')
+        self.get_itmes = []
+        if len(self.request_element.findall(SCHEME_PREFIX+'NVP')):
+            for get_item in self.request_element.findall(SCHEME_PREFIX+'NVP'):
+                self.get_itmes.append({'element': get_item, 'name': get_item.get('NAME'), 'value': get_item.get('VALUE')})
+
         self.request = self.request_element.get('URL')
         self.description_element = element.find(SCHEME_PREFIX+'DESCRIPTION')
         self.description = self.description_element.text
@@ -101,6 +106,9 @@ class Step():
                                             'PROCESSRESPONSE': self.processresponse, 'TYPE': self.type})
 
         request_element = ET.SubElement(step_element, 'REQUEST', {'URL': self.request})
+        if self.get_itmes:
+            for nvp in self.get_itmes:
+                new_nvp = ET.SubElement(request_element, 'NVP', {'NAME': nvp['name'], 'VALUE': nvp['value']})
         # for nvp in
         # <REQUEST URL="{{Homepage}}/webclient/components/portletrenderer.jsp">
         #         <NVP NAME="csrftoken" VALUE="{{csrftoken}}"/>
@@ -138,8 +146,15 @@ class Step():
             new_nvp = ET.SubElement(step_element, 'NVP', {'NAME': nvp['name'], 'TYPE': nvp['type']})
             new_nvp.text = nvp['value']
 
-        stepgroup = ET.SubElement(step_element, 'STEPGROUP')
-        stepgroup.text = str(self.stepgroup_id)
+        if hasattr(self, 'flow_type'):
+            flow_control_element = ET.SubElement(step_element, 'FLOWCONTROL', {'TYPE': self.flow_type})
+            for nvp in self.flow_items:
+                new_nvp = ET.SubElement(flow_control_element, 'NVP', {'NAME': nvp['name'], 'ORDER': nvp['order']})
+                new_nvp.text = nvp['value']
+        else:
+            stepgroup = ET.SubElement(step_element, 'STEPGROUP')
+            stepgroup.text = str(self.stepgroup_id)
+
 
         return step_element
 

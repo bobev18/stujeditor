@@ -208,6 +208,68 @@ class EditorTest(unittest.TestCase):
         self.assertEqual(ddi_list_copy, self.test_uj.list_ddi_names())
         self.assertEqual(0, self.test_uj.xml().count('NAME="Update Purchase Order ID 21"'))
 
+    def test_export_matching(self):
+        with open('Update Purchase Order User Journey.xml', 'rt') as f:
+            original = f.readlines()
+
+        # self.test_uj.name = 'processed'
+        # self.test_uj.app_name = 'test'
+        # with open('page.xml', 'wt') as f:
+        #     f.write(self.test_uj.xml())
+
+        # """
+        # text_diff does the following:
+        #  - joins lines that do not start with tag for both texts
+        #  - compares line to line and pushes lines with difference to tuple
+        #  - ignores lines of original has arbitrary '<SUCCESS/>' tag
+        #     = adjusts line index for rest of the comparison
+        # """
+        differences = text_diff(original, self.test_uj.xml().splitlines())
+        #  clean the siphon <STARTTEXT> because these differ by the encoded double quotes
+        differences = [ z for z in differences if z[0].count('<STARTTEXT') == 0 and z[0].count('<ENDTEXT') == 0 ]
+        self.assertEqual([], differences)
+        # print(differences)
+
+
+import re
+
+def text_diff(text1, text2):
+
+    def join_untagged_lines(text):
+        result = []
+        for i in range(len(text)):
+            match = re.search(r'^\s*?<', text[i])
+            if match:
+                result.append(text[i])
+            else:
+                # print(i)
+                # print(text3[-1].strip())
+                result[-1] = result[-1].rstrip() + ' '
+                result[-1] += text[i].strip()
+
+        # print(text3[-1].strip())
+        return result
+
+    text1 = join_untagged_lines(text1)
+    text2 = join_untagged_lines(text2)
+
+    # print(len(text1), len(text2))
+    mutator = 0
+    differences = []
+    for i in range(len(text1)):
+        # print(i)
+        try:
+            if text1[i + mutator].strip() != text2[i].strip():
+                # print('t1',i + mutator, text1[i + mutator].strip())
+                # print('t2',i, text2[i].strip())
+                if text1[i + mutator].strip()=='<SUCCESS/>':
+                    mutator += 1
+                else:
+                    differences.append((text1[i + mutator].strip(), text2[i].strip()))
+        except IndexError:
+            pass
+
+    return differences
 
 
 

@@ -28,7 +28,6 @@ class UserJourney():
         self.version = version
 
     def import_uj(self, filename):
-        # self.filename = filename
         with open(filename, 'r') as f:
             raw = f.readlines()
 
@@ -47,8 +46,6 @@ class UserJourney():
         self.uj_global_settings = []
         for nvp in root.findall(SCHEME_PREFIX+'NVP'):
             self.uj_global_settings.append({'NAME': nvp.attrib['NAME'], 'PLUGIN': nvp.attrib['PLUGIN'], 'TYPE': nvp.attrib['TYPE'], 'text': nvp.text})
-
-
 
         #### Dynamic Data Items ###
         dditems_element = root.find(SCHEME_PREFIX+'DYNAMICDATA')
@@ -82,9 +79,6 @@ class UserJourney():
 
         # finalize after last step
         stepgroups.append(StepGroup(lead_step, stepgroup_steps))
-        # lead_step = current_step
-        # stepgroup_steps = [current_step]
-        # last_step_stepgroup_id = current_step.id
 
         self.stepgroups = stepgroups
 
@@ -158,9 +152,6 @@ class UserJourney():
     def list_stepgroup_names(self):
         return [z.name for z in self.stepgroups]
 
-    # def __repr__(self):
-        # return str(ET.tostring(self.root))
-
     def tree_output(self):
         result = ''
         for stepgroup in self.stepgroups:
@@ -182,8 +173,6 @@ class UserJourney():
         groups_wiht_id = [ z for z in self.stepgroups if z.id == id_ ]
         if len(groups_wiht_id) != 1:
             return None
-            # message = str(len(groups_wiht_id)) + ' stepgroups found for id ' + str(id_)
-            # raise StepGroupIDException(message)
 
         return groups_wiht_id[0]
 
@@ -208,11 +197,6 @@ class UserJourney():
         root.set('xmlns', "http://www.reflective.com")
         root.set('xmlns:xsi', "http://www.w3.org/2001/XMLSchema-instance")
         root.set('xsi:schemaLocation', "http://www.reflective.com stschema.xsd")
-        # root.set('APPNAME', self.app_name)
-        # root.set('NAME', self.name)
-        # root.set('VALID', 'true')
-        # root.set('VERSION', self.version)
-
         description = ET.SubElement(root, 'DESCRIPTION')
         plugin = ET.SubElement(root, 'PLUGIN', {'ID': '1'})
         responseprocessor = ET.SubElement(root, 'RESPONSEPROCESSOR')
@@ -234,10 +218,6 @@ class UserJourney():
             st = step.xml()
             steps_element.append(step.xml())
 
-
-        # tree = ET.ElementTree(root)
-        # tree.write("page.xhtml")
-
         rough_string = ET.tostring(root, 'utf-8')
         reparsed = minidom.parseString(rough_string)
         return reparsed.toprettyxml(indent='\t').replace('<?xml version="1.0" ?>\n', self.first_import_line)
@@ -245,7 +225,6 @@ class UserJourney():
     def export_uj(self, filename):
         with open(filename, 'w') as xml_file:
             xml_file.write(self.xml())
-
 
     def push_stepgroup_changes_to_XML(self):
         new_step_list = list(itertools.chain(*[z.steps for z in self.stepgroups]))
@@ -280,6 +259,3 @@ class UserJourney():
         target_ddi = self.find_ddi_by_name(ddi_name)
         # self.dditems_element.remove(target_ddi.element)
         self.dditems.remove(target_ddi)
-
-
-

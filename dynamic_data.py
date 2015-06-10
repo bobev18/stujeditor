@@ -52,9 +52,12 @@ class DynamicDataItem():
         lifecycle = ET.SubElement(ddi_element, 'LIFECYCLE', {'TYPE': self.lifecycle})
         description = ET.SubElement(ddi_element, 'DESCRIPTION')
         description.text = self.description
-        for key, value in self.items.items():
+        ordered_item_keys = list(self.items.keys())
+        # ordered_item_keys = ordered_item_keys.ordered()
+        ordered_item_keys.sort()
+        for key in ordered_item_keys:
             new_item = ET.SubElement(ddi_element, 'ITEM', {'CODE': key})
-            new_item.text = value
+            new_item.text = self.items[key]
 
         if len(self.siphons):
             siphons_element = ET.SubElement(ddi_element, 'SIPHONS')
@@ -62,6 +65,7 @@ class DynamicDataItem():
                 new_siphon = ET.SubElement(siphons_element, 'SIPHON', {'SEQUENCE': str(index), 'TYPE': siphon.type})
                 start = ET.SubElement(new_siphon, 'STARTTEXT')
                 start.text = siphon.start
+                # print('OOO', siphon.start, start, start.text)
                 end = ET.SubElement(new_siphon, 'ENDTEXT')
                 end.text = siphon.end
                 rfindex = ET.SubElement(new_siphon, 'RFINDEX')
