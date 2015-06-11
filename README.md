@@ -53,22 +53,37 @@ with open(file_name, 'w') as xml_file:
 - I should find, learn and utilize PyQt's unit testing
 
 ### BUGS:
-- trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
-- showing DDI that has invalid step reference, silently uses the last value of the 'source step' field
-- Field Name dropdown for Correlated DDI mixes the possible selections for Repeated and Known fields.
-- exporting siphon strings adds extra encoding on some characters i.e. double quotes:
+1. trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
+2. showing DDI that has invalid step reference, silently uses the last value of the 'source step' field
+3. Field Name dropdown for Correlated DDI mixes the possible selections for Repeated and Known fields.
+4. exporting siphon strings adds extra encoding on some characters i.e. double quotes:
+  - original
 
 ```
 <STARTTEXT>&lt;td    nowrap="nowrap"  id="mx\d{2,8}(\[R:\d+?\])_0"  align="left"   valign="top".+?id="(mx\d{2,8})\1_holder" class="bc"&gt;&lt;span ctype="label"  id="\2\1".+?title="([^"]+?)"&gt;[^"]+?&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?&lt;td    nowrap="nowrap"  id="mx\d{2,8}\1_0"[^~]+?id="mx\d{2,8}\1_holder" class="bc"&gt;&lt;span ctype="label"  id="mx\d{2,8}\1"[^~]+?title="([^"]+?)"&gt;\4&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?title="([^"]+?)"[^~]+?title="WAPPR"&gt;WAPPR&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
 ```
-to
+  - processed
 ```
 <STARTTEXT>&lt;td    nowrap=&quot;nowrap&quot;  id=&quot;mx\d{2,8}(\[R:\d+?\])_0&quot;  align=&quot;left&quot;   valign=&quot;top&quot;.+?id=&quot;(mx\d{2,8})\1_holder&quot; class=&quot;bc&quot;&gt;&lt;span ctype=&quot;label&quot;  id=&quot;\2\1&quot;.+?title=&quot;([^&quot;]+?)&quot;&gt;[^&quot;]+?&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?&lt;td    nowrap=&quot;nowrap&quot;  id=&quot;mx\d{2,8}\1_0&quot;[^~]+?id=&quot;mx\d{2,8}\1_holder&quot; class=&quot;bc&quot;&gt;&lt;span ctype=&quot;label&quot;  id=&quot;mx\d{2,8}\1&quot;[^~]+?title=&quot;([^&quot;]+?)&quot;&gt;\4&lt;/span&gt;&lt;/div&gt;&lt;/td&gt;[^~]+?title=&quot;([^&quot;]+?)&quot;[^~]+?title=&quot;WAPPR&quot;&gt;WAPPR&lt;/label&gt;&lt;/div&gt;&lt;/td&gt;</STARTTEXT>
 ```
-- GET requests can have table data, that is listed in the XML as NVPs under the REQUEST element
-- Export forces STEPGROUP tag on steps that didn't have one
-- Export ommits Flow Control details
+5. Export forces STEPGROUP tag on steps that didn't have one
+6. switching the DDI type of a selected DDI, should change the type specific items in the UI
 
+### BUG NOTES:
+- on bug 1 - this is now fixed in some places to properly interpret the values, and on other places to retain the string value
+- on bug 2 - this occurs only when the input UJ is technically incomplete; should be handled along with setting the DDI attribute 'valid' to False
+- on bug 3 - fixing this would need to circumvent/extend the algorithm that maps DDI type to UI fields; extra UI field change triggered by selection of the ddi_auto_correlate_type field
+- on bug 4 - this is crazy, but this does not seem to affect import:
+  - in ST value for the ID 10 of the processed XML:
+```
+<input  aria-required="true"  role="textbox"  id="([^'"\[]*?)" class="fld text    ibfld fld_req"     ctype="textbox"   li="mx[\d]{1,8}"     maxlength="[\d]{1,8}" style=";width:[\d]{1,8}\.[\d]{1,8}px;"         type="text" title="Description:? ?.*?" value=".*?" ov=".*?" work="[\d]{1,8}" fldInfo='\{&quot;length&quot;:&quot;[\d]{1,8}&quot;,&quot;inttype&quot;:&quot;[\d]{1,8}&quot;,&quot;required&quot;:true\}'/>
+```
+  - in ST value for the ID 10 of the original XML:
+```
+<input  aria-required="true"  role="textbox"  id="([^'"\[]*?)" class="fld text    ibfld fld_req"     ctype="textbox"   li="mx[\d]{1,8}"     maxlength="[\d]{1,8}" style=";width:[\d]{1,8}\.[\d]{1,8}px;"         type="text" title="Description:? ?.*?" value=".*?" ov=".*?" work="[\d]{1,8}" fldInfo='\{&quot;length&quot;:&quot;[\d]{1,8}&quot;,&quot;inttype&quot;:&quot;[\d]{1,8}&quot;,&quot;required&quot;:true\}'/>
+```
+- on bug 5 - ST import should not complain about that, and the UJ functionality does not change as a result [WONTFIX]
+- on bug 6 -
 
 #### DESIGN DECISIONS:
  - Q: Knowledge among UJ<>STEP<>DDI:

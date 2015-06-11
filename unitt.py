@@ -44,8 +44,6 @@ class EditorTest(unittest.TestCase):
         self.assertEqual(id13_anew, id13)
         self.assertRaises(DDINameException, self.test_uj.rename_ddi, 'Update Purchase Order ID 14', 'MXID Item')
 
-
-
     def test_list_steps(self):
         # self.test_uj = UserJourney('Update Purchase Order User Journey.xml')
         self.assertEqual(set(STEP_LIST), set(self.test_uj.list_step_names()))

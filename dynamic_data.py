@@ -25,7 +25,7 @@ class DynamicDataItem():
 
         # print('proceesing ENCODE for step', self.name)
         if 'ENCODE    ' in self.items.keys():
-            self.encode = bool(self.items['ENCODE    '])
+            self.encode = self.items['ENCODE    '] == 'true'
         else:
             self.encode = None
 
