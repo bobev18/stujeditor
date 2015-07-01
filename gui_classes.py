@@ -293,6 +293,7 @@ class SiphonTableWidget(QWidget):
     def __init__(self, items = [{'type': 'T', 'start': '', 'end': '', 'match_number': '1'}]):
         super(SiphonTableWidget, self).__init__()
         self.table = QTableWidget(len(items), 4)
+        self.table.setHorizontalHeaderLabels(['Filter Type', 'Start', 'End', 'Index'])
         self.add_row_button = QPushButton('Add Row')
         self.add_row_button.clicked.connect(self.add_row)
         self.delete_row_button = QPushButton('Delete Row')

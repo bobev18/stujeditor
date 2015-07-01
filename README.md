@@ -55,7 +55,7 @@ with open(file_name, 'w') as xml_file:
 ### BUGS:
 1. trying to use `bool(element.get('NAMEUSERDEFINED'))` fails because the strings in source are not capitalized; use instead `element.get('NAMEUSERDEFINED') == 'true'`
 2. showing DDI that has invalid step reference, silently uses the last value of the 'source step' field
-3. Field Name dropdown for Correlated DDI mixes the possible selections for Repeated and Known fields.
+3. Field Name drop-down for Correlated DDI mixes the possible selections for Repeated and Known fields.
 4. exporting siphon strings adds extra encoding on some characters i.e. double quotes:
   - original
 
@@ -68,6 +68,8 @@ with open(file_name, 'w') as xml_file:
 ```
 5. Export forces STEPGROUP tag on steps that didn't have one
 6. switching the DDI type of a selected DDI, should change the type specific items in the UI
+7. export forces EXECUTESEPARATELY="true" for lead steps
+8. execute separately checkbox is not hidden for lead steps
 
 ### BUG NOTES:
 - on bug 1 - this is now fixed in some places to properly interpret the values, and on other places to retain the string value
@@ -84,6 +86,8 @@ with open(file_name, 'w') as xml_file:
 ```
 - on bug 5 - ST import should not complain about that, and the UJ functionality does not change as a result [WONTFIX]
 - on bug 6 -
+- on bug 7 - this is actually more correct based on behavior
+- on bug 8 - hiding it serves only as foolproofing - [FIXLATER]
 
 #### DESIGN DECISIONS:
  - Q: Knowledge among UJ<>STEP<>DDI:
@@ -127,9 +131,9 @@ The question is, if I have class, stepgroup, should I have step references in th
  - Q: How to implement Undo if triggered on after element change (i.e. Save)
    - undo all changes made since prior Save
    - undo just last field change
- - A: If you apply undo just to the last field, you can keep using Undo to revert all changes for that element i.e. covers both use cases; Alternatively provide two separate undo flavours - 'undo' & 'undo element';
+ - A: If you apply undo just to the last field, you can keep using Undo to revert all changes for that element i.e. covers both use cases; Alternatively provide two separate undo flavors - 'undo' & 'undo element';
  - Q: Should there be multi-select edit, where each field change is applied to all selected fields, while fields that are not altered remain different for the different elements.
- - A: Sure, why not. Especially if Undo works.
+ - A: Sure, why not. Especially if Undo works properly.
 
 #### OTHER CONSIDERATIONS
 There are too many design issues that creep from the XML structure into the object structure. I should create an alternative, using my structures, and adjust the XML feed as needed once I get to that point.
@@ -160,7 +164,8 @@ The XML structure is horrible -- take the 'constant' DDI:
  - the 'selector' field is not available in the GUI for this DDI type. The default value is "First", but is never omitted in XML, although it cannot be anything different
  - the 'refresh' (named lifecycle in XML) and 'shared' (scope), are shown in UI, but fully disabled; the defaults cannot be changed, yet are not omitted in XML, nor hidden in UI
  - seems like every DDI object has an boolean 'encode' attribute, but in XML, that's not in the the DDI element attributes, not even as a child like 'selection' or 'scope', but is under sub-element 'item' identified with specific attribute-value pair i.e `CODE="ENCODE    "` , and the actual boolean value is as in element text: `<ITEM CODE="ENCODE    ">true</ITEM>`
- - indication whether the success validation string should be RegEx or strig is in NVP towards the step, while it fits better as attribute to the SUCCESS tag
+ - indication whether the success validation string should be RegEx or string is in NVP towards the step, while it fits better as attribute to the SUCCESS tag
+ - EXECUTESEPARATELY="false" is present for group lead steps, so apparently they are being executed separately based on some other condition; in the GUI, the checkbox for 'execute separately' is hidden for lead steps
 
 
 ---
@@ -177,5 +182,5 @@ I have 4 structures:
 1. XML objects
 2. My UJ objects
 3. UI objects
-So far I have altered the MY UJ & XML objects in paralel to avoid the need of composing XML. Now that I'm using UI, I'll need save primitive that does not involve the XML objects.
+So far I have altered the MY UJ & XML objects in parallel to avoid the need of composing XML. Now that I'm using UI, I'll need save primitive that does not involve the XML objects.
 I have to loose the XML objects, and generate the XML for the export from scratch.

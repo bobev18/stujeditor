@@ -12,6 +12,8 @@ from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
 
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
+STEP_REQUEST_TYPES = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']
+STEP_CONTENT_TYPES = {'form': ['application/x-www-form-urlencoded', 'multipart/form-data'], 'binary': ['application/octet-stream', 'binary/octet-stream'], 'XML': ['text/html'], 'other': ['text/plain', 'application/json']}
 
 class Window(QWidget):
     def __init__(self, parent=None):
@@ -66,6 +68,11 @@ class Window(QWidget):
         self.step_tree = QTreeWidget()
         self.step_tree.itemSelectionChanged.connect(self.show_step_details)
         step_details = QGroupBox()
+        step_details_layout = QGridLayout()
+        step_details_layout.setContentsMargins(0,0,0,0)
+        step_details_layout.addWidget(self.create_common_step_details(), 0, 0, 1, 1)
+        step_details_layout.addWidget(self.create_specific_step_details(), 1, 0, 3, 1)
+        step_details.setLayout(step_details_layout)
 
         splitter = QSplitter(self)
         splitter.addWidget(self.ddi_tree)
@@ -176,12 +183,56 @@ class Window(QWidget):
         group_box.setLayout(self.ddi_specific_layout)
         return group_box
 
+    # ()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()()
+
+    def create_common_step_details(self):
+        group_box = QGroupBox()
+        vbox = QVBoxLayout()
+        vbox.setContentsMargins(0,0,0,0)
+        name_sleep_layout = QHBoxLayout()
+        name_sleep_layout.setContentsMargins(0,0,0,0)
+        self.step_name = LabelLineEdit('Name')
+        name_sleep_layout.addLayout(self.step_name.layout)
+        self.step_pre_time = LabelLineEdit('Sleep Time (sec)')
+        name_sleep_layout.addLayout(self.step_pre_time.layout)
+        vbox.addLayout(name_sleep_layout)
+        self.step_description = LabelLineEdit('Description')
+        vbox.addLayout(self.step_description.layout)
+        self.step_checkboxes = LabelCheckboxesGroup('', ['Run First Cycle Only', 'Run Last Cycle Only', 'Count as Transaction', 'Process Response', 'Execute Separately'])
+        vbox.addLayout(self.step_checkboxes.layout)
+        request_type_content_type_layout = QHBoxLayout()
+        self.request_type = LabelComboBox('Type', { z:z for z in STEP_REQUEST_TYPES })
+        request_type_content_type_layout.addLayout(self.request_type.layout)
+        self.content_type = LabelComboBox('Content-Type', { z:z for z in STEP_CONTENT_TYPES.keys() })
+        request_type_content_type_layout.addLayout(self.content_type.layout)
+        self.content_type.combo_box.currentIndexChanged[str].connect(self.update_content_subtypes)
+        self.content_subtype = LabelComboBox('', { z:z for z in STEP_CONTENT_TYPES['form'] })
+        request_type_content_type_layout.addLayout(self.content_subtype.layout)
+        # what's the point of having type and subtypes? the one sent with headers is the subtype - it should be the only selection
+        vbox.addLayout(request_type_content_type_layout)
+
+
+
+        group_box.setLayout(vbox)
+        return group_box
+
+
+    def create_specific_step_details(self):
+        pass
+
+
+
 
 # ------------------------------------------------------ end of creations ----------------------------------------------------------
 
     # def create_actions(self):
     #     self.import_act = QAction("&Import...", self, shortcut="Ctrl+I", triggered=self.import_uj)
     #     self.export_act = QAction("&Export...", self, shortcut="Ctrl+E", triggered=self.export_uj)
+
+    def update_content_subtypes(self, item):
+        # item is supposed to be the text value of the combobox selection
+        print('reached function update_content_subtypes with item=', item)
+
 
     def debug__(self, message):
         self.debug_edit.appendPlainText(message)
