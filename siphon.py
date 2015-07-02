@@ -8,7 +8,11 @@ class Siphon():
         self.sequence = element.get('SEQUENCE')
         self.type = element.get('TYPE')
         self.start = element.find(SCHEME_PREFIX+'STARTTEXT').text
+        if self.start == None:
+            self.start = ''
         self.end = element.find(SCHEME_PREFIX+'ENDTEXT').text
+        if self.end == None:
+            self.end = ''
         self.match_number = element.find(SCHEME_PREFIX+'RFINDEX').text
         # self.as_dict = {'SEQUENCE': self.sequence, 'TYPE': self.type, 'STARTTEXT': self.start, 'ENDTEXT': self.end, 'RFINDEX': self.match_number}
 

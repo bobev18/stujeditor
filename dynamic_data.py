@@ -2,6 +2,7 @@ from siphon import Siphon
 import xml.etree.cElementTree as ET
 
 SCHEME_PREFIX = '{http://www.reflective.com}'
+SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
 
 class DynamicDataItem():
 
@@ -80,7 +81,7 @@ class DynamicDataItem():
     def dict_siphons(self):
         table = []
         for siphon in self.siphons:
-            table.append({'type': siphon.type, 'start': siphon.start, 'end': siphon.end, 'match_number': siphon.match_number})
+            table.append([{SIPHON_TYPES[siphon.type]: SIPHON_TYPES.values()}, siphon.start, siphon.end, siphon.match_number])
 
         return table
 

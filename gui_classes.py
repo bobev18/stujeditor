@@ -12,7 +12,10 @@ from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup, QMe
 # DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 # SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
 
-SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
+
+class CellObjectException(Exception):
+    def __init__(self, *args):
+        self.args = [a for a in args]
 
 class LabelLineEdit(QWidget):
     def __init__(self, label=''):
@@ -289,11 +292,11 @@ class MyTableWidget(QWidget):
 
 # SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
 # {'Position': 'I', 'Regular Expression': 'R', 'Text Substring': 'T', 'Replace': 'Y', 'Delimiter': 'D'}
-class SiphonTableWidget(QWidget):
-    def __init__(self, items = [{'type': 'T', 'start': '', 'end': '', 'match_number': '1'}]):
-        super(SiphonTableWidget, self).__init__()
-        self.table = QTableWidget(len(items), 4)
-        self.table.setHorizontalHeaderLabels(['Filter Type', 'Start', 'End', 'Index'])
+class RowControlTableWidget(QWidget):
+    def __init__(self, items = ['col1_name', 'col2_name', ]):
+        super(RowControlTableWidget, self).__init__()
+        self.table = QTableWidget(1, len(items))
+        self.table.setHorizontalHeaderLabels(items)
         self.add_row_button = QPushButton('Add Row')
         self.add_row_button.clicked.connect(self.add_row)
         self.delete_row_button = QPushButton('Delete Row')
@@ -336,32 +339,38 @@ class SiphonTableWidget(QWidget):
         self.delete_row_button.hide()
 
     def set_text(self, items):
+        # where items should be list of lists of objects that can be either dict (loads as QComboBox) or string (used in setItem)
         # print('siphon itmes', items)
         self.table.setRowCount(len(items))
+        self.table.setColumnCount(len(items[0]))
         for i, row in enumerate(items):
             # print('siphon row', row)
-            type_box = QComboBox()
-            type_box.insertItems(0, SIPHON_TYPES.values())
-            type_box.setCurrentText(SIPHON_TYPES[row['type']])
-            self.table.setCellWidget(i, 0, type_box)
-            item = QTableWidgetItem(row['start'])
-            self.table.setItem(i, 1, item)
-            item = QTableWidgetItem(row['end'])
-            self.table.setItem(i, 2, item)
-            item = QTableWidgetItem(row['match_number'])
-            self.table.setItem(i, 3, item)
+            for j, value in enumerate(row):
+                if isinstance(value, str):
+                    item = QTableWidgetItem(value)
+                    self.table.setItem(i, j, item)
+                elif isinstance(value, dict):
+                    combo_box = QComboBox()
+                    dict_keys = list(value.keys())
+                    selected = dict_keys[0]
+                    combo_box.insertItems(0, value[selected])
+                    combo_box.setCurrentText(selected)
+                    self.table.setCellWidget(i, j, combo_box)
+                else:
+                    message = 'Table cells are expected to be either Dict (added asQComboBox via setCellWidget) or String (added as QTableWidgetItem). You have type ' + str(type(value))
+                    message += ' at position ' + str(i) + ', ' + str(j)
+                    raise CellObjectException(message)
 
     def get_values(self):
-        rows = self.table.rowCount()
         table = []
-        for i in range(rows):
-            type_long_name = self.table.cellWidget(i, 0).currentText()
-            type_code = {v:k for k,v in SIPHON_TYPES.items()}[type_long_name]
-            row = {'type': type_code}
-            for j, key in enumerate(['start', 'end', 'match_number']):
-                row[key] = self.table.item(i, j+1).text()
+        for i in range(self.table.rowCount()):
+            row = []
+            for j in range(self.table.columnCount()):
+                try:
+                    row.append(self.table.item(i, j).text())
+                except AttributeError:
+                    row.append(self.table.cellWidget(i, j).currentText())
             table.append(row)
-
         return table
 
 class LabelCheckboxesGroup(QWidget):

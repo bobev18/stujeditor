@@ -1,7 +1,7 @@
 import os
 from userjourney import UserJourney
 from dynamic_data import ConstantDDI, DateDDI, DelimitedFileDDI, ListDDI, VariableDDI, RelatedDDI, ResponseDDI, AutoCorrelatedDDI, AutoIncrementDDI
-from gui_classes import LabelLineEdit, LabelComboBox, LabelButtonGroup, DateFieldsGroup, MyTableWidget, SiphonTableWidget, LabelCheckboxesGroup
+from gui_classes import LabelLineEdit, LabelComboBox, LabelButtonGroup, DateFieldsGroup, MyTableWidget, RowControlTableWidget, LabelCheckboxesGroup
 
 from PyQt5.QtCore import Qt
 # from PyQt5.QtWidgets import (QApplication, QCheckBox, QGridLayout, QGroupBox,
@@ -13,7 +13,9 @@ from PyQt5.QtWidgets import (QApplication, QGroupBox, QWidget, QButtonGroup,
 DDI_TYPES = {'AUTOCORR': 'Auto-Correlated', 'AUTOINCR': 'Auto-Incremented', 'CONSTANT': 'Constant', 'DATE    ': 'Date', 'FLATFILE': 'Delimited File', '        ': 'Java Class', 'LIST    ': 'List', 'SAMEAS  ': 'Related', 'RESPONSE': 'Response', 'VARIABLE': 'Variable'}
 SELECTOR_TYPES = {'FIRST   ': 'First', 'LAST    ': 'Last', 'RANDOM  ': 'Random', 'RANDONCE': 'Random Unique', 'SEQUENTI': 'Sequential', 'SEQUONCE': 'Sequential Unique'}
 STEP_REQUEST_TYPES = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS', 'TRACE']
-STEP_CONTENT_TYPES = {'form': ['application/x-www-form-urlencoded', 'multipart/form-data'], 'binary': ['application/octet-stream', 'binary/octet-stream'], 'XML': ['text/html'], 'other': ['text/plain', 'application/json']}
+# STEP_CONTENT_TYPES = {'form': ['application/x-www-form-urlencoded', 'multipart/form-data'], 'binary': ['application/octet-stream', 'binary/octet-stream'], 'XML': ['text/html'], 'other': ['text/plain', 'application/json']}
+STEP_CONTENT_TYPES = ['application/x-www-form-urlencoded', 'multipart/form-data', 'application/octet-stream', 'binary/octet-stream', 'text/xml', 'text/plain', 'application/json']
+SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
 
 class Window(QWidget):
     def __init__(self, parent=None):
@@ -71,7 +73,7 @@ class Window(QWidget):
         step_details_layout = QGridLayout()
         step_details_layout.setContentsMargins(0,0,0,0)
         step_details_layout.addWidget(self.create_common_step_details(), 0, 0, 1, 1)
-        step_details_layout.addWidget(self.create_specific_step_details(), 1, 0, 3, 1)
+        # step_details_layout.addWidget(self.create_specific_step_details(), 1, 0, 3, 1)
         step_details.setLayout(step_details_layout)
 
         splitter = QSplitter(self)
@@ -156,7 +158,7 @@ class Window(QWidget):
         self.ddi_response_source_step = LabelComboBox('Source Step:')
         self.ddi_specific_layout.addLayout(self.ddi_response_source_step.layout)
 
-        self.ddi_siphon_table = SiphonTableWidget()
+        self.ddi_siphon_table = RowControlTableWidget(['type', 'start', 'end', 'index'])
         self.ddi_specific_layout.addLayout(self.ddi_siphon_table.layout)
 
         self.ddi_auto_correlate_type = LabelComboBox('Field Type:', { z:z for z in ['Repeated Fields', 'Known Fields'] })
@@ -203,13 +205,20 @@ class Window(QWidget):
         request_type_content_type_layout = QHBoxLayout()
         self.request_type = LabelComboBox('Type', { z:z for z in STEP_REQUEST_TYPES })
         request_type_content_type_layout.addLayout(self.request_type.layout)
-        self.content_type = LabelComboBox('Content-Type', { z:z for z in STEP_CONTENT_TYPES.keys() })
+        self.content_type = LabelComboBox('Content-Type', { z:z for z in STEP_CONTENT_TYPES })
         request_type_content_type_layout.addLayout(self.content_type.layout)
-        self.content_type.combo_box.currentIndexChanged[str].connect(self.update_content_subtypes)
-        self.content_subtype = LabelComboBox('', { z:z for z in STEP_CONTENT_TYPES['form'] })
-        request_type_content_type_layout.addLayout(self.content_subtype.layout)
-        # what's the point of having type and subtypes? the one sent with headers is the subtype - it should be the only selection
+        # self.content_type.combo_box.currentIndexChanged[str].connect(self.update_content_subtypes)
+        # # what's the point of having type and subtypes? the one sent with headers is the subtype - it should be the only selection
+        # self.content_subtype = LabelComboBox('', { z:z for z in STEP_CONTENT_TYPES['form'] })
+        # request_type_content_type_layout.addLayout(self.content_subtype.layout)
         vbox.addLayout(request_type_content_type_layout)
+        self.step_url = LabelLineEdit('URL')
+        vbox.addLayout(self.step_url.layout)
+
+
+
+
+
 
 
 
@@ -229,9 +238,10 @@ class Window(QWidget):
     #     self.import_act = QAction("&Import...", self, shortcut="Ctrl+I", triggered=self.import_uj)
     #     self.export_act = QAction("&Export...", self, shortcut="Ctrl+E", triggered=self.export_uj)
 
-    def update_content_subtypes(self, item):
-        # item is supposed to be the text value of the combobox selection
-        print('reached function update_content_subtypes with item=', item)
+    # def update_content_subtypes(self, item):
+    #     # item is supposed to be the text value of the combobox selection
+    #     print('reached function update_content_subtypes with item=', item)
+
 
 
     def debug__(self, message):
@@ -291,6 +301,7 @@ class Window(QWidget):
 
     def export_uj(self):
         pass
+        # convert SIPHON_TYPES from full text to code before passing them to self.uj...
 
     def show_ddi_details(self):
         selected_ddi_name = self.ddi_tree.selectedItems()[0].text(0)

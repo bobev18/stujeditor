@@ -460,9 +460,9 @@ class UITest(unittest.TestCase, CustomAssertions):
         self.assertIsVisibleToParent(self.window.ddi_response_source_step.combo_box)
         self.assertEqual(self.window.ddi_selector_widget.text(), 'Random Unique')
         self.assertIsVisibleToParent(self.window.ddi_selector_widget.combo_box)
-        self.assertEqual(self.window.ddi_siphon_table.get_values(), [{'type': 'T', 'start': 'tuka', 'end':'taka', 'match_number': '2'},
-                                                                     {'type': 'R', 'start': 'the(.+?)test', 'end':'', 'match_number': '1'},
-                                                                     {'type': 'D', 'start': '', 'end':'', 'match_number': 'All'}])
+        self.assertEqual(self.window.ddi_siphon_table.get_values(), [['Text Substring', 'tuka', 'taka', '2'],
+                                                                     ['Regular Expression', 'the(.+?)test', '', '1'],
+                                                                     ['Delimiter', '', '', 'All']])
         self.assertIsVisibleToParent(self.window.ddi_siphon_table.table)
 
     def test_auto_correlated_ddi_selection(self):

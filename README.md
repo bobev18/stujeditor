@@ -134,6 +134,9 @@ The question is, if I have class, stepgroup, should I have step references in th
  - A: If you apply undo just to the last field, you can keep using Undo to revert all changes for that element i.e. covers both use cases; Alternatively provide two separate undo flavors - 'undo' & 'undo element';
  - Q: Should there be multi-select edit, where each field change is applied to all selected fields, while fields that are not altered remain different for the different elements.
  - A: Sure, why not. Especially if Undo works properly.
+ ***
+ - Q: If I think there is some improvement to be made in the GUI, do I implement it directly or do I first match the current GUI, and then change it?
+ - A: Implement directly.
 
 #### OTHER CONSIDERATIONS
 There are too many design issues that creep from the XML structure into the object structure. I should create an alternative, using my structures, and adjust the XML feed as needed once I get to that point.
