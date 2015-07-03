@@ -214,12 +214,57 @@ class Window(QWidget):
         vbox.addLayout(request_type_content_type_layout)
         self.step_url = LabelLineEdit('URL')
         vbox.addLayout(self.step_url.layout)
+        self.step_url_params_table = RowControlTableWidget(['Parameter', 'Value'])
+        vbox.addLayout(self.step_url_params_table.layout)
+        self.step_post_params_table = RowControlTableWidget(['Parameter', 'Value'])
+        vbox.addLayout(self.step_post_params_table.layout)
+        self.step_post_block = QPlainTextEdit()
+        vbox.addWidget(self.step_post_block)
+        success_validation_layout = QHBoxLayout()
+        success_validation_layout.setContentsMargins(0,0,0,0)
+        self.step_validation_type = LabelComboBox('Success Validation', {'Plain Text': 'PLAIN', 'Regular Expression': 'REGEX'})
+        success_validation_layout.addLayout(self.step_validation_type.layout)
+        self.step_validation_text = LabelLineEdit('')
+        success_validation_layout.addLayout(self.step_validation_text.layout)
+        self.max_response = LabelLineEdit('Max acceptable response time')
+        success_validation_layout.addLayout(self.max_response.layout)
+        vbox.addLayout(success_validation_layout)
+        self.step_dynamic_content = LabelCheckboxesGroup('Select content types to be handled automatically', ['images', 'css', 'javaScript'])
+        vbox.addLayout(self.step_dynamic_content.layout)
 
+        flow_control_line1_layout = QHBoxLayout()
+        self.step_flow_control_type = LabelComboBox('Flow Control', {'GoTo': '', 'Response Based': 'RESPONSE', 'Conditional': 'CONDTITIONAL', 'Percentage Based': 'PERCENTAGE',
+                                                                     'Dynamic Data Loop': 'DDLOOP', 'Variable Loop': 'VARIABLELOOP', 'Fixed Loop': 'FIXEDLOOP'})
+        flow_control_line1_layout.addLayout(self.step_flow_control_type.layout)
+        self.step_flow_target_plus = LabelComboBox('Step', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        flow_control_line1_layout.addLayout(self.step_flow_target_plus.layout)
+        self.step_flow_sleep = LabelLineEdit('Sleep Time (sec)')
+        flow_control_line1_layout.addLayout(self.step_flow_sleep.layout)
+        vbox.addLayout(flow_control_line1_layout)
 
+        flow_control_line2_layout = QHBoxLayout()
+        self.step_flow_ddl_ddi = LabelComboBox('Dynamic Data Item', {})
+        flow_control_line2_layout.addLayout(self.step_flow_ddl_ddi.layout)
+        self.step_flow_varloop_start = LabelLineEdit('Minimum Iterations')
+        flow_control_line2_layout.addLayout(self.step_flow_varloop_start.layout)
+        self.step_flow_varloop_end = LabelLineEdit('Minimum Iterations')
+        flow_control_line2_layout.addLayout(self.step_flow_varloop_end.layout)
+        self.step_flow_fixloop = LabelLineEdit('Iterations')
+        flow_control_line2_layout.addLayout(self.step_flow_fixloop.layout)
 
+        self.step_flow_conditional_true = LabelComboBox('If true, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        flow_control_line2_layout.addLayout(self.step_flow_conditional_true.layout)
+        self.step_flow_conditional_false = LabelComboBox('otherwise, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        flow_control_line2_layout.addLayout(self.step_flow_conditional_false.layout)
+        vbox.addLayout(flow_control_line2_layout)
 
-
-
+        self.step_flow_response_table = RowControlTableWidget(['Response Step', 'Match Criteria', 'Step', 'Sleep Time'])
+        vbox.addLayout(self.step_flow_response_table.layout)
+        self.step_flow_percentage_table = RowControlTableWidget(['Percentage', 'Step', 'Sleep Time'])
+        self.step_flow_percentage_table.set_text([['100', {'Next Step': ['Next Step', 'End Cycle', 'End User']}, '0.0']])
+        vbox.addLayout(self.step_flow_percentage_table.layout)
+        self.step_flow_conditional_table = RowControlTableWidget(['Phrase 1', 'Conditional', 'Phrase 2', 'Operator'])
+        vbox.addLayout(self.step_flow_conditional_table.layout)
 
 
         group_box.setLayout(vbox)
@@ -295,7 +340,6 @@ class Window(QWidget):
                 stepnodes.append(new_step_node)
 
             groupnodes.append(new_group_node)
-
 
         self.step_tree.addTopLevelItems(groupnodes)
 
@@ -421,7 +465,119 @@ class Window(QWidget):
 
 
     def show_step_details(self):
-        pass
+        selected_step_name = self.step_tree.selectedItems()[0].text(0)
+        self.selected_step = self.uj.find_step_by_name(selected_step_name)
+
+        # self.ddi_name.set_text(selected_ddi_name)
+        # self.ddi_description.set_text(self.selected_ddi.description)
+        # self.ddi_type.set_text(DDI_TYPES[self.selected_ddi.type])
+        # self.ddi_sharing.set_text(self.selected_ddi.scope)
+        # self.ddi_refresh.set_text(self.selected_ddi.lifecycle)
+
+        self.step_name.set_text(selected_step_name)
+        self.step_pre_time.set_text(self.selected_step.sleeptime)
+        self.step_description.set_text(self.selected_step.description)
+        # print(self.selected_step.first_cycle_only, self.selected_step.last_cycle_only, self.selected_step.count_as_transaction, self.selected_step.processresponse, self.selected_step.execute_separately)
+        self.step_checkboxes.set_values(self.selected_step.first_cycle_only, self.selected_step.last_cycle_only, self.selected_step.count_as_transaction,
+                                         self.selected_step.processresponse, self.selected_step.execute_separately)
+        # ['Run First Cycle Only', 'Run Last Cycle Only', 'Count as Transaction', 'Process Response', 'Execute Separately'])
+        self.request_type.set_text(self.selected_step.type)
+        selected_step_content_type = ''
+        for header in self.selected_step.headers:
+            if header['name'] == 'Content-Type':
+                selected_step_content_type = header['value']
+        self.content_type.set_text(selected_step_content_type)
+        self.step_url.set_text(self.selected_step.request)
+        if self.selected_step.get_itmes == []:
+            self.step_url_params_table.hide()
+        else:
+            self.step_url_params_table.show()
+            get_params = []
+            for item in self.selected_step.get_itmes:
+                get_params.append([item['name'], item['value']])
+            self.step_url_params_table.set_text(get_params)
+
+        if self.selected_step.post_items == []:
+            self.step_post_params_table.hide()
+            self.step_post_block.hide()
+        else:
+            if self.selected_step.post_items[0]['name'] == '':
+                self.step_post_params_table.hide()
+                self.step_post_block.show()
+                self.step_post_block.appendPlainText(self.selected_step.post_items[0]['value'])
+            else:
+                self.step_post_block.hide()
+                self.step_post_params_table.show()
+                self.step_post_params_table.set_text([ [z['name'], z['value']] for z in self.selected_step.post_items])
+
+        selected_step_validation_type = ''
+        for item in self.selected_step.items:
+            if item['name'] == 'ValidationType':
+                selected_step_validation_type = item['value']
+
+        self.step_validation_type.set_text(selected_step_validation_type)
+        self.step_validation_text.set_text(self.selected_step.success)
+
+        selected_step_max_response = ''
+        for item in self.selected_step.items:
+            if item['name'] == 'MaxResponseTime':
+                selected_step_max_response = item['value']
+        if self.selected_step.is_lead():
+            self.max_response.show()
+            self.max_response.set_text(selected_step_max_response)
+        else:
+            self.max_response.hide()
+
+        selected_step_dynamic_content = []
+        for item in self.selected_step.items:
+            if item['name'] == 'contentTypes':
+                selected_step_dynamic_content = [ z in item['value'] for z in ['images', 'javaScript', 'css'] ]
+        if self.selected_step.is_lead():
+            self.step_dynamic_content.show()
+            self.step_dynamic_content.set_values(*selected_step_dynamic_content)
+        else:
+            self.step_dynamic_content.hide()
+
+        self.step_flow_control_type.set_text(self.selected_step.flow_type)
+        # need to update the step list every time because new steps might have been added after the initial import
+        steps = self.uj.list_step_name_id_pairs()
+        steps.update({'NEXT_STEP': 'Next Step', 'END_CYCLE': 'End Cycle', 'END_USER': 'End User'})
+        self.step_flow_target_plus.reset_items(steps)
+
+        selected_step_flow_target = ''
+        for item in self.selected_step.flow_items:
+            if item['name'] == 'DESTINATIONSTEP':
+                selected_step_flow_target = item['value']
+        self.step_flow_target_plus.set_text(selected_step_flow_target)
+         # = LabelComboBox('Step', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        # flow_control_line1_layout.addLayout(self.step_flow_target_plus.layout)
+        # self.step_flow_sleep = LabelLineEdit('Sleep Time (sec)')
+        # flow_control_line1_layout.addLayout(self.step_flow_sleep.layout)
+        # vbox.addLayout(flow_control_line1_layout)
+
+        # flow_control_line2_layout = QHBoxLayout()
+        # self.step_flow_ddl_ddi = LabelComboBox('Dynamic Data Item', {})
+        # flow_control_line2_layout.addLayout(self.step_flow_ddl_ddi.layout)
+        # self.step_flow_varloop_start = LabelLineEdit('Minimum Iterations')
+        # flow_control_line2_layout.addLayout(self.step_flow_varloop_start.layout)
+        # self.step_flow_varloop_end = LabelLineEdit('Minimum Iterations')
+        # flow_control_line2_layout.addLayout(self.step_flow_varloop_end.layout)
+        # self.step_flow_fixloop = LabelLineEdit('Iterations')
+        # flow_control_line2_layout.addLayout(self.step_flow_fixloop.layout)
+
+        # self.step_flow_conditional_true = LabelComboBox('If true, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        # flow_control_line2_layout.addLayout(self.step_flow_conditional_true.layout)
+        # self.step_flow_conditional_false = LabelComboBox('otherwise, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        # flow_control_line2_layout.addLayout(self.step_flow_conditional_false.layout)
+        # vbox.addLayout(flow_control_line2_layout)
+
+        # self.step_flow_response_table = RowControlTableWidget(['Response Step', 'Match Criteria', 'Step', 'Sleep Time'])
+        # vbox.addLayout(self.step_flow_response_table.layout)
+        # self.step_flow_percentage_table = RowControlTableWidget(['Percentage', 'Step', 'Sleep Time'])
+        # self.step_flow_percentage_table.set_text(['100', {'Next Step': ['Next Step', 'End Cycle', 'End User']}, '0.0'])
+        # vbox.addLayout(self.step_flow_percentage_table.layout)
+        # self.step_flow_conditional_table = RowControlTableWidget(['Phrase 1', 'Conditional', 'Phrase 2', 'Operator'])
+        # vbox.addLayout(self.step_flow_conditional_table.layout)
 
 
 

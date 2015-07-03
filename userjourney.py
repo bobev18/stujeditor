@@ -99,7 +99,14 @@ class UserJourney():
         return result
 
     def list_step_names(self):
-        return functools.reduce(lambda x,y: x+y, [z.list_step_names() for z in self. stepgroups])
+        return functools.reduce(lambda x,y: x+y, [z.list_step_names() for z in self.stepgroups])
+
+    def list_step_name_id_pairs(self):
+        stepgroup_name_id_pairs = [z.list_step_name_id_pairs() for z in self.stepgroups]
+        all_name_id_pairs = {}
+        for pairs in stepgroup_name_id_pairs:
+            all_name_id_pairs.update(pairs)
+        return all_name_id_pairs
 
     def find_step_by_name(self, name):
         for stepgroup in self.stepgroups:

@@ -25,6 +25,9 @@ class StepGroup():
     def list_step_names(self):
         return [z.name for z in self.steps]
 
+    def list_step_name_id_pairs(self):
+        return { str(z.id):z.name for z in self.steps }
+
     def tree_output(self):
         # result = '[ '+str(self.order).center(5) + ' ] ' + self.name + '\n'
         result = str(self.id).center(5) + self.name.ljust(MAX_STEP_NAME_LENGTH)

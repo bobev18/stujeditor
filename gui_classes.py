@@ -400,6 +400,7 @@ class LabelCheckboxesGroup(QWidget):
 
     def set_values(self, *checks):
         for key, value in zip(self.box_key_order, checks):
+            # print('key', key, 'value', value)
             self.boxes[key].setChecked(value)
 
     def text(self):

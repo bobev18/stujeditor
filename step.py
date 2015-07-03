@@ -32,16 +32,16 @@ class StepNameException(Exception):
 class Step():
     def __init__(self, element):
         self.element = element
-        self.count_as_transaction = element.get('COUNTASTRANSACTION')
-        self.execute_separately = element.get('EXECUTESEPARATELY')
-        self.first_cycle_only = element.get('FIRSTCYCLEONLY')
-        self.last_cycle_only = element.get('LASTCYCLEONLY')
+        self.count_as_transaction = element.get('COUNTASTRANSACTION') == 'true'
+        self.execute_separately = element.get('EXECUTESEPARATELY') == 'true'
+        self.first_cycle_only = element.get('FIRSTCYCLEONLY') == 'true'
+        self.last_cycle_only = element.get('LASTCYCLEONLY') == 'true'
         self.name = element.get('NAME')
         self.name_user_defined = element.get('NAMEUSERDEFINED') == 'true'
         self.nameuserdefined = element.get('NAMEUSERDEFINED')
         # print('>>>>', element.tag, element.attrib)
         self.id = int(element.get('ORDER'))
-        self.processresponse = element.get('PROCESSRESPONSE')
+        self.processresponse = element.get('PROCESSRESPONSE')  == 'true'
         self.type = element.get('TYPE')
 
         self.request_element = element.find(SCHEME_PREFIX+'REQUEST')
@@ -54,7 +54,7 @@ class Step():
         self.description_element = element.find(SCHEME_PREFIX+'DESCRIPTION')
         self.description = self.description_element.text
         self.sleeptime_element = element.find(SCHEME_PREFIX+'SLEEPTIME')
-        self.sleeptime = int(self.sleeptime_element.text)
+        self.sleeptime = self.sleeptime_element.text
 
         self.success_element = element.find(SCHEME_PREFIX+'SUCCESS')
         if self.success_element != None:
@@ -228,3 +228,6 @@ class Step():
         self.name_user_defined = True
         self.element.set('NAME', new_name)
         self.element.set('NAMEUSERDEFINED', 'true')
+
+    def is_lead(self):
+        return self.stepgroup_id == self.id

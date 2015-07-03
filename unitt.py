@@ -312,7 +312,7 @@ class UITest(unittest.TestCase, CustomAssertions):
         child_count = ddi_tree_root.childCount()
         self.assertEqual(child_count, 59)
         step_tree_root = self.window.step_tree.invisibleRootItem()
-        self.assertEqual(step_tree_root.childCount(), 2)
+        self.assertEqual(step_tree_root.childCount(), 3)
 
     def test_constant_ddi_selection(self):
         # select some DDI type that doesn't show 'value' field
