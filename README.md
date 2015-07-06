@@ -15,7 +15,9 @@
  	... xmlns="http://www.reflective.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.reflective.com stschema.xsd" ...
  3. add classes for post & flow_control
  4. make UI enforce data types and mandatory fields
- 5. implement step details
+ 4.5. ~~implement step details~~
+ 4.6. add show/hide for GET params table
+ 4.7. split Step Details UI elements in groups - name through URL, URL through validation, Flow Ctrl
  5. implement Save on switching element
  6. implement Undo
  7. implement Copy/Paste/Move/Drag

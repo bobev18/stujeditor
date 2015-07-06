@@ -158,7 +158,7 @@ class Window(QWidget):
         self.ddi_response_source_step = LabelComboBox('Source Step:')
         self.ddi_specific_layout.addLayout(self.ddi_response_source_step.layout)
 
-        self.ddi_siphon_table = RowControlTableWidget(['type', 'start', 'end', 'index'])
+        self.ddi_siphon_table = RowControlTableWidget([('type', SIPHON_TYPES.values()), ('start', ''), ('end', ''), ('index', '')])
         self.ddi_specific_layout.addLayout(self.ddi_siphon_table.layout)
 
         self.ddi_auto_correlate_type = LabelComboBox('Field Type:', { z:z for z in ['Repeated Fields', 'Known Fields'] })
@@ -214,9 +214,9 @@ class Window(QWidget):
         vbox.addLayout(request_type_content_type_layout)
         self.step_url = LabelLineEdit('URL')
         vbox.addLayout(self.step_url.layout)
-        self.step_url_params_table = RowControlTableWidget(['Parameter', 'Value'])
+        self.step_url_params_table = RowControlTableWidget([('Parameter', ''), ('Value', '')])
         vbox.addLayout(self.step_url_params_table.layout)
-        self.step_post_params_table = RowControlTableWidget(['Parameter', 'Value'])
+        self.step_post_params_table = RowControlTableWidget([('Parameter', ''), ('Value', '')])
         vbox.addLayout(self.step_post_params_table.layout)
         self.step_post_block = QPlainTextEdit()
         vbox.addWidget(self.step_post_block)
@@ -258,12 +258,12 @@ class Window(QWidget):
         flow_control_line2_layout.addLayout(self.step_flow_conditional_false.layout)
         vbox.addLayout(flow_control_line2_layout)
 
-        self.step_flow_response_table = RowControlTableWidget(['Response Step', 'Match Criteria', 'Step', 'Sleep Time'])
+        self.step_flow_response_table = RowControlTableWidget([('Response Step', []), ('Match Criteria', ''), ('Step', []), ('Sleep Time', '0.0')])
         vbox.addLayout(self.step_flow_response_table.layout)
-        self.step_flow_percentage_table = RowControlTableWidget(['Percentage', 'Step', 'Sleep Time'])
+        self.step_flow_percentage_table = RowControlTableWidget([('Percentage', ''), ('Step', []), ('Sleep Time', '0.0')])
         self.step_flow_percentage_table.set_text([['100', {'Next Step': ['Next Step', 'End Cycle', 'End User']}, '0.0']])
         vbox.addLayout(self.step_flow_percentage_table.layout)
-        self.step_flow_conditional_table = RowControlTableWidget(['Phrase 1', 'Conditional', 'Phrase 2', 'Operator'])
+        self.step_flow_conditional_table = RowControlTableWidget([('Phrase 1', ''), ('Conditional',  ['<', '<=', '=', '=>', '>', '!=', 'in', 'not in']), ('Phrase 2', ''), ('Operator', ['AND', 'OR'])])
         vbox.addLayout(self.step_flow_conditional_table.layout)
 
 
@@ -632,15 +632,23 @@ class Window(QWidget):
                         sleep = ''
                         for item in self.selected_step.flow_items:
                             if item['name'] == 'DESTINATIONSTEP' and item['order'] == order:
-                                destination = item['value']
+                                try:
+                                    destination = self.uj.find_step_by_id(int(item['value'])).name
+                                except ValueError:
+                                    if item['value'] == 'NEXT_STEP':
+                                        destination = 'Next Step'
+                                    elif item['value'] == 'END_CYCLE':
+                                        destination = 'End Cycle'
+                                    else:
+                                        destination = 'End User'
                             if item['name'] == 'MATCHCRITERIA' and item['order'] == order:
                                 match = item['value']
                             if item['name'] == 'RESPONSESTEP' and item['order'] == order:
-                                source = item['value']
+                                source = self.uj.find_step_by_id(int(item['value'])).name
                             if item['name'] == 'SLEEPTIME' and item['order'] == order:
                                 sleep = str(float(item['value'])/1000)
 
-                        table.append([source, match, {destination: steps}, sleep])
+                        table.append([{source: self.uj.list_step_name_id_pairs()}, match, {destination: steps}, sleep])
 
                     self.step_flow_response_table.set_text(table)
 
@@ -690,7 +698,8 @@ class Window(QWidget):
                         phrase2 = ''
                         for item in self.selected_step.flow_items:
                             if item['name'] == 'CONDITION' and item['order'] == order:
-                                condition = item['value']
+                                conditions = {'less than': '<', 'less than or equals': '<=', 'equals': '=', 'not equals': '!=', 'greater than or equals': '>=', 'greater than': '>', 'contains': 'in', 'does not contain': 'not in',}
+                                condition = conditions[item['value']]
                             if item['name'] == 'FIRSTPHRASE' and item['order'] == order:
                                 phrase1 = item['value']
                             if item['name'] == 'OPERATOR' and item['order'] == order:

@@ -293,10 +293,12 @@ class MyTableWidget(QWidget):
 # SIPHON_TYPES = {'T': 'Text Substring', 'R': 'Regular Expression', 'D': 'Delimiter', 'I': 'Position', 'Y': 'Replace'}
 # {'Position': 'I', 'Regular Expression': 'R', 'Text Substring': 'T', 'Replace': 'Y', 'Delimiter': 'D'}
 class RowControlTableWidget(QWidget):
-    def __init__(self, items = ['col1_name', 'col2_name', ]):
+    def __init__(self, items = [('col1_name', 'default text'), ('col2_name', ['dfeault', 'combo', 'elements'])]):
         super(RowControlTableWidget, self).__init__()
+        self.ordered_column_keys = [ z[0] for z in items ]
+        self.default_row = { z[0]:z[1] for z in items }
         self.table = QTableWidget(1, len(items))
-        self.table.setHorizontalHeaderLabels(items)
+        self.table.setHorizontalHeaderLabels(list(self.default_row.keys()))
         self.add_row_button = QPushButton('Add Row')
         self.add_row_button.clicked.connect(self.add_row)
         self.delete_row_button = QPushButton('Delete Row')
@@ -314,16 +316,21 @@ class RowControlTableWidget(QWidget):
     def add_row(self):
         new_row_number = self.table.rowCount()
         self.table.setRowCount(self.table.rowCount()+1)
-        type_box = QComboBox()
-        type_box.insertItems(0, SIPHON_TYPES.values())
-        self.table.setCellWidget(new_row_number, 0, type_box)
-        # item = QTableWidgetItem(row['start'])
-        # self.table.setItem(new_row_number, 1, item)
-        # item = QTableWidgetItem(row['end'])
-        #     self.table.setItem(i, 2, item)
-        # edit_combo = QLineEdit()
-        # edit_combo.setText('1')
-        # self.table.setCellWidget(new_row_number, 3, edit_combo)
+
+        for column, key in enumerate(self.ordered_column_keys):
+                value = self.default_row[key]
+                if isinstance(value, str):
+                    item = QTableWidgetItem(value)
+                    self.table.setItem(new_row_number, column, item)
+                elif isinstance(value, list):
+                    combo_box = QComboBox()
+                    combo_box.insertItems(0, value)
+                    # combo_box.setCurrentText(value[0])
+                    self.table.setCellWidget(new_row_number, column, combo_box)
+                else:
+                    message = 'Table cells are expected to be either Dict (added asQComboBox via setCellWidget) or String (added as QTableWidgetItem). You have type ' + str(type(value))
+                    message += ' at position ' + str(new_row_number) + ', ' + str(column)
+                    raise CellObjectException(message)
 
     def delete_row(self):
         self.table.removeRow(self.table.currentRow())
@@ -353,7 +360,10 @@ class RowControlTableWidget(QWidget):
                     combo_box = QComboBox()
                     dict_keys = list(value.keys())
                     selected = dict_keys[0]
-                    combo_box.insertItems(0, value[selected])
+                    if isinstance(value[selected], dict):
+                        combo_box.insertItems(0, list(value[selected].values()))
+                    else:
+                        combo_box.insertItems(0, value[selected])
                     combo_box.setCurrentText(selected)
                     self.table.setCellWidget(i, j, combo_box)
                 else:
