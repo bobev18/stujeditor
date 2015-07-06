@@ -169,6 +169,8 @@ The XML structure is horrible -- take the 'constant' DDI:
  - seems like every DDI object has an boolean 'encode' attribute, but in XML, that's not in the the DDI element attributes, not even as a child like 'selection' or 'scope', but is under sub-element 'item' identified with specific attribute-value pair i.e `CODE="ENCODE    "` , and the actual boolean value is as in element text: `<ITEM CODE="ENCODE    ">true</ITEM>`
  - indication whether the success validation string should be RegEx or string is in NVP towards the step, while it fits better as attribute to the SUCCESS tag
  - EXECUTESEPARATELY="false" is present for group lead steps, so apparently they are being executed separately based on some other condition; in the GUI, the checkbox for 'execute separately' is hidden for lead steps
+ - Sleep time is defined as real value in seconds in the GUI, while in the XML it's saved as real value in milliseconds.
+ - For steps that don't have some steps have Success Validation defined, some have "<SUCCESS/>" tag, while for others, it's missing
 
 
 ---

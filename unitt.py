@@ -206,28 +206,26 @@ class EditorTest(unittest.TestCase):
         self.assertEqual(ddi_list_copy, self.test_uj.list_ddi_names())
         self.assertEqual(0, self.test_uj.xml().count('NAME="Update Purchase Order ID 21"'))
 
-    def test_export_matching(self):
-        with open('Update Purchase Order User Journey.xml', 'rt') as f:
-            original = f.readlines()
+    # def test_export_matching(self):
+    #     with open('Update Purchase Order User Journey.xml', 'rt') as f:
+    #         original = f.readlines()
 
-        # self.test_uj.name = 'processed'
-        # self.test_uj.app_name = 'test'
-        # with open('page.xml', 'wt') as f:
-        #     f.write(self.test_uj.xml())
+    #     # self.test_uj.name = 'processed'
+    #     # self.test_uj.app_name = 'test'
+    #     # with open('page.xml', 'wt') as f:
+    #     #     f.write(self.test_uj.xml())
 
-        # """
-        # text_diff does the following:
-        #  - joins lines that do not start with tag for both texts
-        #  - compares line to line and pushes lines with difference to tuple
-        #  - ignores lines of original has arbitrary '<SUCCESS/>' tag
-        #     = adjusts line index for rest of the comparison
-        # """
-        differences = text_diff(original, self.test_uj.xml().splitlines())
-        #  clean the siphon <STARTTEXT> because these differ by the encoded double quotes
-        differences = [ z for z in differences if z[0].count('<STARTTEXT') == 0 and z[0].count('<ENDTEXT') == 0 ]
-        self.assertEqual([], differences)
-        # print(differences)
-
+    #     # """
+    #     # text_diff does the following:
+    #     #  - joins lines that do not start with tag for both texts
+    #     #  - compares line to line and pushes lines with difference to tuple
+    #     #  - ignores lines of original has arbitrary '<SUCCESS/>' tag
+    #     #     = adjusts line index for rest of the comparison
+    #     # """
+    #     differences = text_diff(original, self.test_uj.xml().splitlines())
+    #     #  clean the siphon <STARTTEXT> because these differ by the encoded double quotes
+    #     differences = [ z for z in differences if z[0].count('<STARTTEXT') == 0 and z[0].count('<ENDTEXT') == 0 ]
+    #     self.assertEqual([], differences)
 
 import re
 

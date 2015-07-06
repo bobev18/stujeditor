@@ -100,10 +100,10 @@ class Step():
 
     def xml(self):
 
-        step_element = ET.Element("STEP", {'COUNTASTRANSACTION': self.count_as_transaction, 'EXECUTESEPARATELY': self.execute_separately,
-                                            'FIRSTCYCLEONLY': self.first_cycle_only, 'LASTCYCLEONLY': self.last_cycle_only,
-                                            'NAME': self.name, 'NAMEUSERDEFINED': str(self.name_user_defined).lower(), 'ORDER': str(self.id),
-                                            'PROCESSRESPONSE': self.processresponse, 'TYPE': self.type})
+        step_element = ET.Element("STEP", {'COUNTASTRANSACTION': str(self.count_as_transaction).lower(), 'EXECUTESEPARATELY': str(self.execute_separately).lower(),
+                                            'FIRSTCYCLEONLY': str(self.first_cycle_only).lower(), 'LASTCYCLEONLY': str(self.last_cycle_only).lower(),
+                                            'NAME': self.name, 'NAMEUSERDEFINED': str(self.name_user_defined).lower(), 'ORDER': str(self.id).lower(),
+                                            'PROCESSRESPONSE': str(self.processresponse).lower(), 'TYPE': self.type})
 
         request_element = ET.SubElement(step_element, 'REQUEST', {'URL': self.request})
         if self.get_itmes:
@@ -131,9 +131,11 @@ class Step():
 
 
         # ===========================
+        success = ET.SubElement(step_element, 'SUCCESS')
         if self.success != None:
-            success = ET.SubElement(step_element, 'SUCCESS')
             success.text = self.success
+        # else:
+        #     success.text = ''
         description = ET.SubElement(step_element, 'DESCRIPTION')
         description.text = self.description
         sleeptime = ET.SubElement(step_element, 'SLEEPTIME')

@@ -222,7 +222,7 @@ class Window(QWidget):
         vbox.addWidget(self.step_post_block)
         success_validation_layout = QHBoxLayout()
         success_validation_layout.setContentsMargins(0,0,0,0)
-        self.step_validation_type = LabelComboBox('Success Validation', {'Plain Text': 'PLAIN', 'Regular Expression': 'REGEX'})
+        self.step_validation_type = LabelComboBox('Success Validation', {'PLAIN': 'Plain Text','REGEX': 'Regular Expression'})
         success_validation_layout.addLayout(self.step_validation_type.layout)
         self.step_validation_text = LabelLineEdit('')
         success_validation_layout.addLayout(self.step_validation_text.layout)
@@ -233,10 +233,10 @@ class Window(QWidget):
         vbox.addLayout(self.step_dynamic_content.layout)
 
         flow_control_line1_layout = QHBoxLayout()
-        self.step_flow_control_type = LabelComboBox('Flow Control', {'GoTo': '', 'Response Based': 'RESPONSE', 'Conditional': 'CONDTITIONAL', 'Percentage Based': 'PERCENTAGE',
-                                                                     'Dynamic Data Loop': 'DDLOOP', 'Variable Loop': 'VARIABLELOOP', 'Fixed Loop': 'FIXEDLOOP'})
+        self.step_flow_control_type = LabelComboBox('Flow Control', {'': 'GoTo', 'RESPONSE': 'Response Based', 'CONDTITIONAL': 'Conditional', 'PERCENTAGE': 'Percentage Based',
+                                                                     'DDLOOP': 'Dynamic Data Loop', 'VARIABLELOOP': 'Variable Loop', 'FIXEDLOOP': 'Fixed Loop'})
         flow_control_line1_layout.addLayout(self.step_flow_control_type.layout)
-        self.step_flow_target_plus = LabelComboBox('Step', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        self.step_flow_target_plus = LabelComboBox('Step', {'NEXT_STEP': 'Next Step', 'END_CYCLE': 'End Cycle', 'END_USER': 'End User'})
         flow_control_line1_layout.addLayout(self.step_flow_target_plus.layout)
         self.step_flow_sleep = LabelLineEdit('Sleep Time (sec)')
         flow_control_line1_layout.addLayout(self.step_flow_sleep.layout)
@@ -247,14 +247,14 @@ class Window(QWidget):
         flow_control_line2_layout.addLayout(self.step_flow_ddl_ddi.layout)
         self.step_flow_varloop_start = LabelLineEdit('Minimum Iterations')
         flow_control_line2_layout.addLayout(self.step_flow_varloop_start.layout)
-        self.step_flow_varloop_end = LabelLineEdit('Minimum Iterations')
+        self.step_flow_varloop_end = LabelLineEdit('Maximum Iterations')
         flow_control_line2_layout.addLayout(self.step_flow_varloop_end.layout)
         self.step_flow_fixloop = LabelLineEdit('Iterations')
         flow_control_line2_layout.addLayout(self.step_flow_fixloop.layout)
 
-        self.step_flow_conditional_true = LabelComboBox('If true, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        self.step_flow_conditional_true = LabelComboBox('If true, go to', {'NEXT_STEP': 'Next Step', 'END_CYCLE': 'End Cycle', 'END_USER': 'End User'})
         flow_control_line2_layout.addLayout(self.step_flow_conditional_true.layout)
-        self.step_flow_conditional_false = LabelComboBox('otherwise, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
+        self.step_flow_conditional_false = LabelComboBox('otherwise, go to', {'NEXT_STEP': 'Next Step', 'END_CYCLE': 'End Cycle', 'END_USER': 'End User'})
         flow_control_line2_layout.addLayout(self.step_flow_conditional_false.layout)
         vbox.addLayout(flow_control_line2_layout)
 
@@ -538,46 +538,173 @@ class Window(QWidget):
         else:
             self.step_dynamic_content.hide()
 
-        self.step_flow_control_type.set_text(self.selected_step.flow_type)
+        self.step_flow_target_plus.hide()
+        self.step_flow_sleep.hide()
+        self.step_flow_ddl_ddi.hide()
+        self.step_flow_varloop_start.hide()
+        self.step_flow_varloop_end.hide()
+        self.step_flow_fixloop.hide()
+        self.step_flow_conditional_true.hide()
+        self.step_flow_conditional_false.hide()
+        self.step_flow_response_table.hide()
+        self.step_flow_percentage_table.hide()
+        self.step_flow_conditional_table.hide()
+
         # need to update the step list every time because new steps might have been added after the initial import
         steps = self.uj.list_step_name_id_pairs()
         steps.update({'NEXT_STEP': 'Next Step', 'END_CYCLE': 'End Cycle', 'END_USER': 'End User'})
-        self.step_flow_target_plus.reset_items(steps)
+        self.step_flow_target_plus.reset_items(steps) # reset val even if hidden
 
-        selected_step_flow_target = ''
-        for item in self.selected_step.flow_items:
-            if item['name'] == 'DESTINATIONSTEP':
-                selected_step_flow_target = item['value']
-        self.step_flow_target_plus.set_text(selected_step_flow_target)
-         # = LabelComboBox('Step', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
-        # flow_control_line1_layout.addLayout(self.step_flow_target_plus.layout)
-        # self.step_flow_sleep = LabelLineEdit('Sleep Time (sec)')
-        # flow_control_line1_layout.addLayout(self.step_flow_sleep.layout)
-        # vbox.addLayout(flow_control_line1_layout)
+        if not hasattr(self.selected_step, 'flow_type'):
+            self.step_flow_control_type.set_text('GoTo')
+            self.step_flow_target_plus.show()
+            self.step_flow_target_plus.set_text('NEXT_STEP')
+            self.step_flow_sleep.show()
+            self.step_flow_sleep.set_text('0.0')
+        else:                              # ==================================== ALL NON 'GOTO' FLOW CONTROL ====================================
+            self.step_flow_control_type.set_text(self.selected_step.flow_type)
 
-        # flow_control_line2_layout = QHBoxLayout()
-        # self.step_flow_ddl_ddi = LabelComboBox('Dynamic Data Item', {})
-        # flow_control_line2_layout.addLayout(self.step_flow_ddl_ddi.layout)
-        # self.step_flow_varloop_start = LabelLineEdit('Minimum Iterations')
-        # flow_control_line2_layout.addLayout(self.step_flow_varloop_start.layout)
-        # self.step_flow_varloop_end = LabelLineEdit('Minimum Iterations')
-        # flow_control_line2_layout.addLayout(self.step_flow_varloop_end.layout)
-        # self.step_flow_fixloop = LabelLineEdit('Iterations')
-        # flow_control_line2_layout.addLayout(self.step_flow_fixloop.layout)
+            selected_step_flow_target = ''
+            selected_step_flow_sleep = ''
+            selected_step_flow_ddi = ''
+            selected_step_flow_miniter = ''
+            selected_step_flow_maxiter = ''
+            selected_step_flow_iter = ''
+            selected_step_flow_conditional_true_target = ''
+            selected_step_flow_conditional_false_target = ''
+            for item in self.selected_step.flow_items:
+                if item['name'] == 'DESTINATIONSTEP':
+                    selected_step_flow_target = item['value']
+                if item['name'] == 'SLEEPTIME':
+                    selected_step_flow_sleep = str(float(item['value'])/1000)
+                if item['name'] == 'DDITEM':
+                    selected_step_flow_ddi = item['value']
+                if item['name'] == 'MINITERCOUNT':
+                    selected_step_flow_miniter = item['value']
+                if item['name'] == 'MAXITERCOUNT':
+                    selected_step_flow_maxiter = item['value']
+                if item['name'] == 'ITERCOUNT':
+                    selected_step_flow_iter = item['value']
+                if item['name'] == 'TRUECONDITIONSTEP':
+                    selected_step_flow_conditional_true_target = item['value']
+                if item['name'] == 'FALSECONDITIONSTEP':
+                    selected_step_flow_conditional_false_target = item['value']
 
-        # self.step_flow_conditional_true = LabelComboBox('If true, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
-        # flow_control_line2_layout.addLayout(self.step_flow_conditional_true.layout)
-        # self.step_flow_conditional_false = LabelComboBox('otherwise, go to', {'Next Step': 'NEXT_STEP', 'End Cycle': 'END_CYCLE', 'End User': 'END_USER'})
-        # flow_control_line2_layout.addLayout(self.step_flow_conditional_false.layout)
-        # vbox.addLayout(flow_control_line2_layout)
+            if self.selected_step.flow_type not in ['RESPONSE', 'CONDTITIONAL', 'PERCENTAGE']:
+                self.step_flow_target_plus.show()
+                self.step_flow_target_plus.set_text(selected_step_flow_target)
 
-        # self.step_flow_response_table = RowControlTableWidget(['Response Step', 'Match Criteria', 'Step', 'Sleep Time'])
-        # vbox.addLayout(self.step_flow_response_table.layout)
-        # self.step_flow_percentage_table = RowControlTableWidget(['Percentage', 'Step', 'Sleep Time'])
-        # self.step_flow_percentage_table.set_text(['100', {'Next Step': ['Next Step', 'End Cycle', 'End User']}, '0.0'])
-        # vbox.addLayout(self.step_flow_percentage_table.layout)
-        # self.step_flow_conditional_table = RowControlTableWidget(['Phrase 1', 'Conditional', 'Phrase 2', 'Operator'])
-        # vbox.addLayout(self.step_flow_conditional_table.layout)
+            if self.selected_step.flow_type not in ['RESPONSE', 'PERCENTAGE']:
+                self.step_flow_sleep.show()
+                self.step_flow_sleep.set_text(selected_step_flow_sleep)
+
+            if self.selected_step.flow_type == 'DDLOOP':
+                applicable_ddis_by_refresh = self.uj.find_ddis_by_attribute('lifecycle', 'T') # {'C': 'Cycle', 'R': 'Run', 'T': 'Time', 'U': 'User',}
+                applicable_ddis_by_selection_randomunique = self.uj.find_ddis_by_attribute('selection_type', 'RANDONCE')
+                applicable_ddis_by_selection_sequnique = self.uj.find_ddis_by_attribute('selection_type', 'SEQUONCE')
+                applicable_ddis_by_selection = applicable_ddis_by_selection_randomunique + applicable_ddis_by_selection_sequnique
+                applicable_ddis = { z.name:z.name for z in applicable_ddis_by_refresh if z in applicable_ddis_by_selection }
+                if len(applicable_ddis):
+                    self.step_flow_ddl_ddi.reset_items(applicable_ddis)
+                    self.step_flow_ddl_ddi.set_text(selected_step_flow_ddi)
+                self.step_flow_ddl_ddi.show()
+
+            if self.selected_step.flow_type == 'VARIABLELOOP':
+                self.step_flow_varloop_start.show()
+                self.step_flow_varloop_end.show()
+                self.step_flow_varloop_start.set_text(selected_step_flow_miniter)
+                self.step_flow_varloop_end.set_text(selected_step_flow_maxiter)
+
+            if self.selected_step.flow_type == 'FIXEDLOOP':
+                self.step_flow_fixloop.show()
+                self.step_flow_fixloop.set_text(selected_step_flow_iter)
+
+            if self.selected_step.flow_type == 'RESPONSE':
+                orders = list(set([ z['order'] for z in self.selected_step.flow_items]))
+                orders.sort()
+                if len(orders):
+                    self.step_flow_response_table.show()
+                    table = []
+                    for order in orders:
+                        destination = ''
+                        match = ''
+                        source = ''
+                        sleep = ''
+                        for item in self.selected_step.flow_items:
+                            if item['name'] == 'DESTINATIONSTEP' and item['order'] == order:
+                                destination = item['value']
+                            if item['name'] == 'MATCHCRITERIA' and item['order'] == order:
+                                match = item['value']
+                            if item['name'] == 'RESPONSESTEP' and item['order'] == order:
+                                source = item['value']
+                            if item['name'] == 'SLEEPTIME' and item['order'] == order:
+                                sleep = str(float(item['value'])/1000)
+
+                        table.append([source, match, {destination: steps}, sleep])
+
+                    self.step_flow_response_table.set_text(table)
+
+            if self.selected_step.flow_type == 'PERCENTAGE':
+                orders = list(set([ z['order'] for z in self.selected_step.flow_items]))
+                orders.sort()
+                if len(orders):
+                    self.step_flow_percentage_table.show()
+                    table = [['100', {'Next Step': ['Next Step']}, '0.0']]
+                    extra_percentage = 0
+                    for order in orders:
+                        destination = ''
+                        percentage = ''
+                        sleep = ''
+                        for item in self.selected_step.flow_items:
+                            if item['name'] == 'DESTINATIONSTEP' and item['order'] == order:
+                                destination = item['value']
+                            if item['name'] == 'PERCENTAGE' and item['order'] == order:
+                                percentage = item['value']
+                                extra_percentage += int(percentage)
+                            if item['name'] == 'SLEEPTIME' and item['order'] == order:
+                                sleep = str(float(item['value'])/1000)
+
+                        table.append([percentage, {destination: steps}, sleep])
+
+                    table[0][0] = str(100 - extra_percentage)
+                    self.step_flow_percentage_table.set_text(table)
+
+            if self.selected_step.flow_type == 'CONDTITIONAL':
+
+                self.step_flow_conditional_true.show()
+                self.step_flow_conditional_true.reset_items(steps)
+                self.step_flow_conditional_true.set_text(selected_step_flow_conditional_true_target)
+                self.step_flow_conditional_false.show()
+                self.step_flow_conditional_false.reset_items(steps)
+                self.step_flow_conditional_false.set_text(selected_step_flow_conditional_false_target)
+
+                orders = list(set([ z['order'] for z in self.selected_step.flow_items]))
+                orders.sort()
+                if len(orders):
+                    self.step_flow_conditional_table.show()
+                    table = []
+                    for order in orders:
+                        condition = ''
+                        phrase1 = ''
+                        operator = ''
+                        phrase2 = ''
+                        for item in self.selected_step.flow_items:
+                            if item['name'] == 'CONDITION' and item['order'] == order:
+                                condition = item['value']
+                            if item['name'] == 'FIRSTPHRASE' and item['order'] == order:
+                                phrase1 = item['value']
+                            if item['name'] == 'OPERATOR' and item['order'] == order:
+                                operator = item['value']
+                            if item['name'] == 'SECONDPHRASE' and item['order'] == order:
+                                phrase2 = item['value']
+
+                        table.append([phrase1, {condition: ['<', '<=', '=', '=>', '>', '!=', 'in', 'not in']}, phrase2, {operator: ['AND', 'OR']}])
+
+                    self.step_flow_conditional_table.set_text(table)
+
+        #                          ====================================  END OF -- ALL NON 'GOTO' FLOW CONTROL ====================================
+
+
 
 
 
