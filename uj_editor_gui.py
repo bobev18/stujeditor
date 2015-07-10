@@ -158,7 +158,7 @@ class Window(QWidget):
         self.ddi_response_source_step = LabelComboBox('Source Step:')
         self.ddi_specific_layout.addLayout(self.ddi_response_source_step.layout)
 
-        self.ddi_siphon_table = RowControlTableWidget([('type', SIPHON_TYPES.values()), ('start', ''), ('end', ''), ('index', '')])
+        self.ddi_siphon_table = RowControlTableWidget([('type', list(SIPHON_TYPES.values())), ('start', ''), ('end', ''), ('index', '')])
         self.ddi_specific_layout.addLayout(self.ddi_siphon_table.layout)
 
         self.ddi_auto_correlate_type = LabelComboBox('Field Type:', { z:z for z in ['Repeated Fields', 'Known Fields'] })
@@ -191,6 +191,7 @@ class Window(QWidget):
         group_box = QGroupBox()
         vbox = QVBoxLayout()
         vbox.setContentsMargins(0,0,0,0)
+        vbox.setAlignment(Qt.AlignTop)
         name_sleep_layout = QHBoxLayout()
         name_sleep_layout.setContentsMargins(0,0,0,0)
         self.step_name = LabelLineEdit('Name')
@@ -322,9 +323,11 @@ class Window(QWidget):
         if relatable_type_ddis:
             self.ddi_related_ddi.reset_items({z.name:z.name for z in relatable_type_ddis})
 
+        sourceable_step_names = []
         sourceable_steps = self.uj.find_steps_by_attribute('name_user_defined', True)
         if sourceable_steps:
             self.ddi_response_source_step.reset_items({ str(z.id):z.name for z in sourceable_steps })
+            sourceable_step_names = [ z.name for z in sourceable_steps ]
 
         self.correlated_names = { z.field_name:z.field_name for z in self.uj.find_ddis_by_attribute('type', 'AUTOCORR') } # if z.field_type == 'Repeated Fields' }
         self.ddi_auto_correlate_name.reset_items(self.correlated_names)
@@ -342,6 +345,10 @@ class Window(QWidget):
             groupnodes.append(new_group_node)
 
         self.step_tree.addTopLevelItems(groupnodes)
+
+        self.step_flow_response_table.reset_row_template([('Response Step', sourceable_step_names), ('Match Criteria', ''), ('Step', ['Next Step'] + sourceable_step_names + ['End Cycle', 'End User']), ('Sleep Time', '0.0')])
+        self.step_flow_percentage_table.reset_row_template([('Percentage', ''), ('Step', ['Next Step'] + sourceable_step_names + ['End Cycle', 'End User']), ('Sleep Time', '0.0')])
+        # self.step_flow_percentage_table.set_text([['100', {'Next Step': ['Next Step', 'End Cycle', 'End User']}, '0.0']])
 
     def export_uj(self):
         pass

@@ -81,6 +81,7 @@ class DynamicDataItem():
     def dict_siphons(self):
         table = []
         for siphon in self.siphons:
+            # [('col1_name', 'default text'), ('col2_name', ['dfeault', 'combo', 'elements'])]
             table.append([{SIPHON_TYPES[siphon.type]: SIPHON_TYPES.values()}, siphon.start, siphon.end, siphon.match_number])
 
         return table

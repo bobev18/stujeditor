@@ -298,7 +298,7 @@ class RowControlTableWidget(QWidget):
         self.ordered_column_keys = [ z[0] for z in items ]
         self.default_row = { z[0]:z[1] for z in items }
         self.table = QTableWidget(1, len(items))
-        self.table.setHorizontalHeaderLabels(list(self.default_row.keys()))
+        self.table.setHorizontalHeaderLabels(self.ordered_column_keys)
         self.add_row_button = QPushButton('Add Row')
         self.add_row_button.clicked.connect(self.add_row)
         self.delete_row_button = QPushButton('Delete Row')
@@ -313,12 +313,18 @@ class RowControlTableWidget(QWidget):
         self.layout.addLayout(hbox)
         self.layout.addWidget(self.table)
 
+    def reset_row_template(self, items = [('col1_name', 'default text'), ('col2_name', ['dfeault', 'combo', 'elements'])]):
+        # use to (re)set the values of the drop down elements inside the table cells
+        self.ordered_column_keys = [ z[0] for z in items ]
+        self.default_row = { z[0]:z[1] for z in items }
+
     def add_row(self):
         new_row_number = self.table.rowCount()
         self.table.setRowCount(self.table.rowCount()+1)
 
         for column, key in enumerate(self.ordered_column_keys):
                 value = self.default_row[key]
+                # print(value, type(value))
                 if isinstance(value, str):
                     item = QTableWidgetItem(value)
                     self.table.setItem(new_row_number, column, item)
