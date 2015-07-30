@@ -191,3 +191,11 @@ I have 4 structures:
 3. UI objects
 So far I have altered the MY UJ & XML objects in parallel to avoid the need of composing XML. Now that I'm using UI, I'll need save primitive that does not involve the XML objects.
 I have to loose the XML objects, and generate the XML for the export from scratch.
+
+---
+I need to rethink the interface. I started with the idea of making lib for UJ editing without a GUI, but then I decided to implement one. This pushed the project off rails, because I started recreating the UI we already have. And it's too busy with bunch of details that are more trouble than help. Recreating it turned out to be hard and boring so I have lost impulse. I have to reset the project goals and approach this in a new way. This project should be a domain-specific language so it should be possible to operate without GUI. Yet it needs some UI to present info.
+Focus on the screens/sections that are used most often:
+- step - post params, success validation
+- DDIs - response based
+- multi select operations
+- table view-edit mode
